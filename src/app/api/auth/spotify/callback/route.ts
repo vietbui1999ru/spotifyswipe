@@ -33,8 +33,19 @@ export async function GET(request: NextRequest) {
     const storedState = request.cookies.get('spotify_auth_state')?.value;
     const codeVerifier = request.cookies.get('spotify_code_verifier')?.value;
 
+    console.log('Callback received:');
+    console.log('- State from URL:', state);
+    console.log('- Stored state from cookie:', storedState);
+    console.log('- Code verifier from cookie:', !!codeVerifier);
+    console.log('- States match:', state === storedState);
+
     // Verify state matches (CSRF protection)
     if (!storedState || !state || storedState !== state) {
+      console.error('State mismatch!', {
+        hasStoredState: !!storedState,
+        hasUrlState: !!state,
+        match: storedState === state
+      });
       return NextResponse.redirect(
         new URL('/auth/error?message=State mismatch - potential CSRF attack', request.url)
       );

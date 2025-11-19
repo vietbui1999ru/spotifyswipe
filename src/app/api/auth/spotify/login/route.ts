@@ -21,17 +21,25 @@ export async function GET(request: NextRequest) {
     // Generate code verifier and state
     const codeVerifier = generateRandomString(64);
     const state = generateRandomString(16);
+    console.log('Code verifier:', codeVerifier);
+    console.log('State:', state);
 
     // Store code verifier and state in a cookie for the callback
-    const response = NextResponse.redirect(
-      new URL('/api/auth/spotify/authorize', request.url)
-    );
+    // Pass them as URL params to authorize route to avoid cookie timing issues
+    const authorizeUrl = new URL('/api/auth/spotify/authorize', request.url);
+    authorizeUrl.searchParams.set('code_verifier', codeVerifier);
+    authorizeUrl.searchParams.set('state', state);
 
+    const response = NextResponse.redirect(authorizeUrl);
+    console.log('Redirecting to authorize route...');
+
+    // Also set cookies as backup and for the callback
     response.cookies.set('spotify_code_verifier', codeVerifier, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 600, // 10 minutes
+      path: '/',
     });
 
     response.cookies.set('spotify_auth_state', state, {
@@ -39,6 +47,7 @@ export async function GET(request: NextRequest) {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 600, // 10 minutes
+      path: '/',
     });
 
     return response;
