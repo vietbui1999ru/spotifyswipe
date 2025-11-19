@@ -5,6 +5,7 @@ import Navbar from './navigation';
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { SearchIcon } from "lucide-react"
+import { AuthProvider } from "@/contexts/AuthContext"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,21 +30,23 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
-        <Navbar />
-        <main className="ml-30 min-h-screen w-full p-8">
-          <div className="space-y-6 flex items-center justify-center">
-            {/* Search with icon */}
-            <div className="relative w-full max-w-sm">
-              <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search..."
-                className="pl-10"
-              />
+        <AuthProvider>
+          <Navbar />
+          <main className="ml-30 min-h-screen w-full p-8">
+            <div className="space-y-6 flex items-center justify-center">
+              {/* Search with icon */}
+              <div className="relative w-full max-w-sm">
+                <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search..."
+                  className="pl-10"
+                />
+              </div>
             </div>
-          </div>
-          {children}
-        </main>
+            {children}
+          </main>
+        </AuthProvider>
       </body>
     </html >
   );
