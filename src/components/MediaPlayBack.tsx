@@ -6,22 +6,37 @@ import {
 	SkipBackIcon,
 	SkipForwardIcon,
 } from "lucide-react";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 
-const PlayBack = () => {
-	const [isPlaying, setIsPlaying] = useState(false);
+interface MediaPlayBackProps {
+	isPlaying: boolean;
+	onPlayPause: () => void;
+	onSkipBack?: () => void;
+	onSkipForward?: () => void;
+}
 
+const MediaPlayBack = ({
+	isPlaying,
+	onPlayPause,
+	onSkipBack,
+	onSkipForward
+}: MediaPlayBackProps) => {
 	return (
 		<div className="flex flex-col gap-4 padding-2">
 			<ButtonGroup>
-				<Button className="rounded-full" size="sm" variant="outline">
+				<Button
+					className="rounded-full"
+					size="sm"
+					variant="outline"
+					onClick={onSkipBack}
+					disabled={!onSkipBack}
+				>
 					<SkipBackIcon />
 				</Button>
 				<Button
 					className="rounded-full"
-					onClick={() => setIsPlaying(!isPlaying)}
+					onClick={onPlayPause}
 					size="sm"
 					variant="outline"
 				>
@@ -29,7 +44,11 @@ const PlayBack = () => {
 				</Button>
 				<Button
 					className="rounded-full"
-					size="sm" variant="outline">
+					size="sm"
+					variant="outline"
+					onClick={onSkipForward}
+					disabled={!onSkipForward}
+				>
 					<SkipForwardIcon />
 				</Button>
 			</ButtonGroup>
@@ -37,5 +56,5 @@ const PlayBack = () => {
 	);
 };
 
-export default PlayBack;
+export default MediaPlayBack;
 
