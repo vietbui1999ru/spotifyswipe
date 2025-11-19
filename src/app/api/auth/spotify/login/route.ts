@@ -21,8 +21,14 @@ export async function GET(request: NextRequest) {
     const codeVerifier = generateRandomString(64);
     const state = generateRandomString(16);
 
+    console.log('[Auth] Initiating login flow');
+    console.log('[Auth] Code verifier generated:', codeVerifier.substring(0, 10) + '...');
+    console.log('[Auth] State generated:', state);
+
     // Build Spotify authorization URL
     const authUrl = await getSpotifyAuthUrl(clientId, redirectUri, codeVerifier, state);
+
+    console.log('[Auth] Redirecting to Spotify authorization...');
 
     // Create response with redirect to Spotify
     const response = NextResponse.redirect(authUrl);
@@ -44,9 +50,11 @@ export async function GET(request: NextRequest) {
       path: '/',
     });
 
+    console.log('[Auth] Cookies set, redirecting...');
+
     return response;
   } catch (error) {
-    console.error('Spotify login error:', error);
+    console.error('[Auth] Login error:', error);
     return NextResponse.redirect(
       new URL('/auth/error?message=Failed to initiate login', request.url)
     );

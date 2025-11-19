@@ -21,7 +21,7 @@ export const generateRandomString = (length: number): string => {
 const sha256 = async (plain: string): Promise<ArrayBuffer> => {
   const encoder = new TextEncoder();
   const data = encoder.encode(plain);
-  return window.crypto.subtle.digest('SHA-256', data);
+  return crypto.subtle.digest('SHA-256', data);
 };
 
 /**
@@ -39,6 +39,7 @@ const base64encode = (input: ArrayBuffer): string => {
  */
 export const generateCodeChallenge = async (codeVerifier: string): Promise<string> => {
   const hashed = await sha256(codeVerifier);
+  // console.log('Hashed:', hashed);
   return base64encode(hashed);
 };
 
@@ -79,6 +80,7 @@ export const getSpotifyAuthUrl = async (
     ...(state && { state }),
   });
 
+  console.log('Params:', params.toString());
   return `${SPOTIFY_AUTH_URL}?${params.toString()}`;
 };
 

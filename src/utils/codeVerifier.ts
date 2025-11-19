@@ -9,7 +9,7 @@ const codeVerifier = generateRandomString(64);
 const sha256 = async (plain: string) => {
 	const encoder = new TextEncoder()
 	const data = encoder.encode(plain)
-	return window.crypto.subtle.digest('SHA-256', data)
+	return crypto.subtle.digest('SHA-256', data)
 }
 
 const base64encode = (input: ArrayBuffer) => {
