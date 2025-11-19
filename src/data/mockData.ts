@@ -203,7 +203,7 @@ export const mockSongs: Song[] = [
     previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3',
     fullUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3',
     imageUrl: mockAlbums[8].imageUrl,
-    genres: [Genre.ROCK, Genre.CLASSIC],
+    genres: [Genre.ROCK, Genre.CLASSICAL],
     popularity: 91,
     lyrics: 'Thunder only happens when it\'s raining...\nPlayers only love you when they\'re playing...',
   },
@@ -241,7 +241,7 @@ export const mockSongs: Song[] = [
     previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3',
     fullUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3',
     imageUrl: 'https://picsum.photos/seed/album12/300/300',
-    genres: [Genre.ROCK, Genre.CLASSIC],
+    genres: [Genre.ROCK, Genre.CLASSICAL],
     popularity: 97,
   },
   {
