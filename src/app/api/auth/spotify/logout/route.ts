@@ -10,7 +10,13 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json({ success: true });
 
     // Clear session cookie
-    response.cookies.delete('user_id');
+    response.cookies.set('user_id', '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 0,
+      path: '/',
+    });
 
     return response;
   } catch (error) {
@@ -24,6 +30,14 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   const response = NextResponse.redirect(new URL('/', request.url));
-  response.cookies.delete('user_id');
+
+  response.cookies.set('user_id', '', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 0,
+    path: '/',
+  });
+
   return response;
 }

@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     // Check for errors from Spotify
     if (error) {
       return NextResponse.redirect(
-        new URL(`/auth/error?message=${error}`, request.url)
+        new URL(`/auth/error?message=${encodeURIComponent(error)}`, request.url)
       );
     }
 
@@ -33,17 +33,27 @@ export async function GET(request: NextRequest) {
     const storedState = request.cookies.get('spotify_auth_state')?.value;
     const codeVerifier = request.cookies.get('spotify_code_verifier')?.value;
 
+    console.log('Auth callback:', {
+      hasCode: !!code,
+      hasState: !!state,
+      hasStoredState: !!storedState,
+      stateMatch: state === storedState,
+      hasCodeVerifier: !!codeVerifier,
+    });
+
     // Verify state matches (CSRF protection)
     if (!storedState || !state || storedState !== state) {
+      console.error('State mismatch:', { state, storedState });
       return NextResponse.redirect(
-        new URL('/auth/error?message=State mismatch - potential CSRF attack', request.url)
+        new URL('/auth/error?message=State verification failed. Please try logging in again.', request.url)
       );
     }
 
     // Verify we have the code verifier
     if (!codeVerifier) {
+      console.error('Code verifier missing');
       return NextResponse.redirect(
-        new URL('/auth/error?message=Code verifier missing', request.url)
+        new URL('/auth/error?message=Authentication session expired. Please try again.', request.url)
       );
     }
 
@@ -51,9 +61,8 @@ export async function GET(request: NextRequest) {
     const redirectUri = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI;
 
     if (!clientId || !redirectUri) {
-      return NextResponse.json(
-        { error: 'Spotify configuration missing' },
-        { status: 500 }
+      return NextResponse.redirect(
+        new URL('/auth/error?message=Server configuration error', request.url)
       );
     }
 
@@ -79,6 +88,8 @@ export async function GET(request: NextRequest) {
       expiresAt
     );
 
+    console.log('User authenticated:', { userId: user.id, username: user.username });
+
     // Create response with redirect to dashboard
     const response = NextResponse.redirect(new URL('/dashboard', request.url));
 
@@ -88,17 +99,32 @@ export async function GET(request: NextRequest) {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: '/',
     });
 
     // Clear temporary cookies
-    response.cookies.delete('spotify_code_verifier');
-    response.cookies.delete('spotify_auth_state');
+    response.cookies.set('spotify_code_verifier', '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 0,
+      path: '/',
+    });
+
+    response.cookies.set('spotify_auth_state', '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 0,
+      path: '/',
+    });
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Spotify callback error:', error);
+    const errorMessage = error?.message || 'Authentication failed';
     return NextResponse.redirect(
-      new URL('/auth/error?message=Authentication failed', request.url)
+      new URL(`/auth/error?message=${encodeURIComponent(errorMessage)}`, request.url)
     );
   }
 }

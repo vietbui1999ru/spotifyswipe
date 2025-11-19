@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { generateRandomString } from '@/lib/spotify-auth';
+import { generateRandomString, getSpotifyAuthUrl } from '@/lib/spotify-auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,9 +12,8 @@ export async function GET(request: NextRequest) {
     const redirectUri = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI;
 
     if (!clientId || !redirectUri) {
-      return NextResponse.json(
-        { error: 'Spotify configuration missing' },
-        { status: 500 }
+      return NextResponse.redirect(
+        new URL('/auth/error?message=Spotify configuration missing', request.url)
       );
     }
 
@@ -22,16 +21,19 @@ export async function GET(request: NextRequest) {
     const codeVerifier = generateRandomString(64);
     const state = generateRandomString(16);
 
-    // Store code verifier and state in a cookie for the callback
-    const response = NextResponse.redirect(
-      new URL('/api/auth/spotify/authorize', request.url)
-    );
+    // Build Spotify authorization URL
+    const authUrl = await getSpotifyAuthUrl(clientId, redirectUri, codeVerifier, state);
 
+    // Create response with redirect to Spotify
+    const response = NextResponse.redirect(authUrl);
+
+    // Store code verifier and state in cookies for the callback
     response.cookies.set('spotify_code_verifier', codeVerifier, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 600, // 10 minutes
+      path: '/',
     });
 
     response.cookies.set('spotify_auth_state', state, {
@@ -39,14 +41,14 @@ export async function GET(request: NextRequest) {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 600, // 10 minutes
+      path: '/',
     });
 
     return response;
   } catch (error) {
     console.error('Spotify login error:', error);
-    return NextResponse.json(
-      { error: 'Failed to initiate Spotify login' },
-      { status: 500 }
+    return NextResponse.redirect(
+      new URL('/auth/error?message=Failed to initiate login', request.url)
     );
   }
 }
