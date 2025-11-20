@@ -1,15 +1,14 @@
 import { Navbar01 } from '@/components/ui/shadcn-io/navbar-01';
-import { AudioLines } from 'lucide-react';
+import { Music } from 'lucide-react';
 
 const Navbar = () => {
   const navigationLinks = [
-    { href: '/swipe', label: 'Swipe', active: true },
-    { href: '/playlists', label: 'Playlists' },
-    { href: '/dashboard', label: 'Dashboard' },
+    { href: '/', label: 'Home', active: true },
+    { href: '/create', label: 'Share Music' },
   ];
   return (
     <div className="flex flex-col w-full h-max">
-      <Navbar01 className="" logo=<AudioLines /> logoHref="" navigationLinks={navigationLinks} signInText="" ctaText="" ctaHref="" />
+      <Navbar01 className="" logo={<Music />} logoHref="/" navigationLinks={navigationLinks} signInText="" ctaText="" ctaHref="" />
     </div>
   )
 }

@@ -19,6 +19,7 @@ function Dashboard() {
 	const [sortBy, setSortBy] = useState<'upvotes' | 'date'>('upvotes');
 	const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
 	const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+	const genreKeys = Object.keys(Genre);
 
 	const filteredPlaylists = useMemo(() => {
 		let filtered = [...playlists];
@@ -155,7 +156,7 @@ function Dashboard() {
 
 								{/* Top Genres */}
 								<div className="flex gap-1 flex-wrap">
-									{playlist.topGenres.slice(0, 3).map((genre) => (
+									{genreKeys.map((genre) => (
 										<Badge key={genre} variant="secondary" className="text-xs">
 											{genre}
 										</Badge>

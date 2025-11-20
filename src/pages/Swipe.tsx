@@ -26,7 +26,7 @@ function Swipe() {
 		seedMood,
 	} = useSwipe(mockSongs.slice(0, 20));
 
-	const carouselApi = useRef<CarouselApi>();
+	const carouselApi = useRef<CarouselApi>(undefined);
 
 	useEffect(() => {
 		if (carouselApi.current) {
