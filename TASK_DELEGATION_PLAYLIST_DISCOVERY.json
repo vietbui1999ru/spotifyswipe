@@ -1,0 +1,449 @@
+{
+  "feature": "FEAT-PLAYLIST-DISCOVERY-001",
+  "title": "Playlist-Based Discovery UI with Genre/Mood Buttons",
+  "created": "2026-01-04T00:00:00Z",
+  "priority": "HIGH",
+  "estimatedTotalTime": "10 hours",
+  "status": "READY_FOR_IMPLEMENTATION",
+
+  "tasks": [
+    {
+      "taskId": "BACKEND-PLAYLIST-001",
+      "agent": "backend-code-writer",
+      "title": "Implement Playlist Search and Track Extraction Endpoints",
+      "priority": "HIGH",
+      "estimatedTime": "3 hours",
+      "dependencies": [],
+      "status": "READY",
+
+      "description": "Add two new endpoints to enable playlist-based discovery: (1) Search playlists by genre/mood, (2) Extract all tracks from a playlist. Uses Spotify Search API and Playlist Tracks API.",
+
+      "subtasks": [
+        {
+          "subtaskId": "BACKEND-PLAYLIST-001-A",
+          "title": "Add searchPlaylists() method to SpotifyService",
+          "description": "Create method that calls Spotify Search API with type=playlist filter. Handle pagination, transform response, filter results.",
+          "files": ["/spotifyswipe-backend/src/services/SpotifyService.ts"],
+          "acceptanceCriteria": [
+            "Method accepts userId, query, limit, offset parameters",
+            "Calls Spotify API: GET /v1/search?q={query}&type=playlist",
+            "Returns array of playlists with id, name, description, imageUrl, trackCount, owner, followerCount",
+            "Handles token refresh automatically",
+            "Throws appropriate errors for API failures"
+          ]
+        },
+        {
+          "subtaskId": "BACKEND-PLAYLIST-001-B",
+          "title": "Add GET /api/spotify/playlists/search endpoint",
+          "description": "Create Express route handler that calls searchPlaylists() and returns formatted response.",
+          "files": ["/spotifyswipe-backend/src/routes/spotify.ts"],
+          "acceptanceCriteria": [
+            "Route: GET /api/spotify/playlists/search",
+            "Requires authentication (JWT cookie)",
+            "Query params: query (required), limit (optional, default 10), offset (optional, default 0)",
+            "Returns 400 if query missing",
+            "Returns 401 if not authenticated",
+            "Returns 502 if Spotify API fails",
+            "Response format: { success: true, data: { playlists: [], total: number, limit: number, offset: number } }"
+          ]
+        },
+        {
+          "subtaskId": "BACKEND-PLAYLIST-001-C",
+          "title": "Add getPlaylistTracks() method to SpotifyService",
+          "description": "Create method that fetches all tracks from a Spotify playlist with pagination support. Filters tracks without preview URLs by default.",
+          "files": ["/spotifyswipe-backend/src/services/SpotifyService.ts"],
+          "acceptanceCriteria": [
+            "Method accepts userId, playlistId, filterPreview (default true), maxTracks (default 500)",
+            "Calls Spotify API: GET /v1/playlists/{id} and GET /v1/playlists/{id}/tracks",
+            "Handles pagination automatically (fetch multiple pages if needed)",
+            "Filters tracks without preview_url if filterPreview=true",
+            "Returns playlist name and array of tracks (matching Track interface)",
+            "Throws 404 error if playlist not found",
+            "Throws 403 error if playlist is private/inaccessible"
+          ]
+        },
+        {
+          "subtaskId": "BACKEND-PLAYLIST-001-D",
+          "title": "Add GET /api/spotify/playlists/:playlistId/tracks endpoint",
+          "description": "Create Express route handler that calls getPlaylistTracks() and returns tracks.",
+          "files": ["/spotifyswipe-backend/src/routes/spotify.ts"],
+          "acceptanceCriteria": [
+            "Route: GET /api/spotify/playlists/:playlistId/tracks",
+            "Requires authentication",
+            "Path param: playlistId (Spotify playlist ID)",
+            "Query param: filterPreview (optional, default true)",
+            "Returns 404 if playlist not found",
+            "Returns 403 if playlist is private",
+            "Returns 401 if not authenticated",
+            "Returns 502 if Spotify API fails",
+            "Response format: { success: true, data: { playlistId, playlistName, tracks: [], total, hasMore } }"
+          ]
+        }
+      ],
+
+      "technicalDetails": {
+        "spotifyApiEndpoints": [
+          "GET /v1/search?q={query}&type=playlist&limit={limit}&offset={offset}",
+          "GET /v1/playlists/{playlist_id}?fields=name,tracks.total",
+          "GET /v1/playlists/{playlist_id}/tracks?limit={limit}&offset={offset}&fields=items(track(id,name,artists,album,duration_ms,preview_url,popularity))"
+        ],
+        "newMethods": [
+          "SpotifyService.searchPlaylists(userId, query, limit, offset)",
+          "SpotifyService.getPlaylistTracks(userId, playlistId, filterPreview, maxTracks)"
+        ],
+        "errorHandling": [
+          "401 Unauthorized - no valid token",
+          "403 Forbidden - private playlist or insufficient permissions",
+          "404 Not Found - playlist doesn't exist",
+          "502 Bad Gateway - Spotify API error"
+        ]
+      },
+
+      "testingNotes": "Test manually with Postman/curl first. Verify pagination works for playlists with 100+ tracks. Test with private playlists to verify 403 error. Test with invalid playlist IDs for 404 error.",
+
+      "acceptanceCriteria": [
+        "Both endpoints return correct data format",
+        "Pagination works correctly",
+        "Authentication validation works",
+        "Error handling covers all cases",
+        "Spotify API integration tested manually",
+        "Token refresh works automatically",
+        "No breaking changes to existing endpoints"
+      ]
+    },
+
+    {
+      "taskId": "FRONTEND-PLAYLIST-001",
+      "agent": "frontend-code-writer",
+      "title": "Implement Discovery UI Components and Playlist Mode",
+      "priority": "HIGH",
+      "estimatedTime": "4 hours",
+      "dependencies": ["BACKEND-PLAYLIST-001"],
+      "status": "BLOCKED",
+      "blockedBy": "Waiting for backend endpoints to be implemented",
+
+      "description": "Create genre/mood selector, playlist browser, and modify existing hooks/pages to support playlist-based discovery mode alongside existing recommendations.",
+
+      "subtasks": [
+        {
+          "subtaskId": "FRONTEND-PLAYLIST-001-A",
+          "title": "Create GenreMoodSelector component",
+          "description": "Grid of 12 genre/mood buttons (Pop, Rock, Indie, Chill, Party, Workout, Sleep, Focus, Jazz, Electronic, Hip Hop, Classical). Clicking a button triggers onGenreSelect callback.",
+          "files": ["/spotifyswipe-frontend/src/components/GenreMoodSelector.tsx"],
+          "acceptanceCriteria": [
+            "Renders 12 genre buttons in responsive grid (2-4 columns based on screen size)",
+            "Each button shows icon emoji and label",
+            "Selected state: green border, scaled, background highlight",
+            "Hover effects with smooth transitions",
+            "Calls onGenreSelect(genreId) when clicked",
+            "Keyboard accessible (Tab navigation, Enter to select)",
+            "ARIA labels for screen readers",
+            "Mobile responsive (2 columns on small screens)"
+          ]
+        },
+        {
+          "subtaskId": "FRONTEND-PLAYLIST-001-B",
+          "title": "Create PlaylistBrowser component",
+          "description": "Displays grid of playlist cards with images, names, track counts, follower counts. Includes back button and loading/empty states.",
+          "files": ["/spotifyswipe-frontend/src/components/PlaylistBrowser.tsx"],
+          "acceptanceCriteria": [
+            "Displays playlists in responsive grid (1-3 columns)",
+            "Each card shows: image, name, track count, follower count",
+            "Follower count formatted (1.2K, 2.5M)",
+            "Back button returns to genre selector",
+            "Loading state: skeleton cards with pulse animation",
+            "Empty state: friendly message with icon",
+            "Clicking card calls onPlaylistSelect(playlistId, playlistName)",
+            "Images lazy-load with loading attribute",
+            "Hover effects: scale image slightly, highlight name",
+            "Responsive on mobile, tablet, desktop"
+          ]
+        },
+        {
+          "subtaskId": "FRONTEND-PLAYLIST-001-C",
+          "title": "Modify useTrackQueue hook for dual-mode support",
+          "description": "Add 'mode' and 'playlistId' options to support both recommendations and playlist modes. Maintain backward compatibility.",
+          "files": ["/spotifyswipe-frontend/src/hooks/useTrackQueue.ts"],
+          "acceptanceCriteria": [
+            "Accepts new options: mode ('recommendations' | 'playlist'), playlistId",
+            "Default mode is 'recommendations' (backward compatible)",
+            "In playlist mode, fetches from /api/spotify/playlists/:id/tracks",
+            "In recommendations mode, uses existing logic (/api/spotify/search)",
+            "Playlist mode loads all tracks at once (no auto-refill)",
+            "Returns playlistName when in playlist mode",
+            "Returns current mode in return object",
+            "No breaking changes to existing callers",
+            "Error handling works for both modes"
+          ]
+        },
+        {
+          "subtaskId": "FRONTEND-PLAYLIST-001-D",
+          "title": "Create Discovery page (/dashboard/discover)",
+          "description": "Two-step flow: (1) Genre selection screen, (2) Playlist browser. Handles API calls and navigation.",
+          "files": ["/spotifyswipe-frontend/src/app/dashboard/discover/page.tsx"],
+          "acceptanceCriteria": [
+            "Route: /dashboard/discover",
+            "Step 1: Shows GenreMoodSelector component",
+            "Step 2: Shows PlaylistBrowser component after genre selected",
+            "Genre selection fetches playlists: GET /api/spotify/playlists/search?query={genre}",
+            "Playlist selection navigates to: /dashboard/swipe?mode=playlist&playlistId={id}",
+            "Back button returns from step 2 to step 1",
+            "Loading states during API calls",
+            "Error states with retry option",
+            "Responsive layout on all screen sizes"
+          ]
+        },
+        {
+          "subtaskId": "FRONTEND-PLAYLIST-001-E",
+          "title": "Update SwipePage for query param support",
+          "description": "Read mode and playlistId from URL query params. Initialize useTrackQueue with appropriate mode. Show different UI for playlist mode.",
+          "files": ["/spotifyswipe-frontend/src/app/dashboard/swipe/page.tsx"],
+          "acceptanceCriteria": [
+            "Reads query params: mode, playlistId (using useSearchParams)",
+            "Initializes useTrackQueue with mode and playlistId from params",
+            "Playlist mode shows: playlist name in header, back button, finite progress (Track X of Y)",
+            "Recommendations mode shows: existing header and UI",
+            "Back button navigates to /dashboard/discover",
+            "All existing swipe functionality works in both modes",
+            "Save to playlist works in both modes",
+            "No breaking changes (defaults to recommendations mode if no params)"
+          ]
+        }
+      ],
+
+      "technicalDetails": {
+        "newComponents": [
+          "GenreMoodSelector",
+          "PlaylistBrowser"
+        ],
+        "modifiedComponents": [
+          "useTrackQueue hook",
+          "SwipePage"
+        ],
+        "newPages": [
+          "/dashboard/discover"
+        ],
+        "apiIntegration": [
+          "GET /api/spotify/playlists/search",
+          "GET /api/spotify/playlists/:id/tracks"
+        ],
+        "navigationFlow": [
+          "/dashboard/discover (genre) → /dashboard/discover (playlists) → /dashboard/swipe?mode=playlist&playlistId=xyz"
+        ]
+      },
+
+      "designNotes": "Use existing TailwindCSS classes and design patterns from SongCard and SaveToPlaylistModal. Maintain consistent spacing, colors (spotify-green, gray-800, etc), and hover effects. All components should be client components ('use client').",
+
+      "acceptanceCriteria": [
+        "All components render without errors",
+        "API integration works correctly",
+        "Navigation flow is smooth",
+        "Loading states provide immediate feedback",
+        "Error states are user-friendly",
+        "Responsive design works on mobile, tablet, desktop",
+        "No console errors or warnings",
+        "Backward compatibility maintained (existing flows work unchanged)",
+        "TypeScript types are correct (no any types)"
+      ]
+    },
+
+    {
+      "taskId": "TESTING-PLAYLIST-001",
+      "agent": "tester",
+      "title": "Test Playlist Discovery Feature End-to-End",
+      "priority": "MEDIUM",
+      "estimatedTime": "3 hours",
+      "dependencies": ["BACKEND-PLAYLIST-001", "FRONTEND-PLAYLIST-001"],
+      "status": "BLOCKED",
+      "blockedBy": "Waiting for backend and frontend implementation",
+
+      "description": "Write unit tests for backend endpoints and frontend components. Execute integration testing for complete user flow. Verify no regressions in existing functionality.",
+
+      "subtasks": [
+        {
+          "subtaskId": "TESTING-PLAYLIST-001-A",
+          "title": "Backend endpoint tests",
+          "description": "Write comprehensive tests for both new endpoints using Jest and mocked Spotify API responses.",
+          "files": ["/spotifyswipe-backend/src/routes/__tests__/spotify-playlists.test.ts"],
+          "acceptanceCriteria": [
+            "Test GET /api/spotify/playlists/search: valid query, pagination, auth validation, missing query, Spotify errors",
+            "Test GET /api/spotify/playlists/:id/tracks: valid playlist, preview filtering, pagination, 404, 403, auth validation",
+            "All tests pass",
+            "Test coverage >80% for new code",
+            "Mocks Spotify API responses properly",
+            "Tests edge cases (empty results, large playlists, etc)"
+          ]
+        },
+        {
+          "subtaskId": "TESTING-PLAYLIST-001-B",
+          "title": "Frontend component tests",
+          "description": "Write React component tests using Jest and React Testing Library.",
+          "files": [
+            "/spotifyswipe-frontend/src/components/__tests__/GenreMoodSelector.test.tsx",
+            "/spotifyswipe-frontend/src/components/__tests__/PlaylistBrowser.test.tsx"
+          ],
+          "acceptanceCriteria": [
+            "Test GenreMoodSelector: renders all genres, click handler, selected state, keyboard navigation",
+            "Test PlaylistBrowser: displays playlists, loading state, empty state, click handler, back button",
+            "Snapshot tests for UI consistency",
+            "Interaction tests with userEvent",
+            "Accessibility tests (ARIA, keyboard)",
+            "All tests pass"
+          ]
+        },
+        {
+          "subtaskId": "TESTING-PLAYLIST-001-C",
+          "title": "Integration and manual testing",
+          "description": "Test complete user flow manually. Verify no regressions. Check responsive design.",
+          "acceptanceCriteria": [
+            "Complete flow works: genre → playlists → tracks → swipe → save",
+            "Genre selection loads playlists correctly",
+            "Playlist selection loads tracks correctly",
+            "Swipe functionality works with playlist tracks",
+            "Save to playlist works",
+            "Back navigation works at each step",
+            "Loading states display correctly",
+            "Error states display correctly",
+            "Responsive design works on mobile, tablet, desktop",
+            "No console errors or warnings",
+            "Browser back/forward buttons work",
+            "Existing recommendation flow still works (no regressions)",
+            "Performance acceptable: page loads <2s, API responses <500ms"
+          ]
+        }
+      ],
+
+      "manualTestingChecklist": [
+        "Navigate to /dashboard/discover",
+        "Click each genre button (verify API calls)",
+        "Select a genre with playlists (e.g., Pop)",
+        "Verify playlist grid displays correctly",
+        "Click back button (returns to genre selector)",
+        "Select a different genre",
+        "Click a playlist card",
+        "Verify navigation to /dashboard/swipe with correct query params",
+        "Verify playlist name shows in header",
+        "Verify tracks load correctly",
+        "Swipe through multiple tracks",
+        "Like several tracks",
+        "Click Save to Playlist",
+        "Verify liked songs save correctly",
+        "Click Back to Discovery",
+        "Navigate to /dashboard/swipe (without params)",
+        "Verify recommendations mode still works",
+        "Test on mobile device (responsive design)",
+        "Test on different browsers (Chrome, Firefox, Safari)",
+        "Check browser console for errors"
+      ],
+
+      "acceptanceCriteria": [
+        "All unit tests pass",
+        "All integration tests pass",
+        "All manual checklist items pass",
+        "Test coverage >80% for new code",
+        "No critical bugs found",
+        "No regressions in existing functionality",
+        "Performance meets targets (<2s page load, <500ms API)"
+      ]
+    }
+  ],
+
+  "overallAcceptanceCriteria": [
+    "Users can select genre/mood and browse playlists",
+    "Users can select playlist and swipe through its tracks",
+    "Users can save liked tracks to their playlists",
+    "Existing recommendation flow works unchanged",
+    "All endpoints return correct data formats",
+    "All components render without errors",
+    "Complete user flow tested end-to-end",
+    "No console errors or warnings",
+    "Responsive design works on all screen sizes",
+    "Test coverage >80% for new code",
+    "Performance meets targets",
+    "Backward compatibility maintained"
+  ],
+
+  "deploymentPlan": {
+    "phase1": {
+      "title": "Development",
+      "duration": "7 hours",
+      "tasks": [
+        "Backend implementation (3h)",
+        "Frontend implementation (4h)"
+      ]
+    },
+    "phase2": {
+      "title": "Testing",
+      "duration": "3 hours",
+      "tasks": [
+        "Unit tests (1h)",
+        "Integration tests (1h)",
+        "Manual testing (1h)"
+      ]
+    },
+    "phase3": {
+      "title": "Deployment",
+      "duration": "Not estimated - handled separately",
+      "tasks": [
+        "Deploy backend",
+        "Deploy frontend",
+        "Smoke test production",
+        "Monitor for errors"
+      ]
+    }
+  },
+
+  "riskAssessment": [
+    {
+      "risk": "Spotify API rate limits",
+      "likelihood": "Medium",
+      "impact": "High",
+      "mitigation": "Implement caching for playlist searches, respect rate limits, exponential backoff on errors"
+    },
+    {
+      "risk": "Playlists with no preview URLs",
+      "likelihood": "High",
+      "impact": "Medium",
+      "mitigation": "Filter tracks without preview URLs, show warning if playlist has <5 playable tracks"
+    },
+    {
+      "risk": "Large playlists (1000+ tracks)",
+      "likelihood": "Medium",
+      "impact": "Medium",
+      "mitigation": "Limit to 500 tracks max, implement efficient pagination, show loading indicators"
+    },
+    {
+      "risk": "Private/deleted playlists",
+      "likelihood": "Low",
+      "impact": "Low",
+      "mitigation": "Handle 403/404 errors gracefully with user-friendly messages"
+    },
+    {
+      "risk": "Backward compatibility break",
+      "likelihood": "Low",
+      "impact": "High",
+      "mitigation": "Keep all existing code paths unchanged, default to recommendations mode, thorough regression testing"
+    }
+  ],
+
+  "successMetrics": {
+    "technical": [
+      "All endpoints respond <500ms",
+      "Test coverage >80%",
+      "Zero console errors",
+      "Zero 500 errors in logs",
+      "Lighthouse score >70"
+    ],
+    "userExperience": [
+      "Complete flow works without errors",
+      "Loading feedback <100ms",
+      "Responsive on all devices",
+      "Navigation intuitive and smooth"
+    ],
+    "business": [
+      "Users discover playlists they wouldn't find via recommendations",
+      "Increased engagement (more tracks swiped per session)",
+      "More playlists created/saved"
+    ]
+  }
+}
