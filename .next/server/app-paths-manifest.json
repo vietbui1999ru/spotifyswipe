@@ -1,0 +1,15 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/api/auth/callback/lastfm/route": "app/api/auth/callback/lastfm/route.js",
+  "/api/music/current/route": "app/api/music/current/route.js",
+  "/api/music/recommendations/route": "app/api/music/recommendations/route.js",
+  "/api/music/top-tracks/route": "app/api/music/top-tracks/route.js",
+  "/api/trpc/[trpc]/route": "app/api/trpc/[trpc]/route.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/page": "app/page.js",
+  "/playlist/page": "app/playlist/page.js",
+  "/shareboard/page": "app/shareboard/page.js",
+  "/test-env/page": "app/test-env/page.js"
+}

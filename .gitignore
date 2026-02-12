@@ -48,3 +48,7 @@ yarn-error.log*
 .idea
 
 certificates
+.env
+.next
+node_modules/
+certificates/
