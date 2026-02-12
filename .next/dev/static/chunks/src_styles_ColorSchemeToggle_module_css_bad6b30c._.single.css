@@ -1,0 +1,23 @@
+/* [project]/src/styles/ColorSchemeToggle.module.css [app-client] (css) */
+.ColorSchemeToggle-module__kK2YFa__icon {
+  width: 22px;
+  height: 22px;
+}
+
+[data-mantine-color-scheme="dark"] .ColorSchemeToggle-module__kK2YFa__dark {
+  display: none;
+}
+
+[data-mantine-color-scheme="light"] .ColorSchemeToggle-module__kK2YFa__dark {
+  display: block;
+}
+
+[data-mantine-color-scheme="light"] .ColorSchemeToggle-module__kK2YFa__light {
+  display: none;
+}
+
+[data-mantine-color-scheme="dark"] .ColorSchemeToggle-module__kK2YFa__light {
+  display: block;
+}
+
+/*# sourceMappingURL=src_styles_ColorSchemeToggle_module_css_bad6b30c._.single.css.map*/

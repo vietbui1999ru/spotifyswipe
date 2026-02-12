@@ -1,0 +1,9 @@
+{
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/api/auth/callback/lastfm/route": "app/api/auth/callback/lastfm/route.js",
+  "/api/trpc/[trpc]/route": "app/api/trpc/[trpc]/route.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/page": "app/page.js",
+  "/playlist/page": "app/playlist/page.js",
+  "/shareboard/page": "app/shareboard/page.js"
+}

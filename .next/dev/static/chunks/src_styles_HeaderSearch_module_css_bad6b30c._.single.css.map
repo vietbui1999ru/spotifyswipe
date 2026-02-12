@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/src/styles/HeaderSearch.module.css"],"sourcesContent":[".header {\n\theight: 100%;\n\tmargin: 0 30px 0 30px;\n\tbackground-color: var(--mantine-color-body);\n}\n\n.inner {\n\theight: 56px;\n\tdisplay: flex;\n\tjustify-content: space-between;\n\tjustify-items: stretch;\n\talign-items: center;\n}\n\n.link {\n\tdisplay: block;\n\tline-height: 1;\n\tpadding: 8px 12px;\n\tborder-radius: var(--mantine-radius-sm);\n\ttext-decoration: none;\n\tcolor: var(--mantine-color-gray-7);\n}\n\n[data-mantine-color-scheme='dark'] .link {\n\tcolor: var(--mantine-color-dark-0);\n}\n\n.link {\n\tfont-size: var(--mantine-font-size-sm);\n\tfont-weight: 500;\n}\n\n.link:hover {\n\t\tbackground-color: var(--mantine-color-gray-0);\n\t}\n\n[data-mantine-color-scheme='dark'] .link:hover {\n\t\tbackground-color: var(--mantine-color-dark-6);\n}\n\n[data-mantine-color-scheme] .link[data-active] {\n\t\tbackground-color: var(--mantine-color-blue-filled);\n\t\tcolor: var(--mantine-color-white);\n\t}\n"],"names":[],"mappings":"AAAA;;;;;;AAMA;;;;;;;AAQA;;;;;;;;;AASA;;;;AAIA;;;;;AAKA;;;;AAIA;;;;AAIA"}}]
+}
