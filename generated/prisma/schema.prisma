@@ -1,0 +1,205 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Auth Models (NextAuth) ────────────────────────────────────────────────────
+
+model Account {
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String?
+  access_token             String?
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String?
+  session_state            String?
+  refresh_token_expires_in Int?
+  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── Core Models ───────────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  accounts     Account[]
+  sessions     Session[]
+  playlists    Playlist[]
+  swipeActions SwipeAction[]
+  socialPosts  SocialPost[]
+  likes        Like[]
+  comments     Comment[]
+  followers    Follow[]      @relation("UserFollowers")
+  following    Follow[]      @relation("UserFollowing")
+}
+
+model Song {
+  id         String  @id @default(cuid())
+  title      String
+  artist     String
+  album      String?
+  albumArt   String?
+  lastfmUrl  String?
+  duration   Int?
+  externalId String  @unique
+
+  createdAt DateTime @default(now())
+
+  playlistSongs PlaylistSong[]
+  swipeActions  SwipeAction[]
+
+  @@index([title, artist])
+}
+
+model Playlist {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  coverImage  String?
+  isPublic    Boolean @default(true)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  songs      PlaylistSong[]
+  sharedPost SocialPost?
+
+  @@index([userId])
+}
+
+model PlaylistSong {
+  id       String @id @default(cuid())
+  position Int
+
+  playlistId String
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+
+  songId String
+  song   Song   @relation(fields: [songId], references: [id], onDelete: Cascade)
+
+  addedAt DateTime @default(now())
+
+  @@unique([playlistId, songId])
+  @@index([playlistId])
+}
+
+// ─── Swipe & Discovery ─────────────────────────────────────────────────────────
+
+model SwipeAction {
+  id     String @id @default(cuid())
+  action String // "liked" | "skipped" | "superliked"
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  songId String
+  song   Song   @relation(fields: [songId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, songId])
+  @@index([userId, action])
+}
+
+// ─── Social Models ─────────────────────────────────────────────────────────────
+
+model SocialPost {
+  id      String  @id @default(cuid())
+  caption String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  playlistId String   @unique
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  likes    Like[]
+  comments Comment[]
+
+  @@index([userId])
+}
+
+model Like {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  socialPostId String
+  socialPost   SocialPost @relation(fields: [socialPostId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, socialPostId])
+  @@index([socialPostId])
+}
+
+model Comment {
+  id      String @id @default(cuid())
+  content String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  socialPostId String
+  socialPost   SocialPost @relation(fields: [socialPostId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([socialPostId])
+}
+
+model Follow {
+  id String @id @default(cuid())
+
+  followerId String
+  follower   User   @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+
+  followingId String
+  following   User   @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
