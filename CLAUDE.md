@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-SpotiSwipe is a music discovery social app built on the T3 Stack. Users authenticate via Last.fm OAuth, swipe to discover music, build custom playlists, and share them on a social shareboard. Uses **Last.fm** as the music data provider.
+SpotiSwipe is a music discovery social app built on the T3 Stack. Users authenticate via **Spotify** or **Last.fm** OAuth, swipe to discover music, build custom playlists, and share them on a social shareboard. Uses **Spotify** for playback/playlists and **Last.fm** for discovery recommendations and track metadata.
 
 ## Commands
 
@@ -35,7 +35,7 @@ bun run typecheck          # TypeScript type check (tsc --noEmit)
 - **Next.js 16** App Router, React 19, Node.js runtime (no Edge)
 - **tRPC 11** type-safe API with SuperJSON transformer + React Query
 - **Prisma 6** with PostgreSQL, custom client output at `./generated/prisma`
-- **NextAuth 5 beta** with custom Last.fm OAuth provider + Prisma adapter
+- **better-auth** with Spotify OAuth (built-in) + custom Last.fm OAuth callback + Prisma adapter
 - **Mantine 8** UI framework (dark mode default) + Tailwind CSS 4
 - **Biome 2** for linting/formatting (replaces ESLint + Prettier)
 - **Bun** as package manager
@@ -47,23 +47,25 @@ bun run typecheck          # TypeScript type check (tsc --noEmit)
 ```
 src/
 ├── app/                    # Next.js App Router pages and API routes
-│   ├── _components/        # Shared layout: Navbar, AuthProvider, HeaderSearch, SignIn
-│   ├── api/auth/           # NextAuth handlers + custom Last.fm callback
-│   ├── api/music/          # REST endpoints: current, top-tracks, recommendations
+│   ├── _components/        # Shared layout: Navbar, AuthProvider, HeaderSearch, SignIn, ColorSchemeToggle
+│   ├── api/auth/           # better-auth catch-all handler + custom Last.fm callback
 │   ├── api/trpc/           # tRPC HTTP handler
 │   ├── dashboard/          # Main swipe/discover page (PlayerCard, PlaylistStack, LyricsPanel)
-│   ├── playlist/           # Playlist management page
-│   └── shareboard/         # Social sharing page
+│   ├── playlist/           # Playlist management page (PlaylistHeader, PlaylistSongList)
+│   └── shareboard/         # Social sharing page (ShareboardGrid, ShareboardDetail)
 ├── server/
-│   ├── auth/               # NextAuth config, Last.fm provider, Last.fm API client
-│   │   ├── index.ts        # Exports auth() and signIn/signOut helpers
-│   │   ├── config.ts       # NextAuth config with callbacks
-│   │   ├── lastfm-provider.ts  # Custom OAuth provider definition
+│   ├── auth/               # better-auth config + Last.fm API client
+│   │   ├── index.ts        # betterAuth() init with Spotify provider + generic-oauth Last.fm
 │   │   └── lastfm.ts       # Last.fm API wrapper functions
+│   ├── spotify/            # Spotify API integration
+│   │   ├── api.ts          # Spotify API wrapper (search, playback, playlists)
+│   │   ├── types.ts        # Spotify API response types
+│   │   ├── mappers.ts      # SpotifyTrack → Song mapping utilities
+│   │   └── index.ts        # Barrel export
 │   ├── api/
 │   │   ├── root.ts         # Root router (merges sub-routers)
-│   │   ├── trpc.ts         # tRPC context, middleware, procedure definitions
-│   │   └── routers/        # Individual tRPC routers
+│   │   ├── trpc.ts         # tRPC context (includes getSpotifyToken), middleware, procedures
+│   │   └── routers/        # song, playlist, swipe, social, spotify
 │   ├── db.ts               # Prisma client singleton
 │   ├── logger.ts           # Structured logging utility (createLogger, withTiming)
 │   └── errors.ts           # ErrorCode enum, AppError class, toTRPCError helper
@@ -73,13 +75,21 @@ src/
 ```
 
 ### Auth Flow
+
+**Spotify (primary):**
+1. User clicks "Sign in with Spotify" → `authClient.signIn.social({ provider: "spotify" })`
+2. better-auth redirects to Spotify with explicit `redirectURI: "http://127.0.0.1:3000/api/auth/callback/spotify"`
+3. Access token + refresh token stored in Account model (camelCase fields) via Prisma adapter
+4. Token auto-refreshes via `getSpotifyToken()` in `src/server/spotify/api.ts`
+
+**Last.fm (secondary, for scrobbling/discovery):**
 1. User clicks "Sign in with Last.fm" → redirects to Last.fm authorization
 2. Last.fm redirects to `/api/auth/callback/lastfm` with token
 3. Custom handler exchanges token for session key via Last.fm API (MD5 signature auth)
-4. User upserted in DB via Prisma, session cookie set manually
-5. Redirect to `/dashboard`
+4. If user already signed in via Spotify, Last.fm Account is linked to existing user
+5. Session cookie set as `better-auth.session_token`, redirect to `/dashboard`
 
-**Critical**: All auth URLs must use `127.0.0.1` (not `localhost`) to avoid redirect_uri mismatch. `NEXTAUTH_TRUST_HOST=true` is required.
+**Critical**: All auth URLs must use `127.0.0.1` (not `localhost`) — Spotify banned `localhost` redirect URIs. better-auth `baseURL` and `redirectURI` are hardcoded to `http://127.0.0.1:3000`.
 
 ### tRPC Pattern
 - Define routers in `src/server/api/routers/` and merge in `root.ts`
@@ -91,8 +101,8 @@ src/
 ### Database Schema (Prisma)
 Located at `prisma/schema.prisma`. Generated client at `./generated/prisma`.
 
-**Auth models**: User, Account, Session, VerificationToken
-**Core models**: Song (externalId unique), Playlist, PlaylistSong (position-ordered, unique per playlist+song)
+**Auth models**: User, Account (camelCase fields: providerId, accountId, accessToken, refreshToken, accessTokenExpiresAt), Session (token, expiresAt), Verification
+**Core models**: Song (externalId unique, optional spotifyId/spotifyUrl/previewUrl), Playlist (optional spotifyPlaylistId for sync), PlaylistSong (position-ordered, unique per playlist+song)
 **Discovery models**: SwipeAction (liked/skipped/superliked, unique per user+song)
 **Social models**: SocialPost (one per playlist), Like, Comment, Follow
 
@@ -101,7 +111,7 @@ Located at `prisma/schema.prisma`. Generated client at `./generated/prisma`.
 - `src/server/errors.ts`: `AppError` class with `ErrorCode` enum maps to HTTP status codes and tRPC error codes. `toTRPCError()` converts AppError to TRPCError.
 
 ### Environment Variables
-Validated by Zod in `src/env.js`. Server: `AUTH_SECRET`, `LASTFM_API_KEY`, `LASTFM_API_SECRET`, `DATABASE_URL`. See `.env.example` for full list including `NEXT_PUBLIC_NEXTAUTH_URL`, `NEXTAUTH_URL`, `NEXTAUTH_TRUST_HOST`.
+Validated by Zod in `src/env.js`. Server: `AUTH_SECRET`, `AUTH_SPOTIFY_ID`, `AUTH_SPOTIFY_SECRET`, `LASTFM_API_KEY`, `LASTFM_API_SECRET`, `DATABASE_URL`.
 
 ### Styling
 Mantine components + CSS Modules (`.module.css` files). Tailwind available but Mantine is primary. PostCSS with `postcss-preset-mantine` and `postcss-simple-vars`. Dark mode is default.
@@ -109,31 +119,32 @@ Mantine components + CSS Modules (`.module.css` files). Tailwind available but M
 ### Current Implementation State
 
 **Working**:
-- Last.fm OAuth login flow (custom callback handler)
-- REST API: `/api/music/current`, `/api/music/top-tracks`, `/api/music/recommendations`
-- Dashboard layout with PlayerCard (current track), PlaylistStack (top tracks), LyricsPanel
-- Basic navigation (Navbar with Discover/Playlists/Shareboard)
-- Mantine AppShell layout with sidebar + header
+- Dual auth: Spotify OAuth (via better-auth) + Last.fm OAuth (custom callback)
+- Account linking: Last.fm can be linked to existing Spotify-authenticated user (better-auth trustedProviders)
+- Spotify token auto-refresh (centralized in `src/server/spotify/api.ts`)
+- Dashboard: PlayerCard (swipe to discover), PlaylistStack (create/manage playlists), LyricsPanel (track info + liked songs)
+- Swipe mechanics: like/skip/superlike with animated card transitions
+- Discovery feed via `swipe.getDiscoveryFeed` tRPC procedure
+- Playlist CRUD: create, edit, delete, add/remove songs, share to shareboard
+- Social shareboard: browse shared playlists, like/comment on posts, follow users, copy playlists
+- Music search: debounced search in header via `song.search` tRPC procedure
+- Spotify integration: search, playback control, playlist sync, recently played
+- Responsive dashboard layout (flex-based, adapts to screen size)
+- Navigation: Navbar with Discover/Playlists/Shareboard
+- Mantine AppShell layout with sidebar + header + dark mode toggle
 
-**Placeholder/Hardcoded**:
-- Shareboard page uses hardcoded mock data (6 fake playlists, not connected to DB)
-- Playlist page uses hardcoded songs (PlaylistSongList) and static header (PlaylistHeader)
-- Search bar is a TODO placeholder
-- MusicExploreArea component is essentially empty
-- Swipe buttons exist in PlayerCard but have no functionality
+**tRPC Routers** (all in `src/server/api/routers/`):
+- `song`: search, getInfo, findOrCreate
+- `playlist`: getAll, getById, create, update, delete, addSong, removeSong
+- `swipe`: getDiscoveryFeed, recordSwipe, getHistory
+- `social`: sharePlaylist, getFeed, getPost, likePost, addComment, deleteComment, followUser, addPlaylistFromPost
+- `spotify`: search, getPlayback, play, pause, skip, getPlaylists, createPlaylist, syncPlaylistToSpotify, recentlyPlayed
 
-**Missing Features**:
-- Swipe mechanics (accept/reject/superlike with gesture support)
-- Song discovery engine (recommendations feed for swiping)
-- Playlist CRUD operations (create, edit, delete, reorder songs)
-- Social features (share playlist, like/comment on posts, follow users)
-- tRPC routers for playlist, song, swipe, social operations (only `postRouter` exists with demo endpoints)
-- Music search functionality
+**Not Yet Implemented**:
+- Touch/drag gesture support for swiping (currently button-only)
 - User profile page
+- Spotify playback integration in the PlayerCard (play previews)
+- Song reordering within playlists (drag-and-drop)
 
 **Known Issues**:
-- Duplicated code between `lastfm-provider.ts` and `/api/auth/callback/lastfm/route.ts` (generateApiSig, getSessionKey, getUserProfile)
-- `postRouter` references a `Post` model that no longer exists in schema
-- Logger/error utilities (`logger.ts`, `errors.ts`) exist but aren't used in any routes
-- `debug` import in `config.ts` is unused
-- REST music routes don't use the structured logger
+- Header "Features" and "Community" links are non-functional placeholders

@@ -8,6 +8,7 @@ import Navbar from "../_components/Navbar";
 import LyricsPanel from "./_components/LyricsPanel";
 import PlayerCard from "./_components/PlayerCard";
 import PlaylistStack from "./_components/PlaylistStack";
+import ProviderSwitcher from "./_components/ProviderSwitcher";
 import styles from "./dashboard.module.css";
 
 const Dashboard = () => {
@@ -54,11 +55,24 @@ const Dashboard = () => {
 							onSetActivePlaylist={handleSetActivePlaylist}
 						/>
 
-						{/* Center: Player Card */}
-						<PlayerCard
-							activePlaylistId={activePlaylistId}
-							onSongChange={handleSongChange}
-						/>
+						{/* Center: Provider Switcher + Player Card */}
+						<div
+							style={{
+								display: "flex",
+								flexDirection: "column",
+								gap: "var(--mantine-spacing-sm)",
+								height: "100%",
+								minHeight: 0,
+							}}
+						>
+							<div style={{ display: "flex", justifyContent: "center" }}>
+								<ProviderSwitcher />
+							</div>
+							<PlayerCard
+								activePlaylistId={activePlaylistId}
+								onSongChange={handleSongChange}
+							/>
+						</div>
 
 						{/* Right: Info/Liked Panel */}
 						<LyricsPanel currentSong={currentSong} />

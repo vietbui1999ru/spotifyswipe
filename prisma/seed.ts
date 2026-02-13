@@ -16,7 +16,7 @@ async function main() {
 	await db.song.deleteMany();
 	await db.session.deleteMany();
 	await db.account.deleteMany();
-	await db.verificationToken.deleteMany();
+	await db.verification.deleteMany();
 	await db.user.deleteMany();
 
 	// --- Users ---

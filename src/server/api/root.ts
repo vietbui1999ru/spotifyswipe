@@ -1,7 +1,9 @@
 import { playlistRouter } from "~/server/api/routers/playlist";
 import { socialRouter } from "~/server/api/routers/social";
-import { songRouter } from "~/server/api/routers/song";
+import { spotifyRouter } from "~/server/api/routers/spotify";
 import { swipeRouter } from "~/server/api/routers/swipe";
+import { tokenRouter } from "~/server/api/routers/token";
+import { userRouter } from "~/server/api/routers/user";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 
 /**
@@ -10,10 +12,12 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-	song: songRouter,
 	playlist: playlistRouter,
 	swipe: swipeRouter,
 	social: socialRouter,
+	spotify: spotifyRouter,
+	token: tokenRouter,
+	user: userRouter,
 });
 
 // export type definition of API

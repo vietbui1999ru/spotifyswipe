@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { auth } from "~/server/auth";
 
 export const config = {
 	matcher: [
@@ -14,22 +13,13 @@ export const config = {
 	],
 };
 
-export const runtime = "nodejs";
-
-const protectedRoutes = ["/dashboard", "/playlist", "/shareboard"];
-
-export async function middleware(request: NextRequest) {
-	const session = await auth();
-	const { pathname } = request.nextUrl;
-
-	const isProtected = protectedRoutes.some(
-		(route) => pathname === route || pathname.startsWith(`${route}/`),
-	);
-
-	if (isProtected && !session?.user) {
+export function middleware(request: NextRequest) {
+	// Redirect localhost → 127.0.0.1 (Spotify banned localhost redirect URIs)
+	const host = request.headers.get("host") ?? "";
+	if (host.startsWith("localhost")) {
 		const url = request.nextUrl.clone();
-		url.pathname = "/";
-		return NextResponse.redirect(url);
+		url.hostname = "127.0.0.1";
+		return NextResponse.redirect(url, 308);
 	}
 
 	return NextResponse.next();

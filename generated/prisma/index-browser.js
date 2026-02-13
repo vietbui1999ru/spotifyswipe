@@ -121,41 +121,51 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.AccountScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  type: 'type',
-  provider: 'provider',
-  providerAccountId: 'providerAccountId',
-  refresh_token: 'refresh_token',
-  access_token: 'access_token',
-  expires_at: 'expires_at',
-  token_type: 'token_type',
-  scope: 'scope',
-  id_token: 'id_token',
-  session_state: 'session_state',
-  refresh_token_expires_in: 'refresh_token_expires_in'
-};
-
-exports.Prisma.SessionScalarFieldEnum = {
-  id: 'id',
-  sessionToken: 'sessionToken',
-  userId: 'userId',
-  expires: 'expires'
-};
-
-exports.Prisma.VerificationTokenScalarFieldEnum = {
-  identifier: 'identifier',
-  token: 'token',
-  expires: 'expires'
-};
-
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
   email: 'email',
   emailVerified: 'emailVerified',
-  image: 'image'
+  image: 'image',
+  musicProvider: 'musicProvider',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  accountId: 'accountId',
+  providerId: 'providerId',
+  accessToken: 'accessToken',
+  refreshToken: 'refreshToken',
+  accessTokenExpiresAt: 'accessTokenExpiresAt',
+  refreshTokenExpiresAt: 'refreshTokenExpiresAt',
+  scope: 'scope',
+  idToken: 'idToken',
+  password: 'password',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SessionScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId',
+  expiresAt: 'expiresAt',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.VerificationScalarFieldEnum = {
+  id: 'id',
+  identifier: 'identifier',
+  value: 'value',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SongScalarFieldEnum = {
@@ -167,6 +177,9 @@ exports.Prisma.SongScalarFieldEnum = {
   lastfmUrl: 'lastfmUrl',
   duration: 'duration',
   externalId: 'externalId',
+  spotifyId: 'spotifyId',
+  spotifyUrl: 'spotifyUrl',
+  previewUrl: 'previewUrl',
   createdAt: 'createdAt'
 };
 
@@ -176,6 +189,7 @@ exports.Prisma.PlaylistScalarFieldEnum = {
   description: 'description',
   coverImage: 'coverImage',
   isPublic: 'isPublic',
+  spotifyPlaylistId: 'spotifyPlaylistId',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -246,10 +260,10 @@ exports.Prisma.NullsOrder = {
 
 
 exports.Prisma.ModelName = {
+  User: 'User',
   Account: 'Account',
   Session: 'Session',
-  VerificationToken: 'VerificationToken',
-  User: 'User',
+  Verification: 'Verification',
   Song: 'Song',
   Playlist: 'Playlist',
   PlaylistSong: 'PlaylistSong',

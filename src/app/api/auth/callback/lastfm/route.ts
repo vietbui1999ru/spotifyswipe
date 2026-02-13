@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import { type NextRequest, NextResponse } from "next/server";
+import { auth } from "~/server/auth";
 import { getLastfmUserProfile, getSessionKey } from "~/server/auth/lastfm";
 import { db } from "~/server/db";
 import { createLogger } from "~/server/logger";
@@ -9,10 +10,11 @@ const log = createLogger("lastfm-callback");
 /**
  * Custom Last.fm callback handler
  * Handles Last.fm's implicit OAuth flow (token in URL query param)
- * Bypasses Auth.js OAuth validation which doesn't support implicit flows
+ * Last.fm uses a non-standard auth flow (api_key + MD5 signatures) that
+ * better-auth's generic-oauth plugin can't handle, so we keep this custom route.
  *
- * Shared helpers (generateApiSig, getSessionKey, getLastfmUserProfile) live
- * in ~/server/auth/lastfm.ts to avoid duplication.
+ * Supports account linking: if a user is already signed in (e.g. via Spotify),
+ * the Last.fm account will be linked to the existing user rather than creating a new one.
  */
 
 export async function GET(request: NextRequest) {
@@ -49,82 +51,111 @@ export async function GET(request: NextRequest) {
 			realname: profile.user.realname,
 		});
 
-		const providerAccountId = profile.user.name;
+		const accountId = profile.user.name;
 
-		if (!providerAccountId) {
+		if (!accountId) {
 			throw new Error("Last.fm user profile missing name field");
 		}
 
-		const user = await db.user.upsert({
-			where: { email: `${profile.user.name}@last.fm` },
-			update: {
-				name: profile.user.name || profile.user.realname,
-				image:
-					profile.user.image?.find((img) => img.size === "large")?.["#text"] ||
-					null,
-			},
-			create: {
-				email: `${profile.user.name}@last.fm`,
-				name: profile.user.name || profile.user.realname,
-				image:
-					profile.user.image?.find((img) => img.size === "large")?.["#text"] ||
-					null,
-			},
+		// Check if user is already signed in (e.g. via Spotify) for account linking
+		const existingSession = await auth.api.getSession({
+			headers: request.headers,
 		});
+		let user: { id: string };
+
+		if (existingSession?.user?.id) {
+			// User is already authenticated — link Last.fm to their existing account
+			log.info("Linking Last.fm account to existing user", {
+				userId: existingSession.user.id,
+			});
+			user = await db.user.update({
+				where: { id: existingSession.user.id },
+				data: {
+					image:
+						profile.user.image?.find((img) => img.size === "large")?.[
+							"#text"
+						] || undefined,
+				},
+			});
+		} else {
+			// No existing session — upsert user as before
+			user = await db.user.upsert({
+				where: { email: `${profile.user.name}@last.fm` },
+				update: {
+					name: profile.user.name || profile.user.realname || "Last.fm User",
+					image:
+						profile.user.image?.find((img) => img.size === "large")?.[
+							"#text"
+						] || null,
+				},
+				create: {
+					email: `${profile.user.name}@last.fm`,
+					name: profile.user.name || profile.user.realname || "Last.fm User",
+					image:
+						profile.user.image?.find((img) => img.size === "large")?.[
+							"#text"
+						] || null,
+				},
+			});
+		}
 
 		log.info("Created/updated user", { userId: user.id });
 
 		await db.account.upsert({
 			where: {
-				provider_providerAccountId: {
-					provider: "lastfm",
-					providerAccountId: providerAccountId,
+				providerId_accountId: {
+					providerId: "lastfm",
+					accountId: accountId,
 				},
 			},
 			update: {
-				access_token: sessionKey,
-				token_type: "Bearer",
+				accessToken: sessionKey,
+				userId: user.id,
 			},
 			create: {
 				userId: user.id,
-				provider: "lastfm",
-				providerAccountId: providerAccountId,
-				type: "oauth",
-				access_token: sessionKey,
-				token_type: "Bearer",
+				providerId: "lastfm",
+				accountId: accountId,
+				accessToken: sessionKey,
 			},
 		});
 
 		log.info("Created/updated account with session key");
 
-		const sessionToken = crypto.randomUUID();
-		const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+		// Only create a new session cookie if user wasn't already logged in
+		if (!existingSession?.user?.id) {
+			const sessionToken = crypto.randomUUID();
+			const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
 
-		await db.session.create({
-			data: {
-				sessionToken,
-				userId: user.id,
-				expires,
-			},
-		});
+			await db.session.create({
+				data: {
+					token: sessionToken,
+					userId: user.id,
+					expiresAt,
+				},
+			});
 
-		log.info("Created session token");
+			log.info("Created session token");
 
-		const response = NextResponse.redirect(
-			new URL("/dashboard", request.nextUrl.origin),
-		);
+			const response = NextResponse.redirect(
+				new URL("/dashboard", request.nextUrl.origin),
+			);
 
-		response.cookies.set("next-auth.session-token", sessionToken, {
-			httpOnly: true,
-			maxAge: 30 * 24 * 60 * 60, // 30 days
-			path: "/",
-			secure: process.env.NODE_ENV === "production",
-			sameSite: "lax",
-		});
+			response.cookies.set("better-auth.session_token", sessionToken, {
+				httpOnly: true,
+				maxAge: 30 * 24 * 60 * 60, // 30 days
+				path: "/",
+				secure: process.env.NODE_ENV === "production",
+				sameSite: "lax",
+			});
 
-		log.info("User authenticated successfully, redirecting to dashboard");
+			log.info("User authenticated successfully, redirecting to dashboard");
+			return response;
+		}
 
-		return response;
+		// Already logged in — just redirect
+		log.info("Last.fm account linked, redirecting to dashboard");
+		return NextResponse.redirect(new URL("/dashboard", request.nextUrl.origin));
 	} catch (error) {
 		log.error("Callback error", {
 			error: error instanceof Error ? error.message : error,

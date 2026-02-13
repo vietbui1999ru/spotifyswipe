@@ -1,23 +1,44 @@
-import NextAuth from "next-auth";
-import { cache } from "react";
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { nextCookies } from "better-auth/next-js";
+import { env } from "~/env";
+import { db } from "~/server/db";
 
-import { authConfig } from "./config";
+const SPOTIFY_SCOPES = [
+	"user-read-private",
+	"user-read-email",
+	"streaming",
+	"user-read-playback-state",
+	"user-modify-playback-state",
+	"user-read-recently-played",
+	"user-top-read",
+	"user-library-read",
+	"playlist-read-private",
+	"playlist-modify-public",
+	"playlist-modify-private",
+];
 
-// Force NEXTAUTH_URL to be used instead of auto-detecting from request
-// This is critical for local development with 127.0.0.1
-const configWithUrl = {
-	...authConfig,
-	// Explicitly set the base URL from environment
+export const auth = betterAuth({
+	database: prismaAdapter(db, { provider: "postgresql" }),
+	baseURL: "http://127.0.0.1:3000",
 	basePath: "/api/auth",
-};
+	secret: env.AUTH_SECRET,
 
-const {
-	auth: uncachedAuth,
-	handlers,
-	signIn,
-	signOut,
-} = NextAuth(configWithUrl);
+	socialProviders: {
+		spotify: {
+			clientId: env.AUTH_SPOTIFY_ID,
+			clientSecret: env.AUTH_SPOTIFY_SECRET,
+			redirectURI: "http://127.0.0.1:3000/api/auth/callback/spotify",
+			scope: SPOTIFY_SCOPES,
+		},
+	},
 
-const auth = cache(uncachedAuth);
+	plugins: [nextCookies()],
 
-export { auth, handlers, signIn, signOut };
+	account: {
+		accountLinking: {
+			enabled: true,
+			trustedProviders: ["spotify", "lastfm"],
+		},
+	},
+});

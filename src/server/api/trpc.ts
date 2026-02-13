@@ -14,6 +14,7 @@ import { ZodError } from "zod";
 
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
+import { getSpotifyToken } from "~/server/spotify";
 
 /**
  * 1. CONTEXT
@@ -28,13 +29,28 @@ import { db } from "~/server/db";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-	const session = await auth();
+	const session = await auth.api.getSession({
+		headers: opts.headers,
+	});
 	const requestId = crypto.randomUUID();
+
+	// Lazy Spotify token getter — only fetches/refreshes when called
+	let spotifyTokenPromise: Promise<string> | null = null;
+	const getSpotifyAccessToken = () => {
+		if (!session?.user?.id) {
+			return Promise.reject(new Error("Not authenticated"));
+		}
+		if (!spotifyTokenPromise) {
+			spotifyTokenPromise = getSpotifyToken(session.user.id);
+		}
+		return spotifyTokenPromise;
+	};
 
 	return {
 		db,
 		session,
 		requestId,
+		getSpotifyToken: getSpotifyAccessToken,
 		...opts,
 	};
 };

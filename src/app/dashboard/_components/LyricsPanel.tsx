@@ -2,7 +2,9 @@
 
 import { Badge, Group, Loader, Stack, Text } from "@mantine/core";
 import { IconHeart, IconMusic } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import * as lastfm from "~/lib/services/lastfm";
 import { api } from "~/trpc/react";
 import styles from "../dashboard.module.css";
 import { GradientSegmentedControl } from "./GradientSegmentedControl";
@@ -18,13 +20,36 @@ const LyricsPanel = ({ currentSong }: LyricsPanelProps) => {
 		data: trackInfo,
 		isLoading: trackInfoLoading,
 		error: trackInfoError,
-	} = api.song.getInfo.useQuery(
-		{ track: currentSong?.name ?? "", artist: currentSong?.artist ?? "" },
-		{
-			enabled: !!currentSong && activeTab === "info",
-			refetchOnWindowFocus: false,
+	} = useQuery({
+		queryKey: ["trackInfo", currentSong?.name, currentSong?.artist],
+		queryFn: async () => {
+			if (!currentSong) throw new Error("No song selected");
+			const info = await lastfm.getTrackInfo(
+				currentSong.name,
+				currentSong.artist,
+			);
+			return {
+				name: info.name,
+				artist: info.artist.name,
+				url: info.url,
+				playcount: Number.parseInt(info.playcount || "0", 10),
+				listeners: Number.parseInt(info.listeners || "0", 10),
+				loved: info.userloved === "1",
+				album: info.album
+					? {
+							title: info.album.title,
+							artist: info.album.artist,
+							url: info.album.url,
+							image: lastfm.getImageUrl(info.album.image),
+						}
+					: null,
+				image: lastfm.getImageUrl(info.image),
+				wiki: info.wiki?.content ?? null,
+			};
 		},
-	);
+		enabled: !!currentSong && activeTab === "info",
+		refetchOnWindowFocus: false,
+	});
 
 	const { data: likedHistory, isLoading: historyLoading } =
 		api.swipe.getHistory.useQuery(

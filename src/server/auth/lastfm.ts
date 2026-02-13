@@ -95,9 +95,10 @@ async function callLastfmApi<T>(
 
 /**
  * Get user's recent tracks
+ * Uses the `user` param (no auth/session key required for this read-only endpoint)
  */
 export async function getRecentTracks(
-	sessionKey: string,
+	username: string,
 	limit = 10,
 ): Promise<{
 	recenttracks: {
@@ -124,14 +125,15 @@ export async function getRecentTracks(
 				loved: string;
 			}>;
 		};
-	}>("user.getRecentTracks", { limit: String(limit) }, sessionKey);
+	}>("user.getRecentTracks", { user: username, limit: String(limit) });
 }
 
 /**
  * Get user's top tracks
+ * Uses the `user` param (no auth/session key required for this read-only endpoint)
  */
 export async function getTopTracks(
-	sessionKey: string,
+	username: string,
 	period:
 		| "overall"
 		| "7day"
@@ -161,7 +163,7 @@ export async function getTopTracks(
 				url: string;
 			}>;
 		};
-	}>("user.getTopTracks", { period, limit: String(limit) }, sessionKey);
+	}>("user.getTopTracks", { user: username, period, limit: String(limit) });
 }
 
 /**
@@ -265,9 +267,10 @@ export async function getTrackInfo(
 
 /**
  * Get user's top artists
+ * Uses the `user` param (no auth/session key required for this read-only endpoint)
  */
 export async function getTopArtists(
-	sessionKey: string,
+	username: string,
 	period:
 		| "overall"
 		| "7day"
@@ -295,7 +298,7 @@ export async function getTopArtists(
 				url: string;
 			}>;
 		};
-	}>("user.getTopArtists", { period, limit: String(limit) }, sessionKey);
+	}>("user.getTopArtists", { user: username, period, limit: String(limit) });
 }
 
 /**
@@ -394,7 +397,7 @@ export async function getUserInfo(sessionKey: string): Promise<{
 			subscriber: string;
 			playlists: string;
 		};
-	}>("user.getInfo", { user: "me" }, sessionKey);
+	}>("user.getInfo", {}, sessionKey);
 }
 
 // ─── Auth Helper Functions (shared by provider and callback) ─────────────────
@@ -461,50 +464,12 @@ export async function getSessionKey(
 }
 
 /**
- * Get Last.fm user profile using session key
+ * Get Last.fm user profile using session key.
+ * Reuses callLastfmApi for consistent error handling.
  */
 export async function getLastfmUserProfile(
-	apiKey: string,
+	_apiKey: string,
 	sessionKey: string,
 ): Promise<LastfmProfile> {
-	const params: Record<string, string> = {
-		api_key: apiKey,
-		method: "user.getInfo",
-		sk: sessionKey,
-	};
-
-	const apiSecret = process.env.LASTFM_API_SECRET || "";
-	const api_sig = generateApiSig(params, apiSecret);
-
-	const queryParams = new URLSearchParams({
-		...params,
-		api_sig,
-		format: "json",
-	});
-
-	const response = await fetch(`${LASTFM_API_BASE}?${queryParams}`, {
-		method: "GET",
-	});
-
-	if (!response.ok) {
-		throw new Error(
-			`Failed to get Last.fm user profile: ${response.statusText}`,
-		);
-	}
-
-	const data = (await response.json()) as {
-		user?: LastfmProfile["user"];
-		error?: number;
-		message?: string;
-	};
-
-	if (data.error) {
-		throw new Error(`Last.fm API error (${data.error}): ${data.message}`);
-	}
-
-	if (!data.user) {
-		throw new Error("No user data returned from Last.fm");
-	}
-
-	return { user: data.user };
+	return callLastfmApi<LastfmProfile>("user.getInfo", {}, sessionKey);
 }

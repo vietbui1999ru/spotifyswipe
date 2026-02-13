@@ -4,6 +4,7 @@ import { NavLink } from "@mantine/core";
 import {
 	IconMusicCog,
 	IconPlaylist,
+	IconUser,
 	IconUsersGroup,
 } from "@tabler/icons-react";
 import { usePathname } from "next/navigation";
@@ -23,6 +24,11 @@ const navItems = [
 		href: "/shareboard",
 		label: "Shareboard",
 		icon: IconUsersGroup,
+	},
+	{
+		href: "/profile",
+		label: "Profile",
+		icon: IconUser,
 	},
 ];
 
