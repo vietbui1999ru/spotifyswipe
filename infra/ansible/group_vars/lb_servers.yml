@@ -1,0 +1,24 @@
+# SpotiSwipe - Load Balancer Variables
+
+# Nginx
+nginx_user: www-data
+nginx_worker_connections: 1024
+nginx_client_max_body_size: 10m
+nginx_auth_rate_limit: "10r/s"
+nginx_api_rate_limit: "30r/s"
+nginx_dns_resolver: "1.1.1.1 8.8.8.8"
+nginx_dhparam_path: /etc/nginx/dhparam.pem
+nginx_webroot: /var/www/html
+
+# Domain
+domain: "{{ app_domain }}"
+
+# Upstream app servers (referenced by nginx templates)
+app_server_1: "{{ hostvars[groups['app_servers'][0]]['ansible_host'] }}"
+app_server_2: "{{ hostvars[groups['app_servers'][1]]['ansible_host'] }}"
+
+# SSL
+ssl_use_letsencrypt: true
+ssl_email: "admin@{{ app_domain }}"
+ssl_certificate_path: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
+ssl_certificate_key_path: "/etc/letsencrypt/live/{{ domain }}/privkey.pem"

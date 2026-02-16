@@ -211,15 +211,20 @@ export async function play(
 		context_uri?: string;
 		offset?: { position: number };
 	} = {},
+	deviceId?: string,
 ): Promise<void> {
 	await callSpotify("/me/player/play", token, {
 		method: "PUT",
 		body: options,
+		...(deviceId ? { params: { device_id: deviceId } } : {}),
 	});
 }
 
-export async function pause(token: string): Promise<void> {
-	await callSpotify("/me/player/pause", token, { method: "PUT" });
+export async function pause(token: string, deviceId?: string): Promise<void> {
+	await callSpotify("/me/player/pause", token, {
+		method: "PUT",
+		...(deviceId ? { params: { device_id: deviceId } } : {}),
+	});
 }
 
 export async function skip(token: string): Promise<void> {

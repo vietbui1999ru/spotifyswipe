@@ -1,9 +1,36 @@
 import crypto from "node:crypto";
 import { type NextRequest, NextResponse } from "next/server";
+import { env } from "~/env";
 import { auth } from "~/server/auth";
 import { getLastfmUserProfile, getSessionKey } from "~/server/auth/lastfm";
 import { db } from "~/server/db";
 import { createLogger } from "~/server/logger";
+
+/**
+ * Sign a session token the same way better-auth/better-call does:
+ * HMAC-SHA256(token, secret) → standard base64 → "token.signature"
+ */
+function signSessionToken(token: string, secret: string): string {
+	const signature = crypto
+		.createHmac("sha256", secret)
+		.update(token)
+		.digest("base64");
+	return `${token}.${signature}`;
+}
+
+/**
+ * Get the auth secret matching better-auth's resolution order.
+ */
+function getAuthSecret(): string {
+	const secret =
+		env.AUTH_SECRET ||
+		process.env.BETTER_AUTH_SECRET ||
+		process.env.AUTH_SECRET;
+	if (!secret) {
+		throw new Error("AUTH_SECRET is not configured");
+	}
+	return secret;
+}
 
 const log = createLogger("lastfm-callback");
 
@@ -20,6 +47,15 @@ const log = createLogger("lastfm-callback");
 export async function GET(request: NextRequest) {
 	try {
 		const token = request.nextUrl.searchParams.get("token");
+		const redirectParam = request.nextUrl.searchParams.get("redirect");
+		// Validate redirect is a relative path to prevent open redirect
+		// Block protocol-relative URLs like "//evil.com"
+		const redirectTo =
+			redirectParam &&
+			redirectParam.startsWith("/") &&
+			!redirectParam.startsWith("//")
+				? redirectParam
+				: "/dashboard";
 
 		if (!token) {
 			log.error("No token in callback URL");
@@ -101,6 +137,31 @@ export async function GET(request: NextRequest) {
 
 		log.info("Created/updated user", { userId: user.id });
 
+		// Check if this Last.fm account is already linked to a different user
+		const existingAccount = await db.account.findUnique({
+			where: {
+				providerId_accountId: {
+					providerId: "lastfm",
+					accountId: accountId,
+				},
+			},
+			select: { userId: true },
+		});
+
+		if (existingAccount && existingAccount.userId !== user.id) {
+			log.warn("Last.fm account already linked to another user", {
+				accountId,
+				existingUserId: existingAccount.userId,
+				requestingUserId: user.id,
+			});
+			const url = new URL("/", request.nextUrl.origin);
+			url.searchParams.set(
+				"error",
+				"This Last.fm account is already linked to another user",
+			);
+			return NextResponse.redirect(url);
+		}
+
 		await db.account.upsert({
 			where: {
 				providerId_accountId: {
@@ -138,10 +199,15 @@ export async function GET(request: NextRequest) {
 			log.info("Created session token");
 
 			const response = NextResponse.redirect(
-				new URL("/dashboard", request.nextUrl.origin),
+				new URL(redirectTo, request.nextUrl.origin),
 			);
 
-			response.cookies.set("better-auth.session_token", sessionToken, {
+			// Sign the token with HMAC-SHA256 matching better-auth's format:
+			// "token.base64(hmac_sha256(token, secret))"
+			const secret = getAuthSecret();
+			const signedToken = signSessionToken(sessionToken, secret);
+
+			response.cookies.set("better-auth.session_token", signedToken, {
 				httpOnly: true,
 				maxAge: 30 * 24 * 60 * 60, // 30 days
 				path: "/",
@@ -149,22 +215,19 @@ export async function GET(request: NextRequest) {
 				sameSite: "lax",
 			});
 
-			log.info("User authenticated successfully, redirecting to dashboard");
+			log.info("User authenticated successfully", { redirectTo });
 			return response;
 		}
 
 		// Already logged in — just redirect
-		log.info("Last.fm account linked, redirecting to dashboard");
-		return NextResponse.redirect(new URL("/dashboard", request.nextUrl.origin));
+		log.info("Last.fm account linked", { redirectTo });
+		return NextResponse.redirect(new URL(redirectTo, request.nextUrl.origin));
 	} catch (error) {
 		log.error("Callback error", {
 			error: error instanceof Error ? error.message : error,
 		});
-		const errorMessage =
-			error instanceof Error ? error.message : "Unknown error";
-
 		const url = new URL("/", request.nextUrl.origin);
-		url.searchParams.set("error", encodeURIComponent(errorMessage));
+		url.searchParams.set("error", "AuthCallbackFailed");
 		return NextResponse.redirect(url);
 	}
 }

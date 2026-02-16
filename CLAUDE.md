@@ -48,24 +48,31 @@ bun run typecheck          # TypeScript type check (tsc --noEmit)
 src/
 ├── app/                    # Next.js App Router pages and API routes
 │   ├── _components/        # Shared layout: Navbar, AuthProvider, HeaderSearch, SignIn, ColorSchemeToggle
-│   ├── api/auth/           # better-auth catch-all handler + custom Last.fm callback
+│   ├── api/auth/           # better-auth catch-all handler ([...all]) + custom Last.fm callback
 │   ├── api/trpc/           # tRPC HTTP handler
-│   ├── dashboard/          # Main swipe/discover page (PlayerCard, PlaylistStack, LyricsPanel)
-│   ├── playlist/           # Playlist management page (PlaylistHeader, PlaylistSongList)
-│   └── shareboard/         # Social sharing page (ShareboardGrid, ShareboardDetail)
+│   └── (app)/              # Route group for authenticated pages
+│       ├── dashboard/      # Swipe/discover page (PlayerCard, PlaylistStack, LyricsPanel, ProviderSwitcher)
+│       ├── playlist/       # Playlist management page
+│       ├── shareboard/     # Social sharing page (ShareboardGrid, ShareboardDetail)
+│       ├── profile/        # User profile page
+│       └── admin/          # Admin panel (stats, user management)
+├── lib/
+│   ├── services/           # Client-side API wrappers (spotify.ts, lastfm.ts, discovery.ts)
+│   ├── hooks/              # Custom hooks (useDiscoveryFeed, useSpotifyPlayer, useSessionState)
+│   └── contexts/           # React contexts (app-shell-context)
 ├── server/
 │   ├── auth/               # better-auth config + Last.fm API client
-│   │   ├── index.ts        # betterAuth() init with Spotify provider + generic-oauth Last.fm
+│   │   ├── index.ts        # betterAuth() init with Spotify + Google + generic-oauth Last.fm
 │   │   └── lastfm.ts       # Last.fm API wrapper functions
 │   ├── spotify/            # Spotify API integration
-│   │   ├── api.ts          # Spotify API wrapper (search, playback, playlists)
+│   │   ├── api.ts          # Spotify API wrapper (search, playback, playlists, token refresh)
 │   │   ├── types.ts        # Spotify API response types
 │   │   ├── mappers.ts      # SpotifyTrack → Song mapping utilities
 │   │   └── index.ts        # Barrel export
 │   ├── api/
 │   │   ├── root.ts         # Root router (merges sub-routers)
-│   │   ├── trpc.ts         # tRPC context (includes getSpotifyToken), middleware, procedures
-│   │   └── routers/        # song, playlist, swipe, social, spotify
+│   │   ├── trpc.ts         # tRPC context, middleware, procedures
+│   │   └── routers/        # admin, lastfm, playlist, social, spotify, swipe, token, user
 │   ├── db.ts               # Prisma client singleton
 │   ├── logger.ts           # Structured logging utility (createLogger, withTiming)
 │   └── errors.ts           # ErrorCode enum, AppError class, toTRPCError helper
@@ -124,27 +131,24 @@ Mantine components + CSS Modules (`.module.css` files). Tailwind available but M
 - Spotify token auto-refresh (centralized in `src/server/spotify/api.ts`)
 - Dashboard: PlayerCard (swipe to discover), PlaylistStack (create/manage playlists), LyricsPanel (track info + liked songs)
 - Swipe mechanics: like/skip/superlike with animated card transitions
-- Discovery feed via `swipe.getDiscoveryFeed` tRPC procedure
+- Discovery feed: client-side pipeline in `src/lib/services/discovery.ts` (Spotify or Last.fm based)
 - Playlist CRUD: create, edit, delete, add/remove songs, share to shareboard
 - Social shareboard: browse shared playlists, like/comment on posts, follow users, copy playlists
-- Music search: debounced search in header via `song.search` tRPC procedure
-- Spotify integration: search, playback control, playlist sync, recently played
+- Music search: debounced search in HeaderSearch, Enter/option-select navigates to `/dashboard?q=` for search-based discovery feed
+- Spotify integration: search, playback control (Web Playback SDK), playlist sync, recently played
 - Responsive dashboard layout (flex-based, adapts to screen size)
 - Navigation: Navbar with Discover/Playlists/Shareboard
 - Mantine AppShell layout with sidebar + header + dark mode toggle
 
 **tRPC Routers** (all in `src/server/api/routers/`):
-- `song`: search, getInfo, findOrCreate
+- `admin`: getStats, getUsers, deleteUser, getReports
+- `lastfm`: getTopArtists, getSimilarArtists, searchTracks
 - `playlist`: getAll, getById, create, update, delete, addSong, removeSong
-- `swipe`: getDiscoveryFeed, recordSwipe, getHistory
 - `social`: sharePlaylist, getFeed, getPost, likePost, addComment, deleteComment, followUser, addPlaylistFromPost
 - `spotify`: search, getPlayback, play, pause, skip, getPlaylists, createPlaylist, syncPlaylistToSpotify, recentlyPlayed
+- `swipe`: recordSwipe, getHistory
+- `token`: getSpotifyToken, getLastfmSession
+- `user`: getMusicProvider, setMusicProvider, getConnectedProviders
 
 **Not Yet Implemented**:
-- Touch/drag gesture support for swiping (currently button-only)
-- User profile page
-- Spotify playback integration in the PlayerCard (play previews)
 - Song reordering within playlists (drag-and-drop)
-
-**Known Issues**:
-- Header "Features" and "Community" links are non-functional placeholders

@@ -1,0 +1,273 @@
+/* ─── Container ──────────────────────────────────────────────────── */
+
+.container {
+	width: 100%;
+	min-height: calc(100vh - 60px - 2 * var(--mantine-spacing-md, 16px));
+	padding: 1.5rem;
+	background: linear-gradient(
+		135deg,
+		rgba(9, 9, 11, 1) 0%,
+		rgba(24, 24, 27, 0.5) 100%
+	);
+	position: relative;
+	overflow-y: auto;
+	box-sizing: border-box;
+}
+
+.container::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background:
+		radial-gradient(
+			circle at 20% 30%,
+			rgba(34, 211, 238, 0.03) 0%,
+			transparent 50%
+		),
+		radial-gradient(
+			circle at 80% 70%,
+			rgba(236, 72, 153, 0.03) 0%,
+			transparent 50%
+		);
+	pointer-events: none;
+}
+
+.content {
+	position: relative;
+	z-index: 1;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+/* ─── Page Header ────────────────────────────────────────────────── */
+
+.pageHeader {
+	margin-bottom: 1.5rem;
+}
+
+.pageTitle {
+	color: white;
+	font-weight: 800;
+	font-size: 1.75rem;
+	letter-spacing: -0.025em;
+}
+
+.pageSubtitle {
+	color: rgba(255, 255, 255, 0.45);
+	font-size: 0.9rem;
+	margin-top: 0.25rem;
+}
+
+/* ─── Glass Card (reusable section card) ─────────────────────────── */
+
+.glassCard {
+	background: rgba(24, 24, 27, 0.6);
+	backdrop-filter: blur(12px);
+	border: 1px solid rgba(63, 63, 70, 0.4);
+	border-radius: 1.5rem;
+	padding: 1.5rem;
+	position: relative;
+	box-shadow:
+		0 8px 32px rgba(0, 0, 0, 0.3),
+		inset 0 1px 0 rgba(255, 255, 255, 0.05);
+	overflow: hidden;
+}
+
+.glassCard::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 1px;
+	background: linear-gradient(
+		90deg,
+		transparent,
+		rgba(255, 255, 255, 0.1),
+		transparent
+	);
+}
+
+/* ─── Stat Card ──────────────────────────────────────────────────── */
+
+.statCard {
+	background: rgba(39, 39, 42, 0.6);
+	border: 1px solid rgba(63, 63, 70, 0.5);
+	border-radius: 1rem;
+	padding: 1.25rem;
+	text-align: center;
+	transition: all 0.2s ease;
+}
+
+.statCard:hover {
+	background: rgba(52, 52, 55, 0.8);
+	border-color: rgba(63, 63, 70, 0.8);
+	transform: translateY(-2px);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.statValue {
+	font-size: 2rem;
+	font-weight: 800;
+	color: white;
+	line-height: 1;
+}
+
+.statLabel {
+	font-size: 0.8rem;
+	color: rgba(255, 255, 255, 0.5);
+	font-weight: 500;
+	margin-top: 0.5rem;
+}
+
+.statIcon {
+	color: rgba(34, 211, 238, 0.7);
+	margin-bottom: 0.5rem;
+}
+
+/* ─── Section Title ──────────────────────────────────────────────── */
+
+.sectionTitle {
+	color: white;
+	font-weight: 700;
+	font-size: 1.1rem;
+	letter-spacing: 0.025em;
+}
+
+/* ─── Chart Container ────────────────────────────────────────────── */
+
+.chartWrapper {
+	margin-top: 1rem;
+}
+
+/* ─── Table Styles ───────────────────────────────────────────────── */
+
+.tableRow {
+	transition: background 0.15s ease;
+}
+
+.tableRow:hover {
+	background: rgba(39, 39, 42, 0.5);
+}
+
+.songTitle {
+	font-weight: 600;
+	font-size: 0.85rem;
+	color: rgba(255, 255, 255, 0.9);
+}
+
+.songArtist {
+	font-size: 0.75rem;
+	color: rgba(255, 255, 255, 0.5);
+}
+
+.userName {
+	font-weight: 600;
+	font-size: 0.85rem;
+	color: rgba(255, 255, 255, 0.9);
+}
+
+.userEmail {
+	font-size: 0.75rem;
+	color: rgba(255, 255, 255, 0.5);
+}
+
+/* ─── Activity Item ──────────────────────────────────────────────── */
+
+.activityItem {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.75rem 1rem;
+	background: rgba(39, 39, 42, 0.4);
+	border: 1px solid rgba(63, 63, 70, 0.3);
+	border-radius: 0.75rem;
+	transition: all 0.2s ease;
+}
+
+.activityItem:hover {
+	background: rgba(39, 39, 42, 0.7);
+	transform: translateX(4px);
+}
+
+.activitySong {
+	font-weight: 600;
+	font-size: 0.85rem;
+	color: rgba(255, 255, 255, 0.9);
+}
+
+.activityArtist {
+	font-size: 0.75rem;
+	color: rgba(255, 255, 255, 0.5);
+}
+
+.activityUser {
+	font-size: 0.75rem;
+	color: rgba(34, 211, 238, 0.8);
+}
+
+.activityTime {
+	font-size: 0.7rem;
+	color: rgba(255, 255, 255, 0.35);
+	white-space: nowrap;
+}
+
+/* ─── Loading State ──────────────────────────────────────────────── */
+
+.loadingContainer {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 50vh;
+}
+
+/* ─── Unauthorized State ─────────────────────────────────────────── */
+
+.unauthorizedContainer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 50vh;
+	gap: 1rem;
+}
+
+/* ─── Activity Feed ──────────────────────────────────────────────── */
+
+.activityFeed {
+	max-height: 500px;
+	overflow-y: auto;
+	padding-right: 0.5rem;
+}
+
+.activityFeed::-webkit-scrollbar {
+	width: 4px;
+}
+
+.activityFeed::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.activityFeed::-webkit-scrollbar-thumb {
+	background: rgba(63, 63, 70, 0.6);
+	border-radius: 2px;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+	.container {
+		padding: 1rem;
+	}
+
+	.statValue {
+		font-size: 1.5rem;
+	}
+
+	.pageTitle {
+		font-size: 1.4rem;
+	}
+}

@@ -1,0 +1,22 @@
+# SpotiSwipe - Database Server Variables
+
+# Allow PostgreSQL access from app servers only
+ufw_extra_rules:
+  - { port: "{{ db_port }}", proto: tcp, from: "{{ hostvars[groups['app_servers'][0]]['ansible_host'] }}" }
+  - { port: "{{ db_port }}", proto: tcp, from: "{{ hostvars[groups['app_servers'][1]]['ansible_host'] }}" }
+
+# PostgreSQL
+postgresql_version: 16
+postgresql_data_dir: /var/lib/postgresql/16/main
+postgresql_conf_dir: /etc/postgresql/16/main
+postgresql_max_connections: 100
+postgresql_shared_buffers: 256MB
+postgresql_effective_cache_size: 768MB
+postgresql_work_mem: 4MB
+
+# Backup
+postgresql_backup_enabled: true
+postgresql_backup_dir: /var/backups/postgresql
+postgresql_backup_retention_days: 14
+postgresql_backup_hour: 2
+postgresql_backup_minute: 0

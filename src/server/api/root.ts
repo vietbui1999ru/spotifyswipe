@@ -1,3 +1,5 @@
+import { adminRouter } from "~/server/api/routers/admin";
+import { lastfmRouter } from "~/server/api/routers/lastfm";
 import { playlistRouter } from "~/server/api/routers/playlist";
 import { socialRouter } from "~/server/api/routers/social";
 import { spotifyRouter } from "~/server/api/routers/spotify";
@@ -12,6 +14,8 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
+	admin: adminRouter,
+	lastfm: lastfmRouter,
 	playlist: playlistRouter,
 	swipe: swipeRouter,
 	social: socialRouter,

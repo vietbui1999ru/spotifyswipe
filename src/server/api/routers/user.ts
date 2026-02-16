@@ -34,6 +34,14 @@ export const userRouter = createTRPCRouter({
 			}
 		}),
 
+	getRole: protectedProcedure.query(async ({ ctx }) => {
+		const user = await ctx.db.user.findUnique({
+			where: { id: ctx.session.user.id },
+			select: { role: true },
+		});
+		return { role: (user?.role ?? "user") as "user" | "admin" };
+	}),
+
 	getConnectedProviders: protectedProcedure.query(async ({ ctx }) => {
 		const accounts = await ctx.db.account.findMany({
 			where: { userId: ctx.session.user.id },
@@ -45,4 +53,98 @@ export const userRouter = createTRPCRouter({
 			lastfm: providerIds.has("lastfm"),
 		};
 	}),
+
+	/** Get full profile data including resolved display name/image with provider fallbacks. */
+	getProfile: protectedProcedure.query(async ({ ctx }) => {
+		const user = await ctx.db.user.findUnique({
+			where: { id: ctx.session.user.id },
+			select: {
+				id: true,
+				name: true,
+				email: true,
+				image: true,
+				displayName: true,
+				profileImage: true,
+				role: true,
+				createdAt: true,
+				accounts: {
+					select: { providerId: true, accountId: true },
+				},
+			},
+		});
+
+		if (!user) {
+			throw toTRPCError(new AppError(ErrorCode.NOT_FOUND, "User not found"));
+		}
+
+		const providerIds = new Set(user.accounts.map((a) => a.providerId));
+		const hasSpotify = providerIds.has("spotify");
+		const hasLastfm = providerIds.has("lastfm");
+
+		// Resolve display name: custom > Spotify name > Last.fm name > auth name
+		const resolvedName = user.displayName || user.name || "SpotiSwipe User";
+		// Resolve profile image: custom > provider image (already set by OAuth)
+		const resolvedImage = user.profileImage || user.image || null;
+
+		return {
+			id: user.id,
+			name: resolvedName,
+			email: user.email,
+			image: resolvedImage,
+			displayName: user.displayName,
+			profileImage: user.profileImage,
+			providerName: user.name,
+			providerImage: user.image,
+			role: user.role as "user" | "admin",
+			createdAt: user.createdAt,
+			connectedProviders: { spotify: hasSpotify, lastfm: hasLastfm },
+		};
+	}),
+
+	/** Update custom display name and/or profile image. */
+	updateProfile: protectedProcedure
+		.input(
+			z.object({
+				displayName: z.string().min(1).max(50).optional(),
+				profileImage: z
+					.string()
+					.url()
+					.refine(
+						(url) => {
+							try {
+								const parsed = new URL(url);
+								return (
+									parsed.protocol === "https:" || parsed.protocol === "http:"
+								);
+							} catch {
+								return false;
+							}
+						},
+						{ message: "Profile image must be an HTTP(S) URL" },
+					)
+					.optional(),
+				clearDisplayName: z.boolean().optional(),
+				clearProfileImage: z.boolean().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const log = createLogger("user.updateProfile", {
+				userId: ctx.session.user.id,
+			});
+			log.info("Updating profile", input);
+
+			const data: Record<string, string | null> = {};
+			if (input.displayName !== undefined) data.displayName = input.displayName;
+			if (input.clearDisplayName) data.displayName = null;
+			if (input.profileImage !== undefined)
+				data.profileImage = input.profileImage;
+			if (input.clearProfileImage) data.profileImage = null;
+
+			await ctx.db.user.update({
+				where: { id: ctx.session.user.id },
+				data,
+			});
+
+			return { success: true };
+		}),
 });

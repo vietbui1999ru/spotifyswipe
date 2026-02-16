@@ -1,52 +1,183 @@
 "use client";
 
-import { Button, Stack } from "@mantine/core";
-import { IconBrandLastfm, IconBrandSpotify } from "@tabler/icons-react";
-import { authClient } from "~/lib/auth-client";
+import {
+	Alert,
+	Anchor,
+	Button,
+	Divider,
+	PasswordInput,
+	Stack,
+	TextInput,
+} from "@mantine/core";
+import {
+	IconBrandGoogle,
+	IconBrandLastfm,
+	IconBrandSpotify,
+} from "@tabler/icons-react";
+import { useState } from "react";
+import { authClient, signIn, signUp } from "~/lib/auth-client";
 
-const LASTFM_AUTH_URL = `https://www.last.fm/api/auth?api_key=${process.env.NEXT_PUBLIC_LASTFM_API_KEY}&cb=${encodeURIComponent("http://127.0.0.1:3000/api/auth/callback/lastfm")}`;
-
-interface SignInProps {
-	redirectTo?: string;
+function getLastfmAuthUrl(redirect?: string) {
+	const cb = new URL("/api/auth/callback/lastfm", window.location.origin);
+	if (redirect) {
+		cb.searchParams.set("redirect", redirect);
+	}
+	return `https://www.last.fm/api/auth?api_key=${process.env.NEXT_PUBLIC_LASTFM_API_KEY}&cb=${encodeURIComponent(cb.toString())}`;
 }
 
-const SignIn = ({ redirectTo = "/dashboard" }: SignInProps) => {
+interface SignInProps {
+	mode?: "sign-in" | "sign-up";
+}
+
+const SignIn = ({ mode = "sign-in" }: SignInProps) => {
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [name, setName] = useState("");
+	const [error, setError] = useState<string | null>(null);
+	const [loading, setLoading] = useState(false);
+
+	const isSignUp = mode === "sign-up";
+	const callbackURL = isSignUp ? "/onboarding" : "/dashboard";
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setError(null);
+		setLoading(true);
+
+		try {
+			if (isSignUp) {
+				const result = await signUp.email({
+					email,
+					password,
+					name: name || email.split("@")[0] || "User",
+					callbackURL: "/onboarding",
+				});
+				if (result.error) {
+					setError(result.error.message ?? "Sign up failed");
+				}
+			} else {
+				const result = await signIn.email({
+					email,
+					password,
+					callbackURL: "/dashboard",
+				});
+				if (result.error) {
+					setError(result.error.message ?? "Sign in failed");
+				}
+			}
+		} catch {
+			setError("An unexpected error occurred");
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleGoogleSignIn = async () => {
+		await authClient.signIn.social({
+			provider: "google",
+			callbackURL,
+		});
+	};
+
 	const handleSpotifySignIn = async () => {
 		await authClient.signIn.social({
 			provider: "spotify",
-			callbackURL: redirectTo,
+			callbackURL,
 		});
 	};
 
 	const handleLastfmSignIn = () => {
-		// Last.fm uses non-standard OAuth (api_key + MD5 signatures).
-		// Bypass better-auth and redirect directly to Last.fm auth page.
-		// The custom callback at /api/auth/callback/lastfm handles the rest.
-		window.location.href = LASTFM_AUTH_URL;
+		window.location.href = getLastfmAuthUrl(
+			isSignUp ? "/onboarding" : "/dashboard",
+		);
 	};
 
 	return (
-		<Stack gap="sm">
-			<Button
-				color="#1DB954"
-				leftSection={<IconBrandSpotify size={18} />}
-				onClick={handleSpotifySignIn}
-				radius="md"
-				size="lg"
-				variant="filled"
+		<Stack gap="md">
+			{error && (
+				<Alert color="red" variant="light">
+					{error}
+				</Alert>
+			)}
+
+			<form onSubmit={handleSubmit}>
+				<Stack gap="sm">
+					{isSignUp && (
+						<TextInput
+							label="Name"
+							onChange={(e) => setName(e.currentTarget.value)}
+							placeholder="Your name (optional)"
+							value={name}
+						/>
+					)}
+					<TextInput
+						label="Email"
+						onChange={(e) => setEmail(e.currentTarget.value)}
+						placeholder="you@example.com"
+						required
+						type="email"
+						value={email}
+					/>
+					<PasswordInput
+						label="Password"
+						minLength={8}
+						onChange={(e) => setPassword(e.currentTarget.value)}
+						placeholder="Your password"
+						required
+						value={password}
+					/>
+					<Button loading={loading} radius="md" size="md" type="submit">
+						{isSignUp ? "Create account" : "Sign in"}
+					</Button>
+				</Stack>
+			</form>
+
+			<Divider label="or continue with" labelPosition="center" />
+
+			<Stack gap="sm">
+				<Button
+					color="gray"
+					leftSection={<IconBrandGoogle size={18} />}
+					onClick={handleGoogleSignIn}
+					radius="md"
+					size="md"
+					variant="default"
+				>
+					Google
+				</Button>
+				<Button
+					color="#1DB954"
+					leftSection={<IconBrandSpotify size={18} />}
+					onClick={handleSpotifySignIn}
+					radius="md"
+					size="md"
+					variant="filled"
+				>
+					Spotify
+				</Button>
+				<Button
+					gradient={{ from: "red", to: "pink" }}
+					leftSection={<IconBrandLastfm size={18} />}
+					onClick={handleLastfmSignIn}
+					radius="md"
+					size="md"
+					variant="gradient"
+				>
+					Last.fm
+				</Button>
+			</Stack>
+
+			<Anchor
+				c="dimmed"
+				component="a"
+				href={isSignUp ? "/sign-in" : "/sign-up"}
+				size="sm"
+				ta="center"
 			>
-				Sign in with Spotify
-			</Button>
-			<Button
-				gradient={{ from: "red", to: "pink" }}
-				leftSection={<IconBrandLastfm size={18} />}
-				onClick={handleLastfmSignIn}
-				radius="md"
-				size="md"
-				variant="gradient"
-			>
-				Sign in with Last.fm
-			</Button>
+				{isSignUp
+					? "Already have an account? Sign in"
+					: "Don't have an account? Sign up"}
+			</Anchor>
 		</Stack>
 	);
 };

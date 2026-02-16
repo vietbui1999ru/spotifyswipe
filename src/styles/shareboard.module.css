@@ -35,21 +35,12 @@
 	pointer-events: none;
 }
 
-.shareboardLayout {
-	display: flex;
-	gap: 2rem;
+/* Grid Container */
+.gridContainer {
 	width: 100%;
 	max-width: 1400px;
 	position: relative;
 	z-index: 1;
-	flex-wrap: wrap;
-	align-items: flex-start;
-}
-
-/* Grid Container */
-.gridContainer {
-	flex: 1;
-	min-width: 400px;
 }
 
 .sectionHeader {
@@ -263,39 +254,12 @@
 	color: white;
 }
 
-/* Detail Panel */
-.detailPanel {
-	flex: 0 0 380px;
-	max-height: 800px;
-	background: rgba(24, 24, 27, 0.6);
-	backdrop-filter: blur(12px);
-	border: 1px solid rgba(63, 63, 70, 0.4);
-	border-radius: 2.5rem;
-	padding: 2rem;
-	position: relative;
-	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-	overflow-y: auto;
+/* Modal Inner Content */
+.modalInner {
 	display: flex;
 	flex-direction: column;
 	gap: 1.5rem;
-	position: sticky;
-	top: 2rem;
-}
-
-.detailPanel::before {
-	content: "";
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: 1px;
-	background: linear-gradient(
-		90deg,
-		transparent,
-		rgba(255, 255, 255, 0.1),
-		transparent
-	);
-	border-radius: 2.5rem 2.5rem 0 0;
+	position: relative;
 }
 
 .detailHeader {
@@ -501,40 +465,7 @@
 	color: white;
 }
 
-/* Scrollbar */
-.detailPanel::-webkit-scrollbar {
-	width: 4px;
-}
-
-.detailPanel::-webkit-scrollbar-track {
-	background: transparent;
-}
-
-.detailPanel::-webkit-scrollbar-thumb {
-	background: rgba(63, 63, 70, 0.6);
-	border-radius: 10px;
-}
-
-.detailPanel::-webkit-scrollbar-thumb:hover {
-	background: rgba(63, 63, 70, 0.8);
-}
-
 @media (max-width: 1024px) {
-	.shareboardLayout {
-		flex-direction: column;
-	}
-
-	.gridContainer {
-		min-width: 100%;
-	}
-
-	.detailPanel {
-		flex: 1;
-		min-width: 100%;
-		max-height: none;
-		position: static;
-	}
-
 	.shareboardsGrid {
 		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 	}
@@ -547,10 +478,6 @@
 
 	.shareboardsGrid {
 		grid-template-columns: 1fr;
-	}
-
-	.detailPanel {
-		max-height: 600px;
 	}
 
 	.sectionTitle {

@@ -1,0 +1,83 @@
+# terraform.tfvars.example - Copy to terraform.tfvars and fill in your values
+#
+# cp terraform.tfvars.example terraform.tfvars
+# Then edit terraform.tfvars with your Proxmox credentials and network details.
+# NEVER commit terraform.tfvars (it contains secrets).
+
+# ---------------------------------------------------------------------------
+# Proxmox connection (required)
+# ---------------------------------------------------------------------------
+
+proxmox_api_url          = "https://pve.example.com:8006/api2/json"
+proxmox_api_token_id     = "terraform@pam!terraform-token"
+proxmox_api_token_secret = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+proxmox_tls_insecure     = true  # Set to false if using a valid TLS certificate
+
+# ---------------------------------------------------------------------------
+# Proxmox cluster / node
+# ---------------------------------------------------------------------------
+
+proxmox_node       = "pve"
+storage_pool       = "local-lvm"
+cloud_init_storage = "local-lvm"
+vm_template        = "ubuntu-2204-cloud-init"
+
+# ---------------------------------------------------------------------------
+# Networking
+# ---------------------------------------------------------------------------
+
+network_bridge  = "vmbr0"
+vlan_tag        = -1           # Set to a VLAN ID if needed, -1 disables tagging
+network_gateway = "10.0.0.1"
+network_cidr    = 24
+dns_servers     = "1.1.1.1 8.8.8.8"
+
+# ---------------------------------------------------------------------------
+# SSH
+# ---------------------------------------------------------------------------
+
+ci_user = "ubuntu"
+
+ssh_public_keys = <<-EOF
+ssh-ed25519 AAAA... your-key-comment
+EOF
+
+# ---------------------------------------------------------------------------
+# App servers
+# ---------------------------------------------------------------------------
+
+app_server_count     = 2
+app_server_cores     = 2
+app_server_memory    = 4096       # MB
+app_server_disk_size = "30G"
+app_server_ips       = ["10.0.0.11", "10.0.0.12"]
+app_server_vmid_start = 200
+
+# ---------------------------------------------------------------------------
+# Load balancer
+# ---------------------------------------------------------------------------
+
+lb_cores     = 1
+lb_memory    = 2048              # MB
+lb_disk_size = "20G"
+lb_ip        = "10.0.0.10"
+lb_vmid      = 199
+
+# ---------------------------------------------------------------------------
+# Optional dedicated database server
+# Set dedicated_db_server = true to provision a separate PostgreSQL VM.
+# When false, PostgreSQL runs on app-server-1.
+# ---------------------------------------------------------------------------
+
+dedicated_db_server  = false
+db_server_cores      = 2
+db_server_memory     = 4096      # MB
+db_server_disk_size  = "40G"
+db_server_ip         = "10.0.0.20"
+db_server_vmid       = 210
+
+# ---------------------------------------------------------------------------
+# Tags
+# ---------------------------------------------------------------------------
+
+vm_tags = "spotiswipe"

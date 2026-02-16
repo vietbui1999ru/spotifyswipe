@@ -1,0 +1,16 @@
+# SpotiSwipe - App Server Variables
+
+# Allow internal traffic on app port from load balancer
+ufw_extra_rules:
+  - { port: "{{ app_port }}", proto: tcp, from: "{{ hostvars[groups['lb_servers'][0]]['ansible_host'] }}" }
+
+# Systemd service
+systemd_service_name: spotiswipe
+systemd_restart_sec: 5
+systemd_max_restarts: 5
+systemd_restart_window_sec: 120
+
+# Health check
+health_check_url: "http://127.0.0.1:{{ app_port }}/api/trpc/health"
+health_check_retries: 10
+health_check_delay: 3

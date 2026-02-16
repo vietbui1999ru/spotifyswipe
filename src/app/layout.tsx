@@ -8,7 +8,9 @@ import {
 	mantineHtmlProps,
 } from "@mantine/core";
 import { TRPCReactProvider } from "~/trpc/react";
+import AppShellWrapper from "./_components/AppShellWrapper";
 import { AuthProvider } from "./_components/AuthProvider";
+import { BugMonitorProvider } from "./_components/BugMonitorProvider";
 
 export const metadata = {
 	title: "Discover Music App",
@@ -29,7 +31,9 @@ export default function RootLayout({
 				<AuthProvider>
 					<TRPCReactProvider>
 						<MantineProvider defaultColorScheme="dark">
-							{children}
+							<BugMonitorProvider>
+								<AppShellWrapper>{children}</AppShellWrapper>
+							</BugMonitorProvider>
 						</MantineProvider>
 					</TRPCReactProvider>
 				</AuthProvider>

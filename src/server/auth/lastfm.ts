@@ -27,12 +27,13 @@ export function generateApiSig(
 }
 
 /**
- * Make an authenticated request to Last.fm API
+ * Make a request to Last.fm API (GET for reads, POST for writes)
  */
 async function callLastfmApi<T>(
 	method: string,
 	params: LastfmApiParams,
 	sessionKey?: string,
+	httpMethod: "GET" | "POST" = "GET",
 ): Promise<T> {
 	const apiKey = process.env.LASTFM_API_KEY;
 	const apiSecret = process.env.LASTFM_API_SECRET;
@@ -64,16 +65,28 @@ async function callLastfmApi<T>(
 	// Add format after signature is computed
 	apiParams.format = "json";
 
-	// Make request
-	const queryString = new URLSearchParams(apiParams).toString();
-	const url = `${LASTFM_API_BASE}?${queryString}`;
+	let response: Response;
 
-	const response = await fetch(url, {
-		method: "GET",
-		headers: {
-			"Content-Type": "application/json",
-		},
-	});
+	if (httpMethod === "POST") {
+		// Write operations: POST with params in body
+		response = await fetch(LASTFM_API_BASE, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded",
+			},
+			body: new URLSearchParams(apiParams).toString(),
+		});
+	} else {
+		// Read operations: GET with params in URL
+		const queryString = new URLSearchParams(apiParams).toString();
+		const url = `${LASTFM_API_BASE}?${queryString}`;
+		response = await fetch(url, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+	}
 
 	if (!response.ok) {
 		throw new Error(
@@ -398,6 +411,94 @@ export async function getUserInfo(sessionKey: string): Promise<{
 			playlists: string;
 		};
 	}>("user.getInfo", {}, sessionKey);
+}
+
+// ─── Write Operations (require session key + api_sig, HTTP POST) ─────────────
+
+/**
+ * Scrobble a track to a user's Last.fm profile.
+ * Requires authenticated session key.
+ */
+export async function scrobbleTrack(
+	sessionKey: string,
+	params: {
+		artist: string;
+		track: string;
+		timestamp: number;
+		album?: string;
+		duration?: number;
+	},
+): Promise<{
+	scrobbles: {
+		"@attr": { accepted: number; ignored: number };
+	};
+}> {
+	const apiParams: LastfmApiParams = {
+		artist: params.artist,
+		track: params.track,
+		timestamp: String(params.timestamp),
+	};
+	if (params.album) apiParams.album = params.album;
+	if (params.duration) apiParams.duration = String(params.duration);
+
+	return callLastfmApi("track.scrobble", apiParams, sessionKey, "POST");
+}
+
+/**
+ * Love a track on a user's Last.fm profile.
+ */
+export async function loveTrack(
+	sessionKey: string,
+	params: { artist: string; track: string },
+): Promise<Record<string, never>> {
+	return callLastfmApi(
+		"track.love",
+		{ artist: params.artist, track: params.track },
+		sessionKey,
+		"POST",
+	);
+}
+
+/**
+ * Remove love from a track on a user's Last.fm profile.
+ */
+export async function unloveTrack(
+	sessionKey: string,
+	params: { artist: string; track: string },
+): Promise<Record<string, never>> {
+	return callLastfmApi(
+		"track.unlove",
+		{ artist: params.artist, track: params.track },
+		sessionKey,
+		"POST",
+	);
+}
+
+/**
+ * Update "now playing" status on a user's Last.fm profile.
+ */
+export async function updateNowPlaying(
+	sessionKey: string,
+	params: {
+		artist: string;
+		track: string;
+		album?: string;
+		duration?: number;
+	},
+): Promise<{
+	nowplaying: {
+		track: { corrected: string; "#text": string };
+		artist: { corrected: string; "#text": string };
+	};
+}> {
+	const apiParams: LastfmApiParams = {
+		artist: params.artist,
+		track: params.track,
+	};
+	if (params.album) apiParams.album = params.album;
+	if (params.duration) apiParams.duration = String(params.duration);
+
+	return callLastfmApi("track.updateNowPlaying", apiParams, sessionKey, "POST");
 }
 
 // ─── Auth Helper Functions (shared by provider and callback) ─────────────────

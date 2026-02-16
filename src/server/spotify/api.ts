@@ -19,6 +19,9 @@ const SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token";
 
 const log = createLogger("spotify-api");
 
+// Per-user lock to prevent concurrent token refreshes
+const refreshLocks = new Map<string, Promise<string>>();
+
 /**
  * Refresh a Spotify access token using the refresh_token grant
  */
@@ -61,8 +64,21 @@ async function refreshSpotifyToken(refreshToken: string): Promise<{
 /**
  * Get a valid Spotify access token for a user.
  * Refreshes automatically if expired.
+ * Uses per-user locking to prevent concurrent refresh races.
  */
 export async function getSpotifyToken(userId: string): Promise<string> {
+	// If a refresh is already in-flight for this user, await it
+	const inflight = refreshLocks.get(userId);
+	if (inflight) return inflight;
+
+	const promise = getSpotifyTokenInner(userId).finally(() => {
+		refreshLocks.delete(userId);
+	});
+	refreshLocks.set(userId, promise);
+	return promise;
+}
+
+async function getSpotifyTokenInner(userId: string): Promise<string> {
 	const account = await db.account.findFirst({
 		where: { userId, providerId: "spotify" },
 		select: {

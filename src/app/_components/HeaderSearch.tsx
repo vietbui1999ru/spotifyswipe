@@ -1,10 +1,12 @@
 "use client";
 
 import { Autocomplete, Burger, Group } from "@mantine/core";
-import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
+import { useDebouncedValue } from "@mantine/hooks";
 import { IconMusic, IconSearch } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAppShellState } from "~/lib/contexts/app-shell-context";
 import * as lastfm from "~/lib/services/lastfm";
 import * as spotify from "~/lib/services/spotify";
 import classes from "~/styles/HeaderSearch.module.css";
@@ -12,7 +14,8 @@ import { api } from "~/trpc/react";
 import ColorSchemeToggle from "./ColorSchemeToggle";
 
 const HeaderSearch = () => {
-	const [opened, { toggle }] = useDisclosure(false);
+	const { opened, toggle } = useAppShellState();
+	const router = useRouter();
 	const [searchQuery, setSearchQuery] = useState("");
 	const [debouncedQuery] = useDebouncedValue(searchQuery, 300);
 
@@ -59,6 +62,14 @@ const HeaderSearch = () => {
 		new Map(autocompleteData.map((item) => [item.value, item])).values(),
 	);
 
+	const navigateToSearch = (query: string) => {
+		const trimmed = query.trim();
+		if (trimmed) {
+			router.push(`/dashboard?q=${encodeURIComponent(trimmed)}`);
+			setSearchQuery("");
+		}
+	};
+
 	return (
 		<header className={classes.header}>
 			<div className={classes.inner}>
@@ -78,6 +89,15 @@ const HeaderSearch = () => {
 					onChange={(value) => {
 						console.debug("[SpotiSwipe] Search query changed:", value);
 						setSearchQuery(value);
+					}}
+					onKeyDown={(e) => {
+						if (e.key === "Enter") {
+							e.preventDefault();
+							navigateToSearch(searchQuery);
+						}
+					}}
+					onOptionSubmit={(value) => {
+						navigateToSearch(value);
 					}}
 					placeholder="Search for Songs, Artists, or Genres"
 					value={searchQuery}

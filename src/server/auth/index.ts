@@ -23,6 +23,12 @@ export const auth = betterAuth({
 	baseURL: "http://127.0.0.1:3000",
 	basePath: "/api/auth",
 	secret: env.AUTH_SECRET,
+	trustedOrigins: ["http://localhost:3000", "http://127.0.0.1:3000"],
+
+	emailAndPassword: {
+		enabled: true,
+		autoSignIn: true,
+	},
 
 	socialProviders: {
 		spotify: {
@@ -31,6 +37,11 @@ export const auth = betterAuth({
 			redirectURI: "http://127.0.0.1:3000/api/auth/callback/spotify",
 			scope: SPOTIFY_SCOPES,
 		},
+		google: {
+			clientId: env.AUTH_GOOGLE_ID,
+			clientSecret: env.AUTH_GOOGLE_SECRET,
+			redirectURI: "http://127.0.0.1:3000/api/auth/callback/google",
+		},
 	},
 
 	plugins: [nextCookies()],
@@ -38,7 +49,8 @@ export const auth = betterAuth({
 	account: {
 		accountLinking: {
 			enabled: true,
-			trustedProviders: ["spotify", "lastfm"],
+			trustedProviders: ["spotify", "lastfm", "google"],
+			allowDifferentEmails: true,
 		},
 	},
 });

@@ -1,10 +1,9 @@
 /**
  * Client-side discovery feed pipeline.
  * Orchestrates Spotify/Last.fm services to generate track candidates,
- * enriches with Deezer previews, and filters already-swiped tracks.
+ * filters already-swiped tracks, and returns them for the player.
  */
 
-import * as deezer from "./deezer";
 import * as lastfm from "./lastfm";
 import * as spotify from "./spotify";
 
@@ -18,8 +17,6 @@ export interface DiscoveryTrack {
 	externalId: string;
 	spotifyId?: string;
 	spotifyUrl?: string;
-	previewUrl?: string;
-	deezerPreviewUrl?: string;
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -196,30 +193,75 @@ export async function getLastfmDiscoveryFeed(
 	return candidates;
 }
 
-// ─── Deezer Preview Enrichment ──────────────────────────────────────────────
+// ─── Search-Based Discovery Pipeline ────────────────────────────────────────
 
-/**
- * Enrich discovery tracks with Deezer 30s preview URLs.
- * Non-blocking — tracks without a match keep previewUrl undefined.
- */
-export async function enrichWithDeezerPreviews(
-	tracks: DiscoveryTrack[],
+async function getSearchBasedFeed(
+	query: string,
+	provider: "spotify" | "lastfm",
+	spotifyToken: string | null,
 ): Promise<DiscoveryTrack[]> {
-	await processBatches(tracks, 5, async (track) => {
-		try {
-			const result = await deezer.findTrack(track.artist, track.name);
-			if (result) {
-				track.deezerPreviewUrl = result.preview;
-				// Also use Deezer album art if we don't have one
-				if (!track.image && result.album.cover_big) {
-					track.image = result.album.cover_big;
-				}
+	const candidates: DiscoveryTrack[] = [];
+	const seenIds = new Set<string>();
+
+	if (provider === "spotify" && spotifyToken) {
+		const result = await spotify.search(spotifyToken, query, 30);
+		for (const track of result.tracks?.items ?? []) {
+			const externalId = `spotify:${track.id}`;
+			if (!seenIds.has(externalId)) {
+				seenIds.add(externalId);
+				candidates.push({
+					name: track.name,
+					artist: track.artists.map((a) => a.name).join(", "),
+					url: track.external_urls.spotify,
+					image: track.album?.images?.[0]?.url ?? null,
+					externalId,
+					spotifyId: track.id,
+					spotifyUrl: track.external_urls.spotify,
+				});
 			}
-		} catch {
-			// Non-blocking
 		}
-	});
-	return tracks;
+	} else {
+		// Last.fm search with optional Spotify enrichment
+		const tracks = await lastfm.searchTracks(query, 30);
+		for (const track of tracks) {
+			const externalId = `${track.artist}:${track.name}`.toLowerCase();
+			if (!seenIds.has(externalId)) {
+				seenIds.add(externalId);
+				candidates.push({
+					name: track.name,
+					artist: track.artist,
+					url: track.url,
+					image: lastfm.getImageUrl(track.image),
+					externalId,
+				});
+			}
+		}
+
+		// Enrich with Spotify album art if token available
+		if (spotifyToken) {
+			await processBatches(candidates, 5, async (candidate) => {
+				try {
+					const result = await spotify.search(
+						spotifyToken,
+						`${candidate.name} ${candidate.artist}`,
+						1,
+					);
+					const firstTrack = result.tracks?.items?.[0];
+					if (firstTrack) {
+						const albumImage = firstTrack.album?.images?.[0]?.url;
+						if (albumImage) candidate.image = albumImage;
+						candidate.spotifyId = firstTrack.id;
+						candidate.spotifyUrl =
+							firstTrack.external_urls?.spotify ?? undefined;
+					}
+				} catch {
+					// Non-blocking enrichment
+				}
+			});
+		}
+	}
+
+	return candidates;
 }
 
 // ─── Main Entry Point ───────────────────────────────────────────────────────
@@ -230,11 +272,13 @@ export interface DiscoveryFeedOptions {
 	lastfmUsername: string | null;
 	swipedExternalIds: Set<string>;
 	limit?: number;
+	searchQuery?: string;
 }
 
 /**
- * Generate a discovery feed: fetch candidates, enrich with Deezer previews,
+ * Generate a discovery feed: fetch candidates,
  * filter already-swiped, shuffle, and limit.
+ * If searchQuery is provided, uses search-based feed (preserving relevance order).
  */
 export async function getDiscoveryFeed(
 	options: DiscoveryFeedOptions,
@@ -245,11 +289,14 @@ export async function getDiscoveryFeed(
 		lastfmUsername,
 		swipedExternalIds,
 		limit = 20,
+		searchQuery,
 	} = options;
 
 	let candidates: DiscoveryTrack[];
 
-	if (provider === "spotify" && spotifyToken) {
+	if (searchQuery) {
+		candidates = await getSearchBasedFeed(searchQuery, provider, spotifyToken);
+	} else if (provider === "spotify" && spotifyToken) {
 		candidates = await getSpotifyDiscoveryFeed(spotifyToken);
 	} else if (provider === "lastfm" && lastfmUsername) {
 		candidates = await getLastfmDiscoveryFeed(lastfmUsername, spotifyToken);
@@ -257,15 +304,15 @@ export async function getDiscoveryFeed(
 		return [];
 	}
 
-	// Enrich with Deezer previews
-	await enrichWithDeezerPreviews(candidates);
-
 	// Filter out already-swiped
 	const filtered = candidates.filter(
 		(c) => !swipedExternalIds.has(c.externalId),
 	);
 
-	// Shuffle and limit
-	const shuffled = filtered.sort(() => Math.random() - 0.5);
-	return shuffled.slice(0, limit);
+	// Only shuffle for algorithmic feed; preserve search relevance order
+	if (!searchQuery) {
+		filtered.sort(() => Math.random() - 0.5);
+	}
+
+	return filtered.slice(0, limit);
 }

@@ -1,0 +1,117 @@
+---
+# deploy.yml - Zero-downtime application deployment
+#
+# Deploys the latest code to app servers one at a time so the load
+# balancer always has at least one healthy backend.
+#
+# Usage:
+#   ansible-playbook playbooks/deploy.yml
+#   ansible-playbook playbooks/deploy.yml -e "app_branch=feature-branch"
+
+- name: Deploy SpotiSwipe (zero-downtime rolling update)
+  hosts: app_servers
+  become: yes
+  serial: 1
+  vars:
+    release_timestamp: "{{ ansible_date_time.iso8601_basic_short }}"
+
+  tasks:
+    - name: Clone latest code
+      ansible.builtin.git:
+        repo: "{{ app_repo }}"
+        dest: "{{ app_deploy_dir }}/releases/{{ release_timestamp }}"
+        version: "{{ app_branch }}"
+        depth: 1
+        force: yes
+      become: yes
+      become_user: "{{ deploy_user }}"
+
+    - name: Deploy .env file
+      ansible.builtin.template:
+        src: "{{ playbook_dir }}/../roles/app/templates/env.j2"
+        dest: "{{ app_deploy_dir }}/releases/{{ release_timestamp }}/.env"
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_group }}"
+        mode: "0600"
+
+    - name: Install dependencies
+      ansible.builtin.command: /usr/local/bin/bun install --frozen-lockfile
+      args:
+        chdir: "{{ app_deploy_dir }}/releases/{{ release_timestamp }}"
+      become: yes
+      become_user: "{{ deploy_user }}"
+      environment:
+        HOME: /home/{{ deploy_user }}
+
+    - name: Generate Prisma client
+      ansible.builtin.command: /usr/local/bin/bunx prisma generate
+      args:
+        chdir: "{{ app_deploy_dir }}/releases/{{ release_timestamp }}"
+      become: yes
+      become_user: "{{ deploy_user }}"
+      environment:
+        HOME: /home/{{ deploy_user }}
+
+    - name: Push Prisma schema (first server only)
+      ansible.builtin.command: /usr/local/bin/bunx prisma db push --skip-generate
+      args:
+        chdir: "{{ app_deploy_dir }}/releases/{{ release_timestamp }}"
+      become: yes
+      become_user: "{{ deploy_user }}"
+      environment:
+        HOME: /home/{{ deploy_user }}
+      run_once: true
+
+    - name: Build application
+      ansible.builtin.command: /usr/local/bin/bun run build
+      args:
+        chdir: "{{ app_deploy_dir }}/releases/{{ release_timestamp }}"
+      become: yes
+      become_user: "{{ deploy_user }}"
+      environment:
+        HOME: /home/{{ deploy_user }}
+        NODE_ENV: production
+
+    - name: Save previous release path
+      ansible.builtin.stat:
+        path: "{{ app_deploy_dir }}/current"
+      register: current_link
+
+    - name: Record previous release for rollback
+      ansible.builtin.copy:
+        content: "{{ current_link.stat.lnk_target }}"
+        dest: "{{ app_deploy_dir }}/shared/previous_release"
+        mode: "0644"
+      when: current_link.stat.exists and current_link.stat.islnk
+
+    - name: Update current symlink
+      ansible.builtin.file:
+        src: "{{ app_deploy_dir }}/releases/{{ release_timestamp }}"
+        dest: "{{ app_deploy_dir }}/current"
+        state: link
+        force: yes
+        owner: "{{ deploy_user }}"
+        group: "{{ deploy_group }}"
+
+    - name: Restart application service
+      ansible.builtin.systemd:
+        name: "{{ systemd_service_name }}"
+        state: restarted
+
+    - name: Wait for application to be healthy
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ app_port }}/"
+        status_code: [200, 301, 302]
+        timeout: 5
+      register: health_check
+      retries: "{{ health_check_retries }}"
+      delay: "{{ health_check_delay }}"
+      until: health_check.status in [200, 301, 302]
+
+    - name: Clean up old releases (keep last {{ app_releases_keep }})
+      ansible.builtin.shell: |
+        cd {{ app_deploy_dir }}/releases
+        ls -dt */ | tail -n +{{ app_releases_keep + 1 }} | xargs -r rm -rf
+      become: yes
+      become_user: "{{ deploy_user }}"
+      changed_when: false

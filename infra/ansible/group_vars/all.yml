@@ -1,0 +1,45 @@
+# SpotiSwipe - Shared Variables (all hosts)
+
+# Application
+app_name: spotiswipe
+app_domain: spotiswipe.example.com
+app_port: 3000
+app_repo: "https://github.com/vietbui1999ru/spotiswipe.git"
+app_branch: main
+app_deploy_dir: /opt/spotiswipe
+app_releases_keep: 5
+
+# Deploy user
+deploy_user: deploy
+deploy_group: deploy
+
+# System
+timezone: America/Los_Angeles
+swap_size_mb: 2048
+
+# Firewall (UFW)
+ufw_allowed_ports:
+  - { port: 22,   proto: tcp }
+  - { port: 80,   proto: tcp }
+  - { port: 443,  proto: tcp }
+
+# Node / Bun
+bun_version: "latest"
+node_major_version: 20
+
+# Database
+db_name: spotiswipe
+db_user: spotiswipe
+db_password: "{{ vault_db_password }}"
+db_host: "{{ groups['db_servers'][0] | default('spotiswipe-app-1') }}"
+db_port: 5432
+
+# App environment (secrets from vault)
+app_env:
+  NODE_ENV: production
+  DATABASE_URL: "postgresql://{{ db_user }}:{{ db_password }}@{{ db_host }}:{{ db_port }}/{{ db_name }}"
+  AUTH_SECRET: "{{ vault_auth_secret }}"
+  AUTH_SPOTIFY_ID: "{{ vault_auth_spotify_id }}"
+  AUTH_SPOTIFY_SECRET: "{{ vault_auth_spotify_secret }}"
+  LASTFM_API_KEY: "{{ vault_lastfm_api_key }}"
+  LASTFM_API_SECRET: "{{ vault_lastfm_api_secret }}"

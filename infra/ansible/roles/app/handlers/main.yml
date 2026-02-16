@@ -1,0 +1,9 @@
+---
+- name: reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: restart spotiswipe
+  ansible.builtin.systemd:
+    name: "{{ systemd_service_name }}"
+    state: restarted

@@ -1,0 +1,70 @@
+---
+# nginx/tasks/main.yml - Install and configure Nginx reverse proxy / load balancer
+
+- name: Install Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Create Nginx conf.d directory
+  ansible.builtin.file:
+    path: /etc/nginx/conf.d
+    state: directory
+    mode: "0755"
+
+- name: Create webroot for ACME challenges
+  ansible.builtin.file:
+    path: "{{ nginx_webroot }}"
+    state: directory
+    mode: "0755"
+
+- name: Generate Diffie-Hellman parameters (may take a few minutes)
+  ansible.builtin.command: openssl dhparam -out {{ nginx_dhparam_path }} 2048
+  args:
+    creates: "{{ nginx_dhparam_path }}"
+
+- name: Deploy main nginx.conf
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/../../nginx/nginx.conf"
+    dest: /etc/nginx/nginx.conf
+    mode: "0644"
+    validate: "nginx -t -c %s"
+  notify: reload nginx
+
+- name: Deploy spotiswipe site config
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/../../nginx/conf.d/spotiswipe.conf"
+    dest: /etc/nginx/conf.d/spotiswipe.conf
+    mode: "0644"
+  notify: reload nginx
+
+- name: Deploy SSL parameters config
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/../../nginx/conf.d/ssl-params.conf"
+    dest: /etc/nginx/conf.d/ssl-params.conf
+    mode: "0644"
+  notify: reload nginx
+
+- name: Deploy security headers config
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/../../nginx/conf.d/security-headers.conf"
+    dest: /etc/nginx/conf.d/security-headers.conf
+    mode: "0644"
+  notify: reload nginx
+
+- name: Remove default Nginx site
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: reload nginx
+
+- name: Test Nginx configuration
+  ansible.builtin.command: nginx -t
+  changed_when: false
+
+- name: Enable and start Nginx
+  ansible.builtin.systemd:
+    name: nginx
+    enabled: yes
+    state: started

@@ -1,14 +1,16 @@
 # SpotiSwipe
 
-A music discovery social app where you swipe to discover new music, build custom playlists, and share them with a community. Powered by Last.fm for music data and recommendations.
+A music discovery social app where you swipe to discover new music, build custom playlists, and share them with a community. Powered by Spotify for playback/playlists and Last.fm for discovery recommendations.
 
 ## Features
 
-- **Swipe to Discover** - Tinder-style card swiping to like, skip, or superlike songs from personalized recommendations
-- **Custom Playlists** - Create and manage playlists from your liked songs with drag-to-reorder
+- **Swipe to Discover** - Tinder-style card swiping (drag gestures + buttons) to like, skip, or superlike songs
+- **Search-Based Discovery** - Search for songs, artists, or genres to generate a swipe-ready discovery feed
+- **Spotify Playback** - In-app playback via Spotify Web Playback SDK (Premium required)
+- **Custom Playlists** - Create and manage playlists from liked songs, sync to Spotify
 - **Social Shareboard** - Share playlists publicly, like and comment on others' playlists, follow users
-- **Last.fm Integration** - OAuth login, scrobble history, top tracks, similar artists, and recommendations
-- **Dark Mode UI** - Beautiful dark-themed interface built with Mantine components
+- **Dual Auth** - Sign in with Spotify (primary) or Last.fm, with account linking support
+- **Dark Mode UI** - Dark-themed interface built with Mantine components
 
 ## Tech Stack
 
@@ -17,7 +19,7 @@ A music discovery social app where you swipe to discover new music, build custom
 | Framework | Next.js 16 (App Router, React 19) |
 | API | tRPC 11 (type-safe RPC) |
 | Database | PostgreSQL + Prisma 6 ORM |
-| Auth | NextAuth 5 (Last.fm OAuth) |
+| Auth | better-auth (Spotify + Last.fm + Google OAuth) |
 | UI | Mantine 8 + Tailwind CSS 4 |
 | State | TanStack React Query 5 |
 | Linting | Biome 2 |
@@ -27,9 +29,8 @@ A music discovery social app where you swipe to discover new music, build custom
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) 18+
-- [Bun](https://bun.sh/) (package manager)
-- [PostgreSQL](https://www.postgresql.org/) 14+
+- [Bun](https://bun.sh/) (package manager + runtime)
+- [PostgreSQL](https://www.postgresql.org/) 14+ (or Docker/Podman)
 
 ### Setup
 
@@ -55,20 +56,20 @@ bun run db:push
 bun dev
 ```
 
-The app runs at **http://127.0.0.1:3000** (must use 127.0.0.1, not localhost, for OAuth compatibility).
+The app runs at **http://127.0.0.1:3000** (must use 127.0.0.1, not localhost, for Spotify OAuth compatibility).
 
 ## Environment Variables
 
 | Variable | Description |
 |----------|-------------|
-| `AUTH_SECRET` | NextAuth secret (generate with `npx auth secret`) |
-| `NEXT_PUBLIC_NEXTAUTH_URL` | Auth URL exposed to browser (`http://127.0.0.1:3000`) |
-| `NEXTAUTH_URL` | Server-side auth URL (`http://127.0.0.1:3000`) |
-| `NEXTAUTH_URL_INTERNAL` | Internal server URL (`http://127.0.0.1:3000`) |
-| `NEXTAUTH_TRUST_HOST` | Trust host header (`true`) |
+| `AUTH_SECRET` | better-auth secret (generate with `openssl rand -base64 32`) |
+| `AUTH_SPOTIFY_ID` | Spotify app client ID ([create here](https://developer.spotify.com/dashboard)) |
+| `AUTH_SPOTIFY_SECRET` | Spotify app client secret |
+| `AUTH_GOOGLE_ID` | Google OAuth client ID (optional) |
+| `AUTH_GOOGLE_SECRET` | Google OAuth client secret (optional) |
 | `LASTFM_API_KEY` | Last.fm API key ([create here](https://www.last.fm/api/account/create)) |
 | `LASTFM_API_SECRET` | Last.fm API secret |
-| `LASTFM_CALLBACK_URL` | OAuth callback (`http://127.0.0.1:3000/api/auth/callback/lastfm`) |
+| `NEXT_PUBLIC_LASTFM_API_KEY` | Last.fm API key exposed to client (same as LASTFM_API_KEY) |
 | `DATABASE_URL` | PostgreSQL connection string |
 
 ## Scripts
@@ -82,7 +83,9 @@ bun run check:write  # Auto-fix safe issues
 bun run typecheck    # TypeScript type check
 bun run db:push      # Push schema to database
 bun run db:generate  # Create migration + generate client
+bun run db:migrate   # Deploy migrations
 bun run db:studio    # Open Prisma Studio GUI
+bun run db:seed      # Seed database with sample data
 ```
 
 ## Project Structure
@@ -90,14 +93,20 @@ bun run db:studio    # Open Prisma Studio GUI
 ```
 src/
   app/                  # Next.js App Router (pages + API routes)
-    api/auth/           # NextAuth + Last.fm OAuth callback
-    api/music/          # REST endpoints (current track, top tracks, recommendations)
+    _components/        # Shared layout: Navbar, AuthProvider, HeaderSearch, SignIn
+    api/auth/           # better-auth catch-all handler + Last.fm callback
     api/trpc/           # tRPC HTTP handler
-    dashboard/          # Swipe discovery page
-    playlist/           # Playlist management
-    shareboard/         # Social feed
+    (app)/dashboard/    # Swipe discovery page (PlayerCard, PlaylistStack, LyricsPanel)
+    (app)/playlist/     # Playlist management
+    (app)/shareboard/   # Social feed
+    (app)/profile/      # User profile
+    (app)/admin/        # Admin panel
+  lib/
+    services/           # Client-side API wrappers (spotify, lastfm, discovery)
+    hooks/              # Custom hooks (useDiscoveryFeed, useSpotifyPlayer, etc.)
   server/
-    auth/               # NextAuth config, Last.fm provider + API client
+    auth/               # better-auth config + Last.fm API client
+    spotify/            # Spotify API integration (search, playback, playlists)
     api/routers/        # tRPC router definitions
     db.ts               # Prisma client singleton
     logger.ts           # Structured logging utility
@@ -111,17 +120,17 @@ prisma/schema.prisma    # Database schema
 ```
 Browser  -->  Next.js App Router  -->  tRPC Routers  -->  Prisma  -->  PostgreSQL
                     |                       |
-              Mantine UI            Last.fm API Client
-              React Query           (MD5 signature auth)
+              Mantine UI            Spotify API Client
+              React Query           Last.fm API Client
                     |
-              NextAuth Session
-              (Last.fm OAuth)
+              better-auth Session
+              (Spotify / Last.fm / Google OAuth)
 ```
 
 - **Pages** use React Server Components with client components for interactivity
 - **tRPC** provides end-to-end type safety between client and server
 - **Prisma** manages database access with generated TypeScript client
-- **NextAuth** handles Last.fm OAuth with custom provider and Prisma adapter
+- **better-auth** handles OAuth with Spotify (built-in), Last.fm (custom callback), and Google
 - **Path alias**: `~/*` maps to `./src/*`
 
 ## License

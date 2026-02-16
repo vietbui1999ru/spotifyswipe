@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 10, "column": 0}, "map": {"version":3,"sources":["file:///Users/vietquocbui/repos/VsCode/vietbui1999ru/CodePath/Web/Web102/spotiswipe/src/app/_components/AuthProvider.tsx"],"sourcesContent":["\"use client\";\n\nimport { SessionProvider } from \"next-auth/react\";\n\nexport const AuthProvider = ({ children }: { children: React.ReactNode }) => {\n  return <SessionProvider>{children}</SessionProvider>;\n};\n"],"names":[],"mappings":";;;;;AAEA;AAFA;;;AAIO,MAAM,eAAe,CAAC,EAAE,QAAQ,EAAiC;IACtE,qBAAO,8OAAC,wJAAe;kBAAE;;;;;;AAC3B"}}]
-}

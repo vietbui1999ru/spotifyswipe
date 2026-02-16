@@ -152,3 +152,31 @@ export const protectedProcedure = t.procedure
 			},
 		});
 	});
+
+/**
+ * Admin procedure
+ *
+ * Requires authentication AND role === "admin" on the User record.
+ */
+export const adminProcedure = t.procedure
+	.use(timingMiddleware)
+	.use(async ({ ctx, next }) => {
+		if (!ctx.session?.user) {
+			throw new TRPCError({ code: "UNAUTHORIZED" });
+		}
+		const user = await ctx.db.user.findUnique({
+			where: { id: ctx.session.user.id },
+			select: { role: true },
+		});
+		if (user?.role !== "admin") {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: "Admin access required",
+			});
+		}
+		return next({
+			ctx: {
+				session: { ...ctx.session, user: ctx.session.user },
+			},
+		});
+	});

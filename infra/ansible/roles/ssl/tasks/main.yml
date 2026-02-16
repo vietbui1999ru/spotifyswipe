@@ -1,0 +1,57 @@
+---
+# ssl/tasks/main.yml - SSL certificate management (Let's Encrypt or self-signed)
+
+- name: Install Certbot and Nginx plugin
+  ansible.builtin.apt:
+    name:
+      - certbot
+      - python3-certbot-nginx
+    state: present
+  when: ssl_use_letsencrypt
+
+# --- Let's Encrypt flow ---
+- name: Check if Let's Encrypt certificate exists
+  ansible.builtin.stat:
+    path: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
+  register: le_cert
+  when: ssl_use_letsencrypt
+
+- name: Obtain Let's Encrypt certificate (webroot mode)
+  ansible.builtin.command: >
+    certbot certonly --webroot
+    --webroot-path {{ nginx_webroot }}
+    --domain {{ domain }}
+    --email {{ ssl_email }}
+    --agree-tos
+    --non-interactive
+  when: ssl_use_letsencrypt and not le_cert.stat.exists
+  notify: reload nginx
+
+- name: Set up Certbot auto-renewal cron
+  ansible.builtin.cron:
+    name: "Certbot renewal"
+    user: root
+    hour: "3"
+    minute: "30"
+    job: "certbot renew --quiet --post-hook 'systemctl reload nginx'"
+  when: ssl_use_letsencrypt
+
+# --- Self-signed fallback (dev / staging) ---
+- name: Create self-signed SSL directory
+  ansible.builtin.file:
+    path: /etc/nginx/ssl
+    state: directory
+    mode: "0700"
+  when: not ssl_use_letsencrypt
+
+- name: Generate self-signed certificate
+  ansible.builtin.command: >
+    openssl req -x509 -nodes -days 365
+    -newkey rsa:2048
+    -keyout /etc/nginx/ssl/{{ domain }}.key
+    -out /etc/nginx/ssl/{{ domain }}.crt
+    -subj "/CN={{ domain }}/O=SpotiSwipe/C=US"
+  args:
+    creates: /etc/nginx/ssl/{{ domain }}.crt
+  when: not ssl_use_letsencrypt
+  notify: reload nginx

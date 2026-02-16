@@ -1,0 +1,9 @@
+# Vault secrets
+.vault_password
+group_vars/vault.yml
+
+# Fact cache
+/tmp/ansible_facts_cache/
+
+# Retry files
+*.retry

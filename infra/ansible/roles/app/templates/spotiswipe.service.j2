@@ -1,0 +1,39 @@
+# Managed by Ansible - do not edit manually
+# SpotiSwipe Next.js application service
+
+[Unit]
+Description=SpotiSwipe Next.js Application
+After=network.target postgresql.service
+Wants=network.target
+
+[Service]
+Type=simple
+User={{ deploy_user }}
+Group={{ deploy_group }}
+WorkingDirectory={{ app_deploy_dir }}/current
+ExecStart=/usr/local/bin/bun start
+Restart=on-failure
+RestartSec={{ systemd_restart_sec }}
+StartLimitBurst={{ systemd_max_restarts }}
+StartLimitIntervalSec={{ systemd_restart_window_sec }}
+
+# Environment
+EnvironmentFile={{ app_deploy_dir }}/current/.env
+Environment=NODE_ENV=production
+Environment=PORT={{ app_port }}
+Environment=HOSTNAME=0.0.0.0
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths={{ app_deploy_dir }}
+PrivateTmp=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier={{ systemd_service_name }}
+
+[Install]
+WantedBy=multi-user.target

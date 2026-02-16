@@ -2091,6 +2091,9 @@ export namespace Prisma {
     email: string | null
     emailVerified: boolean | null
     image: string | null
+    displayName: string | null
+    profileImage: string | null
+    role: string | null
     musicProvider: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -2102,6 +2105,9 @@ export namespace Prisma {
     email: string | null
     emailVerified: boolean | null
     image: string | null
+    displayName: string | null
+    profileImage: string | null
+    role: string | null
     musicProvider: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -2113,6 +2119,9 @@ export namespace Prisma {
     email: number
     emailVerified: number
     image: number
+    displayName: number
+    profileImage: number
+    role: number
     musicProvider: number
     createdAt: number
     updatedAt: number
@@ -2126,6 +2135,9 @@ export namespace Prisma {
     email?: true
     emailVerified?: true
     image?: true
+    displayName?: true
+    profileImage?: true
+    role?: true
     musicProvider?: true
     createdAt?: true
     updatedAt?: true
@@ -2137,6 +2149,9 @@ export namespace Prisma {
     email?: true
     emailVerified?: true
     image?: true
+    displayName?: true
+    profileImage?: true
+    role?: true
     musicProvider?: true
     createdAt?: true
     updatedAt?: true
@@ -2148,6 +2163,9 @@ export namespace Prisma {
     email?: true
     emailVerified?: true
     image?: true
+    displayName?: true
+    profileImage?: true
+    role?: true
     musicProvider?: true
     createdAt?: true
     updatedAt?: true
@@ -2232,6 +2250,9 @@ export namespace Prisma {
     email: string
     emailVerified: boolean
     image: string | null
+    displayName: string | null
+    profileImage: string | null
+    role: string
     musicProvider: string
     createdAt: Date
     updatedAt: Date
@@ -2260,6 +2281,9 @@ export namespace Prisma {
     email?: boolean
     emailVerified?: boolean
     image?: boolean
+    displayName?: boolean
+    profileImage?: boolean
+    role?: boolean
     musicProvider?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -2281,6 +2305,9 @@ export namespace Prisma {
     email?: boolean
     emailVerified?: boolean
     image?: boolean
+    displayName?: boolean
+    profileImage?: boolean
+    role?: boolean
     musicProvider?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -2292,6 +2319,9 @@ export namespace Prisma {
     email?: boolean
     emailVerified?: boolean
     image?: boolean
+    displayName?: boolean
+    profileImage?: boolean
+    role?: boolean
     musicProvider?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -2303,12 +2333,15 @@ export namespace Prisma {
     email?: boolean
     emailVerified?: boolean
     image?: boolean
+    displayName?: boolean
+    profileImage?: boolean
+    role?: boolean
     musicProvider?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "musicProvider" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "displayName" | "profileImage" | "role" | "musicProvider" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
@@ -2343,6 +2376,9 @@ export namespace Prisma {
       email: string
       emailVerified: boolean
       image: string | null
+      displayName: string | null
+      profileImage: string | null
+      role: string
       musicProvider: string
       createdAt: Date
       updatedAt: Date
@@ -2783,6 +2819,9 @@ export namespace Prisma {
     readonly email: FieldRef<"User", 'String'>
     readonly emailVerified: FieldRef<"User", 'Boolean'>
     readonly image: FieldRef<"User", 'String'>
+    readonly displayName: FieldRef<"User", 'String'>
+    readonly profileImage: FieldRef<"User", 'String'>
+    readonly role: FieldRef<"User", 'String'>
     readonly musicProvider: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
@@ -15569,6 +15608,9 @@ export namespace Prisma {
     email: 'email',
     emailVerified: 'emailVerified',
     image: 'image',
+    displayName: 'displayName',
+    profileImage: 'profileImage',
+    role: 'role',
     musicProvider: 'musicProvider',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -15825,6 +15867,9 @@ export namespace Prisma {
     email?: StringFilter<"User"> | string
     emailVerified?: BoolFilter<"User"> | boolean
     image?: StringNullableFilter<"User"> | string | null
+    displayName?: StringNullableFilter<"User"> | string | null
+    profileImage?: StringNullableFilter<"User"> | string | null
+    role?: StringFilter<"User"> | string
     musicProvider?: StringFilter<"User"> | string
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -15845,6 +15890,9 @@ export namespace Prisma {
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrderInput | SortOrder
+    displayName?: SortOrderInput | SortOrder
+    profileImage?: SortOrderInput | SortOrder
+    role?: SortOrder
     musicProvider?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -15868,6 +15916,9 @@ export namespace Prisma {
     name?: StringFilter<"User"> | string
     emailVerified?: BoolFilter<"User"> | boolean
     image?: StringNullableFilter<"User"> | string | null
+    displayName?: StringNullableFilter<"User"> | string | null
+    profileImage?: StringNullableFilter<"User"> | string | null
+    role?: StringFilter<"User"> | string
     musicProvider?: StringFilter<"User"> | string
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -15888,6 +15939,9 @@ export namespace Prisma {
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrderInput | SortOrder
+    displayName?: SortOrderInput | SortOrder
+    profileImage?: SortOrderInput | SortOrder
+    role?: SortOrder
     musicProvider?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -15905,6 +15959,9 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter<"User"> | string
     emailVerified?: BoolWithAggregatesFilter<"User"> | boolean
     image?: StringNullableWithAggregatesFilter<"User"> | string | null
+    displayName?: StringNullableWithAggregatesFilter<"User"> | string | null
+    profileImage?: StringNullableWithAggregatesFilter<"User"> | string | null
+    role?: StringWithAggregatesFilter<"User"> | string
     musicProvider?: StringWithAggregatesFilter<"User"> | string
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -16676,6 +16733,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16696,6 +16756,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16716,6 +16779,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16736,6 +16802,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16756,6 +16825,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16767,6 +16839,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16778,6 +16853,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17706,6 +17784,9 @@ export namespace Prisma {
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
+    displayName?: SortOrder
+    profileImage?: SortOrder
+    role?: SortOrder
     musicProvider?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -17717,6 +17798,9 @@ export namespace Prisma {
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
+    displayName?: SortOrder
+    profileImage?: SortOrder
+    role?: SortOrder
     musicProvider?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -17728,6 +17812,9 @@ export namespace Prisma {
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
+    displayName?: SortOrder
+    profileImage?: SortOrder
+    role?: SortOrder
     musicProvider?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -19856,6 +19943,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -19875,6 +19965,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -19910,6 +20003,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19929,6 +20025,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19948,6 +20047,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -19967,6 +20069,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20002,6 +20107,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20021,6 +20129,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20131,6 +20242,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20150,6 +20264,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20234,6 +20351,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20253,6 +20373,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20467,6 +20590,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20486,6 +20612,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20558,6 +20687,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20577,6 +20709,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20639,6 +20774,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20658,6 +20796,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20772,6 +20913,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20791,6 +20935,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20879,6 +21026,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20898,6 +21048,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20958,6 +21111,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20977,6 +21133,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21027,6 +21186,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21046,6 +21208,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21106,6 +21271,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21125,6 +21293,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21175,6 +21346,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21194,6 +21368,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21218,6 +21395,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21237,6 +21417,9 @@ export namespace Prisma {
     email: string
     emailVerified?: boolean
     image?: string | null
+    displayName?: string | null
+    profileImage?: string | null
+    role?: string
     musicProvider?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21272,6 +21455,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21291,6 +21477,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21321,6 +21510,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21340,6 +21532,9 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
