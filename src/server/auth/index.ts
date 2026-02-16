@@ -4,6 +4,19 @@ import { nextCookies } from "better-auth/next-js";
 import { env } from "~/env";
 import { db } from "~/server/db";
 
+/**
+ * Resolve the canonical app URL.
+ * - Production: uses VERCEL_URL (auto-provided by Vercel) or BETTER_AUTH_URL (manual override)
+ * - Development: falls back to http://127.0.0.1:3000
+ */
+function getBaseUrl(): string {
+	if (process.env.BETTER_AUTH_URL) return process.env.BETTER_AUTH_URL;
+	if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+	return "http://127.0.0.1:3000";
+}
+
+const baseUrl = getBaseUrl();
+
 const SPOTIFY_SCOPES = [
 	"user-read-private",
 	"user-read-email",
@@ -20,10 +33,10 @@ const SPOTIFY_SCOPES = [
 
 export const auth = betterAuth({
 	database: prismaAdapter(db, { provider: "postgresql" }),
-	baseURL: "http://127.0.0.1:3000",
+	baseURL: baseUrl,
 	basePath: "/api/auth",
 	secret: env.AUTH_SECRET,
-	trustedOrigins: ["http://localhost:3000", "http://127.0.0.1:3000"],
+	trustedOrigins: ["http://localhost:3000", "http://127.0.0.1:3000", baseUrl],
 
 	emailAndPassword: {
 		enabled: true,
@@ -34,13 +47,13 @@ export const auth = betterAuth({
 		spotify: {
 			clientId: env.AUTH_SPOTIFY_ID,
 			clientSecret: env.AUTH_SPOTIFY_SECRET,
-			redirectURI: "http://127.0.0.1:3000/api/auth/callback/spotify",
+			redirectURI: `${baseUrl}/api/auth/callback/spotify`,
 			scope: SPOTIFY_SCOPES,
 		},
 		google: {
 			clientId: env.AUTH_GOOGLE_ID,
 			clientSecret: env.AUTH_GOOGLE_SECRET,
-			redirectURI: "http://127.0.0.1:3000/api/auth/callback/google",
+			redirectURI: `${baseUrl}/api/auth/callback/google`,
 		},
 	},
 

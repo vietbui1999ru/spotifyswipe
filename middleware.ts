@@ -23,12 +23,14 @@ const protectedPaths = [
 ];
 
 export function middleware(request: NextRequest) {
-	// Redirect localhost → 127.0.0.1 (Spotify banned localhost redirect URIs)
-	const host = request.headers.get("host") ?? "";
-	if (host.startsWith("localhost")) {
-		const url = request.nextUrl.clone();
-		url.hostname = "127.0.0.1";
-		return NextResponse.redirect(url, 308);
+	// Dev only: redirect localhost → 127.0.0.1 (Spotify banned localhost redirect URIs)
+	if (process.env.NODE_ENV === "development") {
+		const host = request.headers.get("host") ?? "";
+		if (host.startsWith("localhost")) {
+			const url = request.nextUrl.clone();
+			url.hostname = "127.0.0.1";
+			return NextResponse.redirect(url, 308);
+		}
 	}
 
 	// Route protection: redirect unauthenticated users to /sign-in
