@@ -38,7 +38,10 @@ export function middleware(request: NextRequest) {
 	const isProtected = protectedPaths.some((p) => pathname.startsWith(p));
 
 	if (isProtected) {
-		const sessionToken = request.cookies.get("better-auth.session_token");
+		// better-auth uses "__Secure-" prefix on HTTPS (production)
+		const sessionToken =
+			request.cookies.get("better-auth.session_token") ??
+			request.cookies.get("__Secure-better-auth.session_token");
 		if (!sessionToken?.value) {
 			const signInUrl = new URL("/sign-in", request.nextUrl.origin);
 			signInUrl.searchParams.set("callbackUrl", pathname);
