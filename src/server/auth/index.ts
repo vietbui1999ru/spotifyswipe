@@ -17,6 +17,34 @@ function getBaseUrl(): string {
 
 const baseUrl = getBaseUrl();
 
+/**
+ * Build the list of origins better-auth should trust.
+ * Vercel exposes several auto-URLs that can differ from each other:
+ *   VERCEL_URL              – deployment-specific (changes every deploy)
+ *   VERCEL_PROJECT_PRODUCTION_URL – stable production domain
+ *   VERCEL_BRANCH_URL       – branch-specific preview URL
+ */
+function getTrustedOrigins(): string[] {
+	const origins = new Set([
+		"http://localhost:3000",
+		"http://127.0.0.1:3000",
+		baseUrl,
+	]);
+
+	for (const envVar of [
+		"VERCEL_URL",
+		"VERCEL_PROJECT_PRODUCTION_URL",
+		"VERCEL_BRANCH_URL",
+	]) {
+		const value = process.env[envVar];
+		if (value) {
+			origins.add(`https://${value}`);
+		}
+	}
+
+	return [...origins];
+}
+
 const SPOTIFY_SCOPES = [
 	"user-read-private",
 	"user-read-email",
@@ -36,7 +64,7 @@ export const auth = betterAuth({
 	baseURL: baseUrl,
 	basePath: "/api/auth",
 	secret: env.AUTH_SECRET,
-	trustedOrigins: ["http://localhost:3000", "http://127.0.0.1:3000", baseUrl],
+	trustedOrigins: getTrustedOrigins(),
 
 	emailAndPassword: {
 		enabled: true,
