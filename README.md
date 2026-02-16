@@ -4,13 +4,33 @@ A music discovery social app where you swipe to discover new music, build custom
 
 ## Features
 
-- **Swipe to Discover** - Tinder-style card swiping (drag gestures + buttons) to like, skip, or superlike songs
-- **Search-Based Discovery** - Search for songs, artists, or genres to generate a swipe-ready discovery feed
-- **Spotify Playback** - In-app playback via Spotify Web Playback SDK (Premium required)
-- **Custom Playlists** - Create and manage playlists from liked songs, sync to Spotify
-- **Social Shareboard** - Share playlists publicly, like and comment on others' playlists, follow users
-- **Dual Auth** - Sign in with Spotify (primary) or Last.fm, with account linking support
-- **Dark Mode UI** - Dark-themed interface built with Mantine components
+### Swipe to Discover
+Tinder-style card swiping (drag gestures + buttons) to like, skip, or superlike songs.
+
+<img src="demo/swipe.gif" width="600" alt="Swipe discovery demo">
+
+### Search-Based Discovery
+Search for songs, artists, or genres to generate a swipe-ready discovery feed.
+
+<img src="demo/search.gif" width="600" alt="Search discovery demo">
+
+### Custom Playlists
+Create and manage playlists from liked songs, sync to Spotify.
+
+<img src="demo/createplaylist.gif" width="600" alt="Create playlist demo">
+
+<img src="demo/playlistpage.gif" width="600" alt="Playlist page demo">
+
+### Social Shareboard
+Share playlists publicly, like and comment on others' playlists, follow users.
+
+<img src="demo/shareboard.gif" width="600" alt="Shareboard demo">
+
+### Profile and Admin
+User profile and admin panel for managing the platform.
+
+<img src="demo/profileadmin.gif" width="600" alt="Profile and admin demo">
+
 
 ## Tech Stack
 
