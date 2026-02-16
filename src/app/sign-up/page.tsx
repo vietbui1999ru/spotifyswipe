@@ -12,7 +12,7 @@ const SignUpPage = () => {
 
 	useEffect(() => {
 		if (!isPending && session) {
-			router.replace("/dashboard");
+			router.replace("/onboarding");
 		}
 	}, [session, isPending, router]);
 

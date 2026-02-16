@@ -14,6 +14,7 @@ import {
 	IconBrandLastfm,
 	IconBrandSpotify,
 } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { authClient, signIn, signUp } from "~/lib/auth-client";
 
@@ -30,6 +31,7 @@ interface SignInProps {
 }
 
 const SignIn = ({ mode = "sign-in" }: SignInProps) => {
+	const router = useRouter();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [name, setName] = useState("");
@@ -54,6 +56,8 @@ const SignIn = ({ mode = "sign-in" }: SignInProps) => {
 				});
 				if (result.error) {
 					setError(result.error.message ?? "Sign up failed");
+				} else {
+					router.push("/onboarding");
 				}
 			} else {
 				const result = await signIn.email({
@@ -63,6 +67,8 @@ const SignIn = ({ mode = "sign-in" }: SignInProps) => {
 				});
 				if (result.error) {
 					setError(result.error.message ?? "Sign in failed");
+				} else {
+					router.push("/dashboard");
 				}
 			}
 		} catch {
