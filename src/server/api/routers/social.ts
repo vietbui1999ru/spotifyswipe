@@ -65,7 +65,14 @@ export const socialRouter = createTRPCRouter({
 									},
 								},
 							},
-							user: { select: { id: true, name: true, image: true } },
+							user: {
+								select: {
+									id: true,
+									name: true,
+									image: true,
+									profileImage: true,
+								},
+							},
 						},
 					}),
 				);
@@ -98,7 +105,14 @@ export const socialRouter = createTRPCRouter({
 				const posts = await withTiming(log, "Fetch feed", () =>
 					ctx.db.socialPost.findMany({
 						include: {
-							user: { select: { id: true, name: true, image: true } },
+							user: {
+								select: {
+									id: true,
+									name: true,
+									image: true,
+									profileImage: true,
+								},
+							},
 							playlist: {
 								include: {
 									songs: {
@@ -158,7 +172,9 @@ export const socialRouter = createTRPCRouter({
 				ctx.db.socialPost.findUnique({
 					where: { id: input.id },
 					include: {
-						user: { select: { id: true, name: true, image: true } },
+						user: {
+							select: { id: true, name: true, image: true, profileImage: true },
+						},
 						playlist: {
 							include: {
 								songs: {
@@ -170,12 +186,26 @@ export const socialRouter = createTRPCRouter({
 						likes: {
 							select: {
 								userId: true,
-								user: { select: { id: true, name: true, image: true } },
+								user: {
+									select: {
+										id: true,
+										name: true,
+										image: true,
+										profileImage: true,
+									},
+								},
 							},
 						},
 						comments: {
 							include: {
-								user: { select: { id: true, name: true, image: true } },
+								user: {
+									select: {
+										id: true,
+										name: true,
+										image: true,
+										profileImage: true,
+									},
+								},
 							},
 							orderBy: { createdAt: "asc" },
 						},
@@ -312,7 +342,14 @@ export const socialRouter = createTRPCRouter({
 							socialPostId: input.postId,
 						},
 						include: {
-							user: { select: { id: true, name: true, image: true } },
+							user: {
+								select: {
+									id: true,
+									name: true,
+									image: true,
+									profileImage: true,
+								},
+							},
 						},
 					}),
 				);

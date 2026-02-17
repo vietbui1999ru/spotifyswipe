@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Loader, Stack, Text } from "@mantine/core";
+import { Avatar, Button, Loader, Stack, Text } from "@mantine/core";
 import { IconHeart } from "@tabler/icons-react";
 import { useEffect } from "react";
 import styles from "~/styles/shareboard.module.css";
@@ -97,9 +97,14 @@ const ShareboardGrid = ({ onSelectPost }: ShareboardGridProps) => {
 					>
 						{/* Card Header */}
 						<div className={styles.cardHeader}>
-							<div className={styles.userAvatar}>
+							<Avatar
+								color="violet"
+								radius="xl"
+								size={48}
+								src={post.user.profileImage ?? post.user.image}
+							>
 								{post.user.name?.charAt(0)?.toUpperCase() ?? "?"}
-							</div>
+							</Avatar>
 							<div className={styles.cardMeta}>
 								<h3 className={styles.cardTitle}>{post.playlist.name}</h3>
 								<p className={styles.cardCreator}>

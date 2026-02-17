@@ -2,6 +2,7 @@
 
 import {
 	ActionIcon,
+	Avatar,
 	Button,
 	Group,
 	Loader,
@@ -129,9 +130,14 @@ const ShareboardDetail = ({ shareboardId, onClose }: ShareboardDetailProps) => {
 
 			{/* Header */}
 			<div className={styles.detailHeader}>
-				<div className={styles.detailAvatar}>
+				<Avatar
+					color="violet"
+					radius="xl"
+					size={56}
+					src={post.user.profileImage ?? post.user.image}
+				>
 					{post.user.name?.charAt(0)?.toUpperCase() ?? "?"}
-				</div>
+				</Avatar>
 				<div className={styles.detailMeta}>
 					<h2 className={styles.detailTitle}>{post.playlist.name}</h2>
 					<p className={styles.detailCreator}>
@@ -191,9 +197,19 @@ const ShareboardDetail = ({ shareboardId, onClose }: ShareboardDetailProps) => {
 						}}
 					>
 						<Group justify="space-between">
-							<Text fw={500} size="xs">
-								{comment.user.name ?? "Anonymous"}
-							</Text>
+							<Group gap="xs">
+								<Avatar
+									color="cyan"
+									radius="xl"
+									size={24}
+									src={comment.user.profileImage ?? comment.user.image}
+								>
+									{(comment.user.name ?? "A").charAt(0).toUpperCase()}
+								</Avatar>
+								<Text fw={500} size="xs">
+									{comment.user.name ?? "Anonymous"}
+								</Text>
+							</Group>
 							<Button
 								color="red"
 								onClick={() => deleteComment.mutate({ commentId: comment.id })}
@@ -203,7 +219,7 @@ const ShareboardDetail = ({ shareboardId, onClose }: ShareboardDetailProps) => {
 								Delete
 							</Button>
 						</Group>
-						<Text c="dimmed" size="sm">
+						<Text c="dimmed" ml={32} size="sm">
 							{comment.content}
 						</Text>
 					</div>
