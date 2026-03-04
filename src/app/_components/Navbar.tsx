@@ -8,6 +8,7 @@ import {
 	IconUser,
 	IconUsersGroup,
 } from "@tabler/icons-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { memo } from "react";
 import { api } from "~/trpc/react";
@@ -56,6 +57,7 @@ const Navbar = memo(function Navbar() {
 			{navItems.map((item) => (
 				<NavLink
 					active={pathname === item.href}
+					component={Link}
 					href={item.href}
 					key={item.href}
 					label={item.label}
@@ -68,6 +70,7 @@ const Navbar = memo(function Navbar() {
 					<NavLink
 						active={pathname === "/admin"}
 						color="cyan"
+						component={Link}
 						href="/admin"
 						label="Admin"
 						leftSection={<IconShieldCog size="16" stroke={1.5} />}
