@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { AppError, ErrorCode, toTRPCError } from "~/server/errors";
+import {
+	assertPlaylistOwnership,
+	type SongData,
+	upsertSong,
+} from "~/server/api/utils";
+import { AppError, ErrorCode, isTRPCError, toTRPCError } from "~/server/errors";
 import { createLogger, withTiming } from "~/server/logger";
 
 export const playlistRouter = createTRPCRouter({
@@ -31,6 +36,8 @@ export const playlistRouter = createTRPCRouter({
 				_count: undefined,
 			}));
 		} catch (err) {
+			if (err instanceof AppError) throw toTRPCError(err);
+			if (isTRPCError(err)) throw err;
 			log.error("Failed to fetch playlists", { error: err });
 			throw toTRPCError(
 				new AppError(ErrorCode.DB_ERROR, "Failed to fetch playlists"),
@@ -114,6 +121,8 @@ export const playlistRouter = createTRPCRouter({
 				log.info("Playlist created", { playlistId: playlist.id });
 				return playlist;
 			} catch (err) {
+				if (err instanceof AppError) throw toTRPCError(err);
+				if (isTRPCError(err)) throw err;
 				log.error("Failed to create playlist", { error: err });
 				throw toTRPCError(
 					new AppError(ErrorCode.DB_ERROR, "Failed to create playlist"),
@@ -140,36 +149,41 @@ export const playlistRouter = createTRPCRouter({
 			});
 			log.info("Updating playlist", { playlistId: input.id });
 
-			const existing = await ctx.db.playlist.findUnique({
-				where: { id: input.id },
-				select: { userId: true },
-			});
-
-			if (!existing) {
-				throw toTRPCError(
-					new AppError(ErrorCode.NOT_FOUND, "Playlist not found"),
-				);
-			}
-
-			if (existing.userId !== ctx.session.user.id) {
-				log.warn("Unauthorized update attempt", { playlistId: input.id });
-				throw toTRPCError(
-					new AppError(ErrorCode.UNAUTHORIZED, "Not your playlist"),
-				);
-			}
-
 			try {
 				const { id, ...data } = input;
-				const playlist = await withTiming(log, "Update playlist", () =>
-					ctx.db.playlist.update({
-						where: { id },
+				// Combine ownership check and update into a single atomic query
+				const result = await withTiming(log, "Update playlist", () =>
+					ctx.db.playlist.updateMany({
+						where: { id, userId: ctx.session.user.id },
 						data,
 					}),
 				);
 
-				log.info("Playlist updated", { playlistId: playlist.id });
+				if (result.count === 0) {
+					// Either not found or not owned — check which
+					const exists = await ctx.db.playlist.findUnique({
+						where: { id },
+						select: { id: true },
+					});
+					if (!exists) {
+						throw toTRPCError(
+							new AppError(ErrorCode.NOT_FOUND, "Playlist not found"),
+						);
+					}
+					log.warn("Unauthorized update attempt", { playlistId: id });
+					throw toTRPCError(
+						new AppError(ErrorCode.UNAUTHORIZED, "Not your playlist"),
+					);
+				}
+
+				const playlist = await ctx.db.playlist.findUniqueOrThrow({
+					where: { id },
+				});
+				log.info("Playlist updated", { playlistId: id });
 				return playlist;
 			} catch (err) {
+				if (err instanceof AppError) throw toTRPCError(err);
+				if (isTRPCError(err)) throw err;
 				log.error("Failed to update playlist", { error: err });
 				throw toTRPCError(
 					new AppError(ErrorCode.DB_ERROR, "Failed to update playlist"),
@@ -188,32 +202,36 @@ export const playlistRouter = createTRPCRouter({
 			});
 			log.info("Deleting playlist", { playlistId: input.id });
 
-			const existing = await ctx.db.playlist.findUnique({
-				where: { id: input.id },
-				select: { userId: true },
-			});
-
-			if (!existing) {
-				throw toTRPCError(
-					new AppError(ErrorCode.NOT_FOUND, "Playlist not found"),
-				);
-			}
-
-			if (existing.userId !== ctx.session.user.id) {
-				log.warn("Unauthorized delete attempt", { playlistId: input.id });
-				throw toTRPCError(
-					new AppError(ErrorCode.UNAUTHORIZED, "Not your playlist"),
-				);
-			}
-
 			try {
-				await withTiming(log, "Delete playlist", () =>
-					ctx.db.playlist.delete({ where: { id: input.id } }),
+				// Combine ownership check and delete into a single atomic query
+				const result = await withTiming(log, "Delete playlist", () =>
+					ctx.db.playlist.deleteMany({
+						where: { id: input.id, userId: ctx.session.user.id },
+					}),
 				);
+
+				if (result.count === 0) {
+					// Either not found or not owned — check which
+					const exists = await ctx.db.playlist.findUnique({
+						where: { id: input.id },
+						select: { id: true },
+					});
+					if (!exists) {
+						throw toTRPCError(
+							new AppError(ErrorCode.NOT_FOUND, "Playlist not found"),
+						);
+					}
+					log.warn("Unauthorized delete attempt", { playlistId: input.id });
+					throw toTRPCError(
+						new AppError(ErrorCode.UNAUTHORIZED, "Not your playlist"),
+					);
+				}
 
 				log.info("Playlist deleted", { playlistId: input.id });
 				return { success: true };
 			} catch (err) {
+				if (err instanceof AppError) throw toTRPCError(err);
+				if (isTRPCError(err)) throw err;
 				log.error("Failed to delete playlist", { error: err });
 				throw toTRPCError(
 					new AppError(ErrorCode.DB_ERROR, "Failed to delete playlist"),
@@ -251,58 +269,26 @@ export const playlistRouter = createTRPCRouter({
 			});
 
 			// Verify playlist ownership
-			const playlist = await ctx.db.playlist.findUnique({
-				where: { id: input.playlistId },
-				select: { userId: true },
-			});
-
-			if (!playlist) {
-				throw toTRPCError(
-					new AppError(ErrorCode.NOT_FOUND, "Playlist not found"),
-				);
-			}
-
-			if (playlist.userId !== ctx.session.user.id) {
-				throw toTRPCError(
-					new AppError(ErrorCode.UNAUTHORIZED, "Not your playlist"),
-				);
-			}
+			await assertPlaylistOwnership(
+				ctx.db,
+				input.playlistId,
+				ctx.session.user.id,
+			);
 
 			try {
-				// Upsert the song
-				const song = await withTiming(log, "Upsert song", () =>
-					ctx.db.song.upsert({
-						where: { externalId: input.songData.externalId },
-						update: {
-							title: input.songData.title,
-							artist: input.songData.artist,
-							album: input.songData.album,
-							albumArt: input.songData.albumArt,
-							lastfmUrl: input.songData.lastfmUrl,
-							spotifyId: input.songData.spotifyId,
-							spotifyUrl: input.songData.spotifyUrl,
-							previewUrl: input.songData.previewUrl,
-						},
-						create: {
-							title: input.songData.title,
-							artist: input.songData.artist,
-							album: input.songData.album,
-							albumArt: input.songData.albumArt,
-							lastfmUrl: input.songData.lastfmUrl,
-							spotifyId: input.songData.spotifyId,
-							spotifyUrl: input.songData.spotifyUrl,
-							previewUrl: input.songData.previewUrl,
-							externalId: input.songData.externalId,
-						},
+				// Upsert the song and fetch max position in parallel
+				const [song, lastSong] = await Promise.all([
+					withTiming(log, "Upsert song", () =>
+						upsertSong(ctx.db, input.songData as SongData),
+					),
+					ctx.db.playlistSong.findFirst({
+						where: { playlistId: input.playlistId },
+						orderBy: { position: "desc" },
+						select: { position: true },
 					}),
-				);
+				]);
 
-				// Get current max position in playlist
-				const maxPosition = await ctx.db.playlistSong.aggregate({
-					where: { playlistId: input.playlistId },
-					_max: { position: true },
-				});
-				const nextPosition = (maxPosition._max.position ?? -1) + 1;
+				const nextPosition = (lastSong?.position ?? -1) + 1;
 
 				// Add to playlist (ignore if already exists)
 				const playlistSong = await withTiming(log, "Add PlaylistSong", () =>
@@ -329,6 +315,8 @@ export const playlistRouter = createTRPCRouter({
 				});
 				return playlistSong;
 			} catch (err) {
+				if (err instanceof AppError) throw toTRPCError(err);
+				if (isTRPCError(err)) throw err;
 				log.error("Failed to add song to playlist", { error: err });
 				throw toTRPCError(
 					new AppError(ErrorCode.DB_ERROR, "Failed to add song to playlist"),
@@ -356,22 +344,11 @@ export const playlistRouter = createTRPCRouter({
 			});
 
 			// Verify playlist ownership
-			const playlist = await ctx.db.playlist.findUnique({
-				where: { id: input.playlistId },
-				select: { userId: true },
-			});
-
-			if (!playlist) {
-				throw toTRPCError(
-					new AppError(ErrorCode.NOT_FOUND, "Playlist not found"),
-				);
-			}
-
-			if (playlist.userId !== ctx.session.user.id) {
-				throw toTRPCError(
-					new AppError(ErrorCode.UNAUTHORIZED, "Not your playlist"),
-				);
-			}
+			await assertPlaylistOwnership(
+				ctx.db,
+				input.playlistId,
+				ctx.session.user.id,
+			);
 
 			try {
 				await withTiming(log, "Delete PlaylistSong", () =>
@@ -388,6 +365,8 @@ export const playlistRouter = createTRPCRouter({
 				log.info("Song removed from playlist");
 				return { success: true };
 			} catch (err) {
+				if (err instanceof AppError) throw toTRPCError(err);
+				if (isTRPCError(err)) throw err;
 				log.error("Failed to remove song from playlist", { error: err });
 				throw toTRPCError(
 					new AppError(
@@ -418,22 +397,11 @@ export const playlistRouter = createTRPCRouter({
 			});
 
 			// Verify playlist ownership
-			const playlist = await ctx.db.playlist.findUnique({
-				where: { id: input.playlistId },
-				select: { userId: true },
-			});
-
-			if (!playlist) {
-				throw toTRPCError(
-					new AppError(ErrorCode.NOT_FOUND, "Playlist not found"),
-				);
-			}
-
-			if (playlist.userId !== ctx.session.user.id) {
-				throw toTRPCError(
-					new AppError(ErrorCode.UNAUTHORIZED, "Not your playlist"),
-				);
-			}
+			await assertPlaylistOwnership(
+				ctx.db,
+				input.playlistId,
+				ctx.session.user.id,
+			);
 
 			try {
 				await withTiming(log, "Reorder songs", () =>
@@ -455,6 +423,8 @@ export const playlistRouter = createTRPCRouter({
 				log.info("Songs reordered successfully");
 				return { success: true };
 			} catch (err) {
+				if (err instanceof AppError) throw toTRPCError(err);
+				if (isTRPCError(err)) throw err;
 				log.error("Failed to reorder songs", { error: err });
 				throw toTRPCError(
 					new AppError(ErrorCode.DB_ERROR, "Failed to reorder songs"),

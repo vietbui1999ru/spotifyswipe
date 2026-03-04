@@ -417,13 +417,13 @@ async function main() {
 			}),
 		),
 	);
-	console.log(`  Created ${users.length} users (${users[0]!.name} is admin)`);
+	console.log(`  Created ${users.length} users (${users[0]?.name} is admin)`);
 
 	// ── 2. Create Accounts (fake OAuth, no real tokens) ────────────────────────
 	await Promise.all(
 		users.map((u, i) => {
 			const provider =
-				USERS[i]!.musicProvider === "spotify" ? "spotify" : "lastfm";
+				USERS[i]?.musicProvider === "spotify" ? "spotify" : "lastfm";
 			return db.account.create({
 				data: {
 					id: `demo-account-${i}`,
@@ -632,7 +632,7 @@ async function main() {
 
 	// ── Summary ────────────────────────────────────────────────────────────────
 	console.log("\nSeed complete!");
-	console.log(`  Users:        ${users.length} (1 admin: ${users[0]!.name})`);
+	console.log(`  Users:        ${users.length} (1 admin: ${users[0]?.name})`);
 	console.log(`  Songs:        ${songs.length}`);
 	console.log(`  Playlists:    ${playlists.length}`);
 	console.log(`  Swipes:       ${swipeData.length}`);

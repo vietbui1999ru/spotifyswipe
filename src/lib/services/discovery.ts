@@ -169,8 +169,10 @@ export async function getLastfmDiscoveryFeed(
 	}
 
 	// Enrich with Spotify album art and metadata (if token available)
+	// Cap at 10 candidates to avoid serial Spotify API call bottleneck
 	if (spotifyToken) {
-		await processBatches(candidates, 5, async (candidate) => {
+		const toEnrich = candidates.filter((c) => !c.spotifyId).slice(0, 10);
+		await processBatches(toEnrich, 10, async (candidate) => {
 			try {
 				const result = await spotify.search(
 					spotifyToken,
@@ -238,8 +240,10 @@ async function getSearchBasedFeed(
 		}
 
 		// Enrich with Spotify album art if token available
+		// Cap at 10 to avoid serial API call bottleneck
 		if (spotifyToken) {
-			await processBatches(candidates, 5, async (candidate) => {
+			const toEnrich = candidates.filter((c) => !c.spotifyId).slice(0, 10);
+			await processBatches(toEnrich, 10, async (candidate) => {
 				try {
 					const result = await spotify.search(
 						spotifyToken,

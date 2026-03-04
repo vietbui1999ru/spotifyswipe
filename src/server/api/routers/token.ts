@@ -6,6 +6,11 @@ export const tokenRouter = createTRPCRouter({
 	/**
 	 * Get a valid Spotify access token for the current user.
 	 * Auto-refreshes via server-side getSpotifyToken (uses AUTH_SPOTIFY_SECRET).
+	 *
+	 * SECURITY NOTE: This intentionally exposes the token to the client.
+	 * The Spotify Web Playback SDK requires a client-side access token.
+	 * The token is scoped to the user's Spotify account and short-lived (1h).
+	 * protectedProcedure ensures only authenticated users can access it.
 	 */
 	getSpotifyToken: protectedProcedure.query(async ({ ctx }) => {
 		const log = createLogger("token.getSpotifyToken", {

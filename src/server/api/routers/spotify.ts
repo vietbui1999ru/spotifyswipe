@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { AppError, ErrorCode, toTRPCError } from "~/server/errors";
+import { assertPlaylistOwnership } from "~/server/api/utils";
+import { AppError, ErrorCode, isTRPCError, toTRPCError } from "~/server/errors";
 import { createLogger } from "~/server/logger";
 import { addTracksToPlaylist, createSpotifyPlaylist } from "~/server/spotify";
 
@@ -11,6 +12,13 @@ export const spotifyRouter = createTRPCRouter({
 			const log = createLogger("spotify.syncPlaylist");
 			try {
 				const token = await ctx.getSpotifyToken();
+
+				// Verify ownership first
+				await assertPlaylistOwnership(
+					ctx.db,
+					input.playlistId,
+					ctx.session.user.id,
+				);
 
 				// Get local playlist with songs
 				const playlist = await ctx.db.playlist.findUnique({
@@ -23,12 +31,11 @@ export const spotifyRouter = createTRPCRouter({
 					},
 				});
 
-				if (!playlist) {
-					throw new AppError(ErrorCode.NOT_FOUND, "Playlist not found");
-				}
-				if (playlist.userId !== ctx.session.user.id) {
-					throw new AppError(ErrorCode.UNAUTHORIZED, "Not your playlist");
-				}
+				// playlist is guaranteed to exist after ownership check
+				if (!playlist)
+					throw toTRPCError(
+						new AppError(ErrorCode.NOT_FOUND, "Playlist not found"),
+					);
 
 				// Create Spotify playlist if not already linked
 				let spotifyPlaylistId = playlist.spotifyPlaylistId;
@@ -65,6 +72,7 @@ export const spotifyRouter = createTRPCRouter({
 				return { spotifyPlaylistId, syncedTracks: uris.length };
 			} catch (err) {
 				if (err instanceof AppError) throw toTRPCError(err);
+				if (isTRPCError(err)) throw err;
 				log.error("Failed to sync playlist", { error: err });
 				throw toTRPCError(
 					new AppError(

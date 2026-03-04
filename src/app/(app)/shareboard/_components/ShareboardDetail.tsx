@@ -12,6 +12,7 @@ import {
 } from "@mantine/core";
 import { IconHeart, IconSend, IconUserPlus, IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
+import { useSession } from "~/lib/auth-client";
 import styles from "~/styles/shareboard.module.css";
 import { api } from "~/trpc/react";
 
@@ -22,6 +23,7 @@ interface ShareboardDetailProps {
 
 const ShareboardDetail = ({ shareboardId, onClose }: ShareboardDetailProps) => {
 	const [commentText, setCommentText] = useState("");
+	const { data: session } = useSession();
 
 	const {
 		data: post,
@@ -210,14 +212,18 @@ const ShareboardDetail = ({ shareboardId, onClose }: ShareboardDetailProps) => {
 									{comment.user.name ?? "Anonymous"}
 								</Text>
 							</Group>
-							<Button
-								color="red"
-								onClick={() => deleteComment.mutate({ commentId: comment.id })}
-								size="compact-xs"
-								variant="subtle"
-							>
-								Delete
-							</Button>
+							{session?.user?.id === comment.user.id && (
+								<Button
+									color="red"
+									onClick={() =>
+										deleteComment.mutate({ commentId: comment.id })
+									}
+									size="compact-xs"
+									variant="subtle"
+								>
+									Delete
+								</Button>
+							)}
 						</Group>
 						<Text c="dimmed" ml={32} size="sm">
 							{comment.content}

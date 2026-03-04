@@ -237,16 +237,6 @@ export const socialRouter = createTRPCRouter({
 			});
 			log.info("Liking post", { postId: input.postId });
 
-			// Verify post exists
-			const post = await ctx.db.socialPost.findUnique({
-				where: { id: input.postId },
-				select: { id: true },
-			});
-
-			if (!post) {
-				throw toTRPCError(new AppError(ErrorCode.NOT_FOUND, "Post not found"));
-			}
-
 			try {
 				const like = await withTiming(log, "Create like", () =>
 					ctx.db.like.upsert({
@@ -267,6 +257,17 @@ export const socialRouter = createTRPCRouter({
 				log.info("Post liked", { likeId: like.id });
 				return { success: true };
 			} catch (err) {
+				// FK violation means the post doesn't exist
+				if (
+					typeof err === "object" &&
+					err !== null &&
+					"code" in err &&
+					(err as { code: string }).code === "P2003"
+				) {
+					throw toTRPCError(
+						new AppError(ErrorCode.NOT_FOUND, "Post not found"),
+					);
+				}
 				log.error("Failed to like post", { error: err });
 				throw toTRPCError(
 					new AppError(ErrorCode.DB_ERROR, "Failed to like post"),
@@ -300,6 +301,16 @@ export const socialRouter = createTRPCRouter({
 				log.info("Post unliked");
 				return { success: true };
 			} catch (err) {
+				// P2025 = record not found — already unliked, treat as success
+				if (
+					typeof err === "object" &&
+					err !== null &&
+					"code" in err &&
+					(err as { code: string }).code === "P2025"
+				) {
+					log.debug("Like already removed (idempotent)");
+					return { success: true };
+				}
 				log.error("Failed to unlike post", { error: err });
 				throw toTRPCError(
 					new AppError(ErrorCode.DB_ERROR, "Failed to unlike post"),
@@ -322,16 +333,6 @@ export const socialRouter = createTRPCRouter({
 				userId: ctx.session.user.id,
 			});
 			log.info("Adding comment", { postId: input.postId });
-
-			// Verify post exists
-			const post = await ctx.db.socialPost.findUnique({
-				where: { id: input.postId },
-				select: { id: true },
-			});
-
-			if (!post) {
-				throw toTRPCError(new AppError(ErrorCode.NOT_FOUND, "Post not found"));
-			}
 
 			try {
 				const comment = await withTiming(log, "Create comment", () =>
@@ -357,6 +358,17 @@ export const socialRouter = createTRPCRouter({
 				log.info("Comment added", { commentId: comment.id });
 				return comment;
 			} catch (err) {
+				// FK violation means the post doesn't exist
+				if (
+					typeof err === "object" &&
+					err !== null &&
+					"code" in err &&
+					(err as { code: string }).code === "P2003"
+				) {
+					throw toTRPCError(
+						new AppError(ErrorCode.NOT_FOUND, "Post not found"),
+					);
+				}
 				log.error("Failed to add comment", { error: err });
 				throw toTRPCError(
 					new AppError(ErrorCode.DB_ERROR, "Failed to add comment"),
@@ -488,6 +500,16 @@ export const socialRouter = createTRPCRouter({
 				log.info("User unfollowed");
 				return { success: true };
 			} catch (err) {
+				// P2025 = record not found — already unfollowed, treat as success
+				if (
+					typeof err === "object" &&
+					err !== null &&
+					"code" in err &&
+					(err as { code: string }).code === "P2025"
+				) {
+					log.debug("Follow already removed (idempotent)");
+					return { success: true };
+				}
 				log.error("Failed to unfollow user", { error: err });
 				throw toTRPCError(
 					new AppError(ErrorCode.DB_ERROR, "Failed to unfollow user"),

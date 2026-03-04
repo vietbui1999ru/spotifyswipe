@@ -51,9 +51,7 @@ export async function GET(request: NextRequest) {
 		// Validate redirect is a relative path to prevent open redirect
 		// Block protocol-relative URLs like "//evil.com"
 		const redirectTo =
-			redirectParam &&
-			redirectParam.startsWith("/") &&
-			!redirectParam.startsWith("//")
+			redirectParam?.startsWith("/") && !redirectParam.startsWith("//")
 				? redirectParam
 				: "/dashboard";
 
@@ -116,7 +114,7 @@ export async function GET(request: NextRequest) {
 		} else {
 			// No existing session — upsert user as before
 			user = await db.user.upsert({
-				where: { email: `${profile.user.name}@last.fm` },
+				where: { email: `lastfm+${profile.user.name}@spotiswipe.internal` },
 				update: {
 					name: profile.user.name || profile.user.realname || "Last.fm User",
 					image:
@@ -125,7 +123,7 @@ export async function GET(request: NextRequest) {
 						] || null,
 				},
 				create: {
-					email: `${profile.user.name}@last.fm`,
+					email: `lastfm+${profile.user.name}@spotiswipe.internal`,
 					name: profile.user.name || profile.user.realname || "Last.fm User",
 					image:
 						profile.user.image?.find((img) => img.size === "large")?.[

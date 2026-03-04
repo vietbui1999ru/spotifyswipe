@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import {
 	type DiscoveryTrack,
 	getDiscoveryFeed,
@@ -37,18 +37,23 @@ function loadFeedFromSession(): DiscoveryTrack[] | undefined {
  * Persists feed to sessionStorage so it survives page reloads and tab switches.
  */
 export function useDiscoveryFeed(limit = 20, searchQuery?: string) {
-	// Fetch provider preference and connected accounts
-	const { data: provider } = api.user.getMusicProvider.useQuery();
-	const { data: connected } = api.user.getConnectedProviders.useQuery();
+	// Fetch provider preference and connected accounts — stable data, long staleTime
+	const { data: provider } = api.user.getMusicProvider.useQuery(undefined, {
+		staleTime: 5 * 60 * 1000,
+	});
+	const { data: connected } = api.user.getConnectedProviders.useQuery(
+		undefined,
+		{ staleTime: 5 * 60 * 1000 },
+	);
 
-	// Fetch tokens (will fail gracefully if not connected)
+	// Fetch tokens — server auto-refreshes; long staleTime is safe
 	const { data: spotifyTokenData } = api.token.getSpotifyToken.useQuery(
 		undefined,
-		{ enabled: !!connected?.spotify, retry: false },
+		{ enabled: !!connected?.spotify, retry: false, staleTime: 5 * 60 * 1000 },
 	);
 	const { data: lastfmSessionData } = api.token.getLastfmSession.useQuery(
 		undefined,
-		{ enabled: !!connected?.lastfm, retry: false },
+		{ enabled: !!connected?.lastfm, retry: false, staleTime: 5 * 60 * 1000 },
 	);
 
 	// Fetch swiped song IDs to filter
@@ -72,9 +77,10 @@ export function useDiscoveryFeed(limit = 20, searchQuery?: string) {
 	const spotifyToken = spotifyTokenData?.accessToken ?? null;
 	const lastfmUsername = lastfmSessionData?.username ?? null;
 
-	// Build set of already-swiped external IDs
-	const swipedExternalIds = new Set(
-		swipeHistory?.items.map((s) => s.song.externalId) ?? [],
+	// Build set of already-swiped external IDs — memoized to avoid recreation on every render
+	const swipedExternalIds = useMemo(
+		() => new Set(swipeHistory?.items.map((s) => s.song.externalId) ?? []),
+		[swipeHistory],
 	);
 
 	const isReady =

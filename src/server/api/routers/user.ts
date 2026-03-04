@@ -104,34 +104,45 @@ export const userRouter = createTRPCRouter({
 	/** Update custom display name and/or profile image. */
 	updateProfile: protectedProcedure
 		.input(
-			z.object({
-				displayName: z.string().min(1).max(50).optional(),
-				profileImage: z
-					.string()
-					.url()
-					.refine(
-						(url) => {
-							try {
-								const parsed = new URL(url);
-								return (
-									parsed.protocol === "https:" || parsed.protocol === "http:"
-								);
-							} catch {
-								return false;
-							}
-						},
-						{ message: "Profile image must be an HTTP(S) URL" },
-					)
-					.optional(),
-				clearDisplayName: z.boolean().optional(),
-				clearProfileImage: z.boolean().optional(),
-			}),
+			z
+				.object({
+					displayName: z.string().min(1).max(50).optional(),
+					profileImage: z
+						.string()
+						.url()
+						.refine(
+							(url) => {
+								try {
+									const parsed = new URL(url);
+									return (
+										parsed.protocol === "https:" || parsed.protocol === "http:"
+									);
+								} catch {
+									return false;
+								}
+							},
+							{ message: "Profile image must be an HTTP(S) URL" },
+						)
+						.optional(),
+					clearDisplayName: z.boolean().optional(),
+					clearProfileImage: z.boolean().optional(),
+				})
+				.refine((input) => !(input.displayName && input.clearDisplayName), {
+					message: "Cannot set and clear displayName simultaneously",
+				})
+				.refine((input) => !(input.profileImage && input.clearProfileImage), {
+					message: "Cannot set and clear profileImage simultaneously",
+				}),
 		)
 		.mutation(async ({ ctx, input }) => {
 			const log = createLogger("user.updateProfile", {
 				userId: ctx.session.user.id,
 			});
-			log.info("Updating profile", input);
+			log.info("Updating profile", {
+				fields: Object.keys(input).filter(
+					(k) => input[k as keyof typeof input] !== undefined,
+				),
+			});
 
 			const data: Record<string, string | null> = {};
 			if (input.displayName !== undefined) data.displayName = input.displayName;

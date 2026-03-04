@@ -154,6 +154,7 @@ model SwipeAction {
 
   @@unique([userId, songId])
   @@index([userId, action])
+  @@index([userId, createdAt])
 }
 
 // ─── Social Models ─────────────────────────────────────────────────────────────
@@ -175,6 +176,7 @@ model SocialPost {
   comments Comment[]
 
   @@index([userId])
+  @@index([createdAt])
 }
 
 model Like {
@@ -206,6 +208,7 @@ model Comment {
   updatedAt DateTime @updatedAt
 
   @@index([socialPostId])
+  @@index([socialPostId, createdAt])
 }
 
 model Follow {

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { AppError, ErrorCode, toTRPCError } from "~/server/errors";
+import { type SongData, upsertSong } from "~/server/api/utils";
+import { AppError, ErrorCode, isTRPCError, toTRPCError } from "~/server/errors";
 import { createLogger, withTiming } from "~/server/logger";
 
 export const swipeRouter = createTRPCRouter({
@@ -36,30 +37,7 @@ export const swipeRouter = createTRPCRouter({
 			try {
 				// Upsert the song
 				const song = await withTiming(log, "Upsert song", () =>
-					ctx.db.song.upsert({
-						where: { externalId: input.songData.externalId },
-						update: {
-							title: input.songData.title,
-							artist: input.songData.artist,
-							album: input.songData.album,
-							albumArt: input.songData.albumArt,
-							lastfmUrl: input.songData.lastfmUrl,
-							spotifyId: input.songData.spotifyId,
-							spotifyUrl: input.songData.spotifyUrl,
-							previewUrl: input.songData.previewUrl,
-						},
-						create: {
-							title: input.songData.title,
-							artist: input.songData.artist,
-							album: input.songData.album,
-							albumArt: input.songData.albumArt,
-							lastfmUrl: input.songData.lastfmUrl,
-							spotifyId: input.songData.spotifyId,
-							spotifyUrl: input.songData.spotifyUrl,
-							previewUrl: input.songData.previewUrl,
-							externalId: input.songData.externalId,
-						},
-					}),
+					upsertSong(ctx.db, input.songData as SongData),
 				);
 
 				// Create or update swipe action
@@ -87,6 +65,8 @@ export const swipeRouter = createTRPCRouter({
 				});
 				return swipeAction;
 			} catch (err) {
+				if (err instanceof AppError) throw toTRPCError(err);
+				if (isTRPCError(err)) throw err;
 				log.error("Failed to record swipe", { error: err });
 				throw toTRPCError(
 					new AppError(ErrorCode.DB_ERROR, "Failed to record swipe"),
@@ -148,6 +128,8 @@ export const swipeRouter = createTRPCRouter({
 					nextCursor,
 				};
 			} catch (err) {
+				if (err instanceof AppError) throw toTRPCError(err);
+				if (isTRPCError(err)) throw err;
 				log.error("Failed to fetch swipe history", { error: err });
 				throw toTRPCError(
 					new AppError(ErrorCode.DB_ERROR, "Failed to fetch swipe history"),
