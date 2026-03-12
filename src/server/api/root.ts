@@ -1,4 +1,5 @@
 import { adminRouter } from "~/server/api/routers/admin";
+import { demoRouter } from "~/server/api/routers/demo";
 import { lastfmRouter } from "~/server/api/routers/lastfm";
 import { playlistRouter } from "~/server/api/routers/playlist";
 import { socialRouter } from "~/server/api/routers/social";
@@ -15,6 +16,7 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
  */
 export const appRouter = createTRPCRouter({
 	admin: adminRouter,
+	demo: demoRouter,
 	lastfm: lastfmRouter,
 	playlist: playlistRouter,
 	swipe: swipeRouter,

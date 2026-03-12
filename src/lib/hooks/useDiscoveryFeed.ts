@@ -35,35 +35,59 @@ function loadFeedFromSession(): DiscoveryTrack[] | undefined {
  * Resolves provider, fetches tokens, runs discovery pipeline,
  * and filters already-swiped tracks.
  * Persists feed to sessionStorage so it survives page reloads and tab switches.
+ * Demo users bypass provider resolution and fetch pre-seeded songs from DB.
  */
 export function useDiscoveryFeed(limit = 20, searchQuery?: string) {
-	// Fetch provider preference and connected accounts — stable data, long staleTime
+	// Check if current user is a demo user — this MUST be first
+	const { data: demoStatus } = api.demo.getTimeRemaining.useQuery(undefined, {
+		staleTime: 5 * 60 * 1000,
+	});
+	const isDemo = demoStatus?.isDemo ?? false;
+
+	// Demo path: fetch from DB via demo router
+	const demoFeedQuery = api.demo.getDiscoveryFeed.useQuery(
+		{ limit },
+		{ enabled: isDemo && !searchQuery, staleTime: 10 * 60 * 1000 },
+	);
+	const demoSearchQuery = api.demo.searchSongs.useQuery(
+		{ query: searchQuery ?? "" },
+		{ enabled: isDemo && !!searchQuery, staleTime: 5 * 60 * 1000 },
+	);
+
+	// Regular path: provider-based discovery
 	const { data: provider } = api.user.getMusicProvider.useQuery(undefined, {
 		staleTime: 5 * 60 * 1000,
+		enabled: !isDemo,
 	});
 	const { data: connected } = api.user.getConnectedProviders.useQuery(
 		undefined,
-		{ staleTime: 5 * 60 * 1000 },
+		{ staleTime: 5 * 60 * 1000, enabled: !isDemo },
 	);
 
-	// Fetch tokens — server auto-refreshes; long staleTime is safe
 	const { data: spotifyTokenData } = api.token.getSpotifyToken.useQuery(
 		undefined,
-		{ enabled: !!connected?.spotify, retry: false, staleTime: 5 * 60 * 1000 },
+		{
+			enabled: !isDemo && !!connected?.spotify,
+			retry: false,
+			staleTime: 5 * 60 * 1000,
+		},
 	);
 	const { data: lastfmSessionData } = api.token.getLastfmSession.useQuery(
 		undefined,
-		{ enabled: !!connected?.lastfm, retry: false, staleTime: 5 * 60 * 1000 },
+		{
+			enabled: !isDemo && !!connected?.lastfm,
+			retry: false,
+			staleTime: 5 * 60 * 1000,
+		},
 	);
 
-	// Fetch swiped song IDs to filter
 	const { data: swipeHistory } = api.swipe.getHistory.useQuery(
 		{ limit: 50 },
-		{ refetchOnWindowFocus: false },
+		{ refetchOnWindowFocus: false, enabled: !isDemo },
 	);
 
-	// Resolve effective provider
 	const effectiveProvider = (() => {
+		if (isDemo) return null;
 		const pref = provider ?? "auto";
 		if (pref === "spotify" && connected?.spotify) return "spotify";
 		if (pref === "lastfm" && connected?.lastfm) return "lastfm";
@@ -77,18 +101,16 @@ export function useDiscoveryFeed(limit = 20, searchQuery?: string) {
 	const spotifyToken = spotifyTokenData?.accessToken ?? null;
 	const lastfmUsername = lastfmSessionData?.username ?? null;
 
-	// Build set of already-swiped external IDs — memoized to avoid recreation on every render
 	const swipedExternalIds = useMemo(
 		() => new Set(swipeHistory?.items.map((s) => s.song.externalId) ?? []),
 		[swipeHistory],
 	);
 
 	const isReady =
+		!isDemo &&
 		effectiveProvider !== null &&
 		(effectiveProvider === "spotify" ? !!spotifyToken : !!lastfmUsername);
 
-	// Clear sessionStorage when switching to search-based feed
-	// so old algorithmic results don't flash
 	useEffect(() => {
 		if (searchQuery) {
 			try {
@@ -99,7 +121,7 @@ export function useDiscoveryFeed(limit = 20, searchQuery?: string) {
 		}
 	}, [searchQuery]);
 
-	const query = useQuery<DiscoveryTrack[]>({
+	const regularQuery = useQuery<DiscoveryTrack[]>({
 		queryKey: ["discoveryFeed", effectiveProvider, limit, searchQuery ?? null],
 		queryFn: () =>
 			getDiscoveryFeed({
@@ -117,12 +139,30 @@ export function useDiscoveryFeed(limit = 20, searchQuery?: string) {
 		initialData: searchQuery ? undefined : loadFeedFromSession,
 	});
 
-	// Persist feed to sessionStorage whenever it updates
+	// Persist regular feed to sessionStorage
 	useEffect(() => {
-		if (query.data && query.data.length > 0) {
-			saveFeedToSession(query.data);
+		if (regularQuery.data && regularQuery.data.length > 0) {
+			saveFeedToSession(regularQuery.data);
 		}
-	}, [query.data]);
+	}, [regularQuery.data]);
 
-	return query;
+	// Return the appropriate query based on demo status
+	if (isDemo) {
+		const activeQuery = searchQuery ? demoSearchQuery : demoFeedQuery;
+		return {
+			data: activeQuery.data,
+			isLoading: activeQuery.isLoading,
+			error: activeQuery.error,
+			refetch: activeQuery.refetch,
+			isDemo: true,
+		};
+	}
+
+	return {
+		data: regularQuery.data,
+		isLoading: regularQuery.isLoading,
+		error: regularQuery.error,
+		refetch: regularQuery.refetch,
+		isDemo: false,
+	};
 }

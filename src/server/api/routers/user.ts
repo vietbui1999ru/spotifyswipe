@@ -51,6 +51,7 @@ export const userRouter = createTRPCRouter({
 		return {
 			spotify: providerIds.has("spotify"),
 			lastfm: providerIds.has("lastfm"),
+			demo: providerIds.has("demo"),
 		};
 	}),
 
@@ -97,7 +98,11 @@ export const userRouter = createTRPCRouter({
 			providerImage: user.image,
 			role: user.role as "user" | "admin",
 			createdAt: user.createdAt,
-			connectedProviders: { spotify: hasSpotify, lastfm: hasLastfm },
+			connectedProviders: {
+				spotify: hasSpotify,
+				lastfm: hasLastfm,
+				demo: providerIds.has("demo"),
+			},
 		};
 	}),
 

@@ -2095,6 +2095,8 @@ export namespace Prisma {
     profileImage: string | null
     role: string | null
     musicProvider: string | null
+    isDemo: boolean | null
+    demoExpiresAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2109,6 +2111,8 @@ export namespace Prisma {
     profileImage: string | null
     role: string | null
     musicProvider: string | null
+    isDemo: boolean | null
+    demoExpiresAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2123,6 +2127,8 @@ export namespace Prisma {
     profileImage: number
     role: number
     musicProvider: number
+    isDemo: number
+    demoExpiresAt: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -2139,6 +2145,8 @@ export namespace Prisma {
     profileImage?: true
     role?: true
     musicProvider?: true
+    isDemo?: true
+    demoExpiresAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2153,6 +2161,8 @@ export namespace Prisma {
     profileImage?: true
     role?: true
     musicProvider?: true
+    isDemo?: true
+    demoExpiresAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2167,6 +2177,8 @@ export namespace Prisma {
     profileImage?: true
     role?: true
     musicProvider?: true
+    isDemo?: true
+    demoExpiresAt?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2254,6 +2266,8 @@ export namespace Prisma {
     profileImage: string | null
     role: string
     musicProvider: string
+    isDemo: boolean
+    demoExpiresAt: Date | null
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -2285,6 +2299,8 @@ export namespace Prisma {
     profileImage?: boolean
     role?: boolean
     musicProvider?: boolean
+    isDemo?: boolean
+    demoExpiresAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     accounts?: boolean | User$accountsArgs<ExtArgs>
@@ -2309,6 +2325,8 @@ export namespace Prisma {
     profileImage?: boolean
     role?: boolean
     musicProvider?: boolean
+    isDemo?: boolean
+    demoExpiresAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2323,6 +2341,8 @@ export namespace Prisma {
     profileImage?: boolean
     role?: boolean
     musicProvider?: boolean
+    isDemo?: boolean
+    demoExpiresAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2337,11 +2357,13 @@ export namespace Prisma {
     profileImage?: boolean
     role?: boolean
     musicProvider?: boolean
+    isDemo?: boolean
+    demoExpiresAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "displayName" | "profileImage" | "role" | "musicProvider" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "displayName" | "profileImage" | "role" | "musicProvider" | "isDemo" | "demoExpiresAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
@@ -2380,6 +2402,8 @@ export namespace Prisma {
       profileImage: string | null
       role: string
       musicProvider: string
+      isDemo: boolean
+      demoExpiresAt: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -2823,6 +2847,8 @@ export namespace Prisma {
     readonly profileImage: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'String'>
     readonly musicProvider: FieldRef<"User", 'String'>
+    readonly isDemo: FieldRef<"User", 'Boolean'>
+    readonly demoExpiresAt: FieldRef<"User", 'DateTime'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -15612,6 +15638,8 @@ export namespace Prisma {
     profileImage: 'profileImage',
     role: 'role',
     musicProvider: 'musicProvider',
+    isDemo: 'isDemo',
+    demoExpiresAt: 'demoExpiresAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -15871,6 +15899,8 @@ export namespace Prisma {
     profileImage?: StringNullableFilter<"User"> | string | null
     role?: StringFilter<"User"> | string
     musicProvider?: StringFilter<"User"> | string
+    isDemo?: BoolFilter<"User"> | boolean
+    demoExpiresAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     accounts?: AccountListRelationFilter
@@ -15894,6 +15924,8 @@ export namespace Prisma {
     profileImage?: SortOrderInput | SortOrder
     role?: SortOrder
     musicProvider?: SortOrder
+    isDemo?: SortOrder
+    demoExpiresAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     accounts?: AccountOrderByRelationAggregateInput
@@ -15920,6 +15952,8 @@ export namespace Prisma {
     profileImage?: StringNullableFilter<"User"> | string | null
     role?: StringFilter<"User"> | string
     musicProvider?: StringFilter<"User"> | string
+    isDemo?: BoolFilter<"User"> | boolean
+    demoExpiresAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     accounts?: AccountListRelationFilter
@@ -15943,6 +15977,8 @@ export namespace Prisma {
     profileImage?: SortOrderInput | SortOrder
     role?: SortOrder
     musicProvider?: SortOrder
+    isDemo?: SortOrder
+    demoExpiresAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -15963,6 +15999,8 @@ export namespace Prisma {
     profileImage?: StringNullableWithAggregatesFilter<"User"> | string | null
     role?: StringWithAggregatesFilter<"User"> | string
     musicProvider?: StringWithAggregatesFilter<"User"> | string
+    isDemo?: BoolWithAggregatesFilter<"User"> | boolean
+    demoExpiresAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -16737,6 +16775,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -16760,6 +16800,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -16783,6 +16825,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -16806,6 +16850,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -16829,6 +16875,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -16843,6 +16891,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -16857,6 +16907,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -17682,6 +17734,17 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -17788,6 +17851,8 @@ export namespace Prisma {
     profileImage?: SortOrder
     role?: SortOrder
     musicProvider?: SortOrder
+    isDemo?: SortOrder
+    demoExpiresAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -17802,6 +17867,8 @@ export namespace Prisma {
     profileImage?: SortOrder
     role?: SortOrder
     musicProvider?: SortOrder
+    isDemo?: SortOrder
+    demoExpiresAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -17816,6 +17883,8 @@ export namespace Prisma {
     profileImage?: SortOrder
     role?: SortOrder
     musicProvider?: SortOrder
+    isDemo?: SortOrder
+    demoExpiresAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -17864,6 +17933,20 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -17876,17 +17959,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type UserScalarRelationFilter = {
@@ -17945,20 +18017,6 @@ export namespace Prisma {
     password?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type SessionCountOrderByAggregateInput = {
@@ -18509,6 +18567,10 @@ export namespace Prisma {
     set?: string | null
   }
 
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
   }
@@ -18769,10 +18831,6 @@ export namespace Prisma {
     create?: XOR<UserCreateWithoutAccountsInput, UserUncheckedCreateWithoutAccountsInput>
     connectOrCreate?: UserCreateOrConnectWithoutAccountsInput
     connect?: UserWhereUniqueInput
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
   }
 
   export type UserUpdateOneRequiredWithoutAccountsNestedInput = {
@@ -19270,6 +19328,17 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -19345,31 +19414,6 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -19382,6 +19426,20 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -19947,6 +20005,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -19969,6 +20029,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -20007,6 +20069,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -20029,6 +20093,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -20051,6 +20117,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -20073,6 +20141,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -20111,6 +20181,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -20133,6 +20205,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -20246,6 +20320,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -20268,6 +20344,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -20355,6 +20433,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -20377,6 +20457,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -20594,6 +20676,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -20616,6 +20700,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -20691,6 +20777,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -20713,6 +20801,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -20778,6 +20868,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -20800,6 +20892,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -20917,6 +21011,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -20939,6 +21035,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -21030,6 +21128,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -21052,6 +21152,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -21115,6 +21217,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -21137,6 +21241,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -21190,6 +21296,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -21212,6 +21320,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -21275,6 +21385,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -21297,6 +21409,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -21350,6 +21464,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -21372,6 +21488,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -21399,6 +21517,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -21421,6 +21541,8 @@ export namespace Prisma {
     profileImage?: string | null
     role?: string
     musicProvider?: string
+    isDemo?: boolean
+    demoExpiresAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -21459,6 +21581,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -21481,6 +21605,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -21514,6 +21640,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -21536,6 +21664,8 @@ export namespace Prisma {
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     musicProvider?: StringFieldUpdateOperationsInput | string
+    isDemo?: BoolFieldUpdateOperationsInput | boolean
+    demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput

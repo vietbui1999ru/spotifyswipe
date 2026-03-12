@@ -36,6 +36,7 @@ interface UseSpotifyPlayerOptions {
 	getToken: () => Promise<string>;
 	playerName?: string;
 	volume?: number;
+	enabled?: boolean;
 }
 
 interface UseSpotifyPlayerReturn {
@@ -57,6 +58,7 @@ export function useSpotifyPlayer({
 	getToken,
 	playerName = "SpotiSwipe",
 	volume = 0.5,
+	enabled = true,
 }: UseSpotifyPlayerOptions): UseSpotifyPlayerReturn {
 	const [isReady, setIsReady] = useState(false);
 	const [isPremium, setIsPremium] = useState(true);
@@ -99,6 +101,7 @@ export function useSpotifyPlayer({
 		let cancelled = false;
 
 		async function init() {
+			if (!enabled) return;
 			await loadSpotifySDK();
 			if (cancelled || !window.Spotify) return;
 
@@ -188,7 +191,7 @@ export function useSpotifyPlayer({
 			setIsReady(false);
 			setDeviceId(null);
 		};
-	}, [playerName, volume, startPolling, stopPolling]);
+	}, [playerName, volume, enabled, startPolling, stopPolling]);
 
 	// ─── Controls ──────────────────────────────────────────────────────
 

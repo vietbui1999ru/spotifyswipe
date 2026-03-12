@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { cleanupExpiredDemoUsers } from "~/app/api/cron/cleanup-demo/route";
 import { adminProcedure, createTRPCRouter } from "~/server/api/trpc";
 import { AppError, ErrorCode, toTRPCError } from "~/server/errors";
 import { createLogger, withTiming } from "~/server/logger";
@@ -511,5 +512,16 @@ export const adminRouter = createTRPCRouter({
 				new AppError(ErrorCode.DB_ERROR, "Failed to fetch recent activity"),
 			);
 		}
+	}),
+
+	/** Manually trigger cleanup of expired demo users. */
+	cleanupDemoUsers: adminProcedure.mutation(async ({ ctx }) => {
+		const log = createLogger("admin.cleanupDemoUsers", {
+			userId: ctx.session.user.id,
+		});
+		log.info("Manual demo cleanup triggered");
+		const deletedCount = await cleanupExpiredDemoUsers();
+		log.info("Demo cleanup complete", { deletedCount });
+		return { deletedCount };
 	}),
 });

@@ -1,6 +1,7 @@
 "use client";
 
 import {
+	Alert,
 	Avatar,
 	Badge,
 	Box,
@@ -52,6 +53,12 @@ const ProfilePage = () => {
 		api.user.getProfile.useQuery(undefined, {
 			enabled: isAuthenticated,
 		});
+
+	const { data: demoStatus } = api.demo.getTimeRemaining.useQuery(undefined, {
+		staleTime: 5 * 60 * 1000,
+		enabled: isAuthenticated,
+	});
+	const isDemo = demoStatus?.isDemo ?? false;
 
 	const { data: swipeHistory } = api.swipe.getHistory.useQuery(
 		{ limit: 5 },
@@ -179,6 +186,25 @@ const ProfilePage = () => {
 					</div>
 				) : (
 					<Stack gap="lg">
+						{/* Demo Mode Banner */}
+						{isDemo && (
+							<Alert color="violet" mb="md" title="Demo Mode" variant="light">
+								You're exploring SpotiSwipe in demo mode. Sign up for a full
+								account to connect Spotify and save your playlists permanently.
+								<Group mt="sm">
+									<Button
+										color="violet"
+										component="a"
+										href="/sign-up"
+										size="xs"
+										variant="filled"
+									>
+										Sign Up for Full Access
+									</Button>
+								</Group>
+							</Alert>
+						)}
+
 						{/* User Header */}
 						<div className={styles.userHeader}>
 							<Group gap="lg">
@@ -327,14 +353,16 @@ const ProfilePage = () => {
 											Connected
 										</Badge>
 									) : (
-										<Button
-											color="#1DB954"
-											onClick={handleConnectSpotify}
-											size="compact-xs"
-											variant="light"
-										>
-											Connect
-										</Button>
+										!isDemo && (
+											<Button
+												color="#1DB954"
+												onClick={handleConnectSpotify}
+												size="compact-xs"
+												variant="light"
+											>
+												Connect
+											</Button>
+										)
 									)}
 								</div>
 								<div className={styles.accountRow}>
@@ -352,14 +380,16 @@ const ProfilePage = () => {
 											Connected
 										</Badge>
 									) : (
-										<Button
-											color="red"
-											onClick={handleConnectLastfm}
-											size="compact-xs"
-											variant="light"
-										>
-											Connect
-										</Button>
+										!isDemo && (
+											<Button
+												color="red"
+												onClick={handleConnectLastfm}
+												size="compact-xs"
+												variant="light"
+											>
+												Connect
+											</Button>
+										)
 									)}
 								</div>
 							</Stack>

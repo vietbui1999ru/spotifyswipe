@@ -131,6 +131,8 @@ exports.Prisma.UserScalarFieldEnum = {
   profileImage: 'profileImage',
   role: 'role',
   musicProvider: 'musicProvider',
+  isDemo: 'isDemo',
+  demoExpiresAt: 'demoExpiresAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

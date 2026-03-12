@@ -37,6 +37,7 @@ const SignIn = ({ mode = "sign-in" }: SignInProps) => {
 	const [name, setName] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
+	const [demoLoading, setDemoLoading] = useState(false);
 
 	const isSignUp = mode === "sign-up";
 	const callbackURL = isSignUp ? "/onboarding" : "/dashboard";
@@ -96,6 +97,24 @@ const SignIn = ({ mode = "sign-in" }: SignInProps) => {
 		window.location.href = getLastfmAuthUrl(
 			isSignUp ? "/onboarding" : "/dashboard",
 		);
+	};
+
+	const handleTryDemo = async () => {
+		setDemoLoading(true);
+		setError(null);
+		try {
+			const res = await fetch("/api/demo/start", { method: "POST" });
+			if (!res.ok) {
+				const data = await res.json();
+				setError(data.error ?? "Failed to start demo");
+				return;
+			}
+			router.push("/dashboard");
+		} catch {
+			setError("Failed to start demo session");
+		} finally {
+			setDemoLoading(false);
+		}
 	};
 
 	return (
@@ -172,6 +191,20 @@ const SignIn = ({ mode = "sign-in" }: SignInProps) => {
 					Last.fm
 				</Button>
 			</Stack>
+
+			<Divider label="just browsing?" labelPosition="center" />
+
+			<Button
+				color="violet"
+				disabled={demoLoading}
+				loading={demoLoading}
+				onClick={handleTryDemo}
+				radius="md"
+				size="md"
+				variant="light"
+			>
+				Try Demo — No account needed
+			</Button>
 
 			<Anchor
 				c="dimmed"

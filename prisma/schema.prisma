@@ -20,6 +20,8 @@ model User {
     profileImage  String?  // Custom profile picture; falls back to provider image
     role          String   @default("user") // "user" | "admin"
     musicProvider String   @default("auto") // "auto" | "spotify" | "lastfm"
+    isDemo        Boolean   @default(false)
+    demoExpiresAt DateTime?
     createdAt     DateTime @default(now())
     updatedAt     DateTime @updatedAt
 

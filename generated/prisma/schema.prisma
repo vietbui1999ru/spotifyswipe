@@ -11,17 +11,19 @@ datasource db {
 // ─── Auth Models (better-auth) ──────────────────────────────────────────────────
 
 model User {
-  id            String   @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String
-  email         String   @unique
-  emailVerified Boolean  @default(false)
+  email         String    @unique
+  emailVerified Boolean   @default(false)
   image         String?
   displayName   String? // Custom platform name; falls back to provider name
   profileImage  String? // Custom profile picture; falls back to provider image
-  role          String   @default("user") // "user" | "admin"
-  musicProvider String   @default("auto") // "auto" | "spotify" | "lastfm"
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  role          String    @default("user") // "user" | "admin"
+  musicProvider String    @default("auto") // "auto" | "spotify" | "lastfm"
+  isDemo        Boolean   @default(false)
+  demoExpiresAt DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   accounts     Account[]
   sessions     Session[]

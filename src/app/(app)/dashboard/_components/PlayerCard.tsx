@@ -12,6 +12,7 @@ import {
 	Tooltip,
 } from "@mantine/core";
 import {
+	IconBrandLastfm,
 	IconBrandSpotify,
 	IconCheck,
 	IconHeart,
@@ -58,6 +59,7 @@ const PlayerCard = ({
 		isLoading,
 		error,
 		refetch,
+		isDemo,
 	} = useDiscoveryFeed(20, searchQuery);
 
 	// Reset card index when search query changes
@@ -79,7 +81,11 @@ const PlayerCard = ({
 		return result.accessToken;
 	}, [utils]);
 
-	const player = useSpotifyPlayer({ getToken, playerName: "SpotiSwipe" });
+	const player = useSpotifyPlayer({
+		getToken,
+		playerName: "SpotiSwipe",
+		enabled: !isDemo,
+	});
 
 	const recordSwipe = api.swipe.recordSwipe.useMutation({
 		onSuccess: () => {
@@ -589,7 +595,20 @@ const PlayerCard = ({
 						<IconX size={24} />
 					</button>
 
-					{currentTrack.spotifyId && player.isPremium && player.isReady ? (
+					{isDemo && currentTrack.url ? (
+						<Button
+							color="red"
+							component="a"
+							href={currentTrack.url}
+							leftSection={<IconBrandLastfm size={18} />}
+							rel="noopener noreferrer"
+							size="sm"
+							target="_blank"
+							variant="light"
+						>
+							Listen on Last.fm
+						</Button>
+					) : currentTrack.spotifyId && player.isPremium && player.isReady ? (
 						<button
 							className={styles.playButton}
 							onClick={() => player.togglePlay()}

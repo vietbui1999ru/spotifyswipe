@@ -16,7 +16,8 @@ const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
 
 	useEffect(() => {
 		if (!isLoading && providers) {
-			const hasProvider = providers.spotify || providers.lastfm;
+			const hasProvider =
+				providers.spotify || providers.lastfm || providers.demo;
 			if (!hasProvider) {
 				router.replace("/onboarding");
 			}
@@ -31,7 +32,7 @@ const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
 		);
 	}
 
-	if (providers && !providers.spotify && !providers.lastfm) {
+	if (providers && !providers.spotify && !providers.lastfm && !providers.demo) {
 		return null;
 	}
 

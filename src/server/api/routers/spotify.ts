@@ -11,6 +11,15 @@ export const spotifyRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			const log = createLogger("spotify.syncPlaylist");
 			try {
+				// Demo users cannot sync to Spotify — no valid token
+				const user = await ctx.db.user.findUnique({
+					where: { id: ctx.session.user.id },
+					select: { isDemo: true },
+				});
+				if (user?.isDemo) {
+					return { spotifyPlaylistId: null, syncedTracks: 0, isDemo: true };
+				}
+
 				const token = await ctx.getSpotifyToken();
 
 				// Verify ownership first

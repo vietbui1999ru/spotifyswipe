@@ -12,6 +12,7 @@
 		"db:migrate": "prisma migrate deploy",
 		"db:push": "prisma db push",
 		"db:seed": "bun run prisma/seed.ts",
+		"db:seed-demo": "bun run prisma/seed-demo.ts",
 		"db:studio": "prisma studio",
 		"dev": "next dev --turbo --hostname 127.0.0.1 --port 3000",
 		"postinstall": "prisma generate",
