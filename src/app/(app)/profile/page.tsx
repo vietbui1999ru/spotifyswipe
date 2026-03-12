@@ -444,6 +444,11 @@ const ProfilePage = () => {
 								await authClient.signOut({
 									fetchOptions: {
 										onSuccess: () => {
+											sessionStorage.removeItem("spotiswipe:discovery-feed");
+											sessionStorage.removeItem("spotiswipe:is-demo");
+											sessionStorage.removeItem("spotiswipe:active-playlist");
+											sessionStorage.removeItem("spotiswipe:card-index");
+											sessionStorage.removeItem("spotiswipe:bug-reports");
 											window.location.href = "/";
 										},
 									},
