@@ -6,6 +6,10 @@ export default defineConfig({
     globals: true,
     environment: "node",
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
+    env: {
+      SKIP_ENV_VALIDATION: "1",
+      NEXT_PUBLIC_LASTFM_API_KEY: "test-key",
+    },
   },
   resolve: {
     alias: {

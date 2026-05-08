@@ -178,3 +178,23 @@ export function getImageUrl(images: LastfmImage[] | undefined): string | null {
 		null
 	);
 }
+
+// ─── Chart ───────────────────────────────────────────────────────────────────
+
+export interface LastfmChartTrack {
+	name: string;
+	artist: { name: string; url: string };
+	url: string;
+	image: LastfmImage[];
+	playcount: string;
+	listeners: string;
+}
+
+export async function getChartTopTracks(
+	limit = 50,
+): Promise<LastfmChartTrack[]> {
+	const result = await callLastfm<{
+		tracks: { track: LastfmChartTrack[] };
+	}>("chart.getTopTracks", { limit: String(limit) });
+	return result.tracks?.track ?? [];
+}
