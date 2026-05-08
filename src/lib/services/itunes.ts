@@ -17,7 +17,8 @@ export async function fetchAlbumArt(
     };
     const art = data.results?.[0]?.artworkUrl100;
     if (!art) return null;
-    return art.replace("100x100bb", "300x300bb");
+    const large = art.replace("100x100bb", "300x300bb");
+    return large !== art ? large : art;
   } catch {
     return null;
   }
