@@ -9,22 +9,10 @@ import {
 	Stack,
 	TextInput,
 } from "@mantine/core";
-import {
-	IconBrandGoogle,
-	IconBrandLastfm,
-	IconBrandSpotify,
-} from "@tabler/icons-react";
+import { IconBrandGoogle } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { authClient, signIn, signUp } from "~/lib/auth-client";
-
-function getLastfmAuthUrl(redirect?: string) {
-	const cb = new URL("/api/auth/callback/lastfm", window.location.origin);
-	if (redirect) {
-		cb.searchParams.set("redirect", redirect);
-	}
-	return `https://www.last.fm/api/auth?api_key=${process.env.NEXT_PUBLIC_LASTFM_API_KEY}&cb=${encodeURIComponent(cb.toString())}`;
-}
 
 interface SignInProps {
 	mode?: "sign-in" | "sign-up";
@@ -84,19 +72,6 @@ const SignIn = ({ mode = "sign-in" }: SignInProps) => {
 			provider: "google",
 			callbackURL,
 		});
-	};
-
-	const handleSpotifySignIn = async () => {
-		await authClient.signIn.social({
-			provider: "spotify",
-			callbackURL,
-		});
-	};
-
-	const handleLastfmSignIn = () => {
-		window.location.href = getLastfmAuthUrl(
-			isSignUp ? "/onboarding" : "/dashboard",
-		);
 	};
 
 	const handleTryDemo = async () => {
@@ -169,26 +144,6 @@ const SignIn = ({ mode = "sign-in" }: SignInProps) => {
 					variant="default"
 				>
 					Google
-				</Button>
-				<Button
-					color="#1DB954"
-					leftSection={<IconBrandSpotify size={18} />}
-					onClick={handleSpotifySignIn}
-					radius="md"
-					size="md"
-					variant="filled"
-				>
-					Spotify
-				</Button>
-				<Button
-					gradient={{ from: "red", to: "pink" }}
-					leftSection={<IconBrandLastfm size={18} />}
-					onClick={handleLastfmSignIn}
-					radius="md"
-					size="md"
-					variant="gradient"
-				>
-					Last.fm
 				</Button>
 			</Stack>
 
