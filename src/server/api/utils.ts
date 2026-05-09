@@ -36,9 +36,6 @@ export interface SongData {
 	album?: string;
 	albumArt?: string;
 	lastfmUrl?: string;
-	spotifyId?: string;
-	spotifyUrl?: string;
-	previewUrl?: string;
 	externalId: string;
 }
 
