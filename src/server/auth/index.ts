@@ -45,20 +45,6 @@ function getTrustedOrigins(): string[] {
 	return [...origins];
 }
 
-const SPOTIFY_SCOPES = [
-	"user-read-private",
-	"user-read-email",
-	"streaming",
-	"user-read-playback-state",
-	"user-modify-playback-state",
-	"user-read-recently-played",
-	"user-top-read",
-	"user-library-read",
-	"playlist-read-private",
-	"playlist-modify-public",
-	"playlist-modify-private",
-];
-
 export const auth = betterAuth({
 	database: prismaAdapter(db, { provider: "postgresql" }),
 	baseURL: baseUrl,
@@ -72,12 +58,6 @@ export const auth = betterAuth({
 	},
 
 	socialProviders: {
-		spotify: {
-			clientId: env.AUTH_SPOTIFY_ID,
-			clientSecret: env.AUTH_SPOTIFY_SECRET,
-			redirectURI: `${baseUrl}/api/auth/callback/spotify`,
-			scope: SPOTIFY_SCOPES,
-		},
 		google: {
 			clientId: env.AUTH_GOOGLE_ID,
 			clientSecret: env.AUTH_GOOGLE_SECRET,

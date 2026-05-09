@@ -8,9 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAppShellState } from "~/lib/contexts/app-shell-context";
 import * as lastfm from "~/lib/services/lastfm";
-import * as spotify from "~/lib/services/spotify";
 import classes from "~/styles/HeaderSearch.module.css";
-import { api } from "~/trpc/react";
 import ColorSchemeToggle from "./ColorSchemeToggle";
 
 const HeaderSearch = () => {
@@ -19,31 +17,9 @@ const HeaderSearch = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [debouncedQuery] = useDebouncedValue(searchQuery, 300);
 
-	const { data: provider } = api.user.getMusicProvider.useQuery(undefined, {
-		retry: false,
-	});
-	const { data: connected } = api.user.getConnectedProviders.useQuery();
-	const useSpotify = provider === "spotify" && connected?.spotify;
-
-	const { data: spotifyTokenData } = api.token.getSpotifyToken.useQuery(
-		undefined,
-		{ enabled: !!useSpotify, retry: false },
-	);
-
 	const { data: searchResults } = useQuery({
-		queryKey: ["headerSearch", debouncedQuery, useSpotify],
+		queryKey: ["headerSearch", debouncedQuery],
 		queryFn: async () => {
-			if (useSpotify && spotifyTokenData?.accessToken) {
-				const result = await spotify.search(
-					spotifyTokenData.accessToken,
-					debouncedQuery,
-					10,
-				);
-				return (result.tracks?.items ?? []).map((t) => ({
-					name: t.name,
-					artist: t.artists.map((a) => a.name).join(", "),
-				}));
-			}
 			const tracks = await lastfm.searchTracks(debouncedQuery, 10);
 			return tracks.map((t) => ({ name: t.name, artist: t.artist }));
 		},
