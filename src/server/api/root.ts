@@ -3,7 +3,6 @@ import { demoRouter } from "~/server/api/routers/demo";
 import { lastfmRouter } from "~/server/api/routers/lastfm";
 import { playlistRouter } from "~/server/api/routers/playlist";
 import { socialRouter } from "~/server/api/routers/social";
-import { spotifyRouter } from "~/server/api/routers/spotify";
 import { swipeRouter } from "~/server/api/routers/swipe";
 import { tokenRouter } from "~/server/api/routers/token";
 import { userRouter } from "~/server/api/routers/user";
@@ -21,8 +20,7 @@ export const appRouter = createTRPCRouter({
 	playlist: playlistRouter,
 	swipe: swipeRouter,
 	social: socialRouter,
-	spotify: spotifyRouter,
-	token: tokenRouter,
+token: tokenRouter,
 	user: userRouter,
 });
 
