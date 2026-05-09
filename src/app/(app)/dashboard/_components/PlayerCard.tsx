@@ -13,6 +13,7 @@ import {
 } from "@mantine/core";
 import {
 	IconBrandLastfm,
+	IconBrandYoutube,
 	IconCheck,
 	IconHeart,
 	IconRefresh,
@@ -508,18 +509,32 @@ const PlayerCard = ({
 						<IconX size={24} />
 					</button>
 
-					<Button
-						color="red"
-						component="a"
-						href={currentTrack.url}
-						leftSection={<IconBrandLastfm size={18} />}
-						rel="noopener noreferrer"
-						size="sm"
-						target="_blank"
-						variant="light"
-					>
-						Listen on Last.fm
-					</Button>
+					<Group gap={4}>
+						<Button
+							color="red"
+							component="a"
+							href={currentTrack.url}
+							leftSection={<IconBrandLastfm size={16} />}
+							rel="noopener noreferrer"
+							size="xs"
+							target="_blank"
+							variant="light"
+						>
+							Last.fm
+						</Button>
+						<Button
+							color="red"
+							component="a"
+							href={`https://www.youtube.com/results?search_query=${encodeURIComponent(`${currentTrack.artist} ${currentTrack.name}`)}`}
+							leftSection={<IconBrandYoutube size={16} />}
+							rel="noopener noreferrer"
+							size="xs"
+							target="_blank"
+							variant="subtle"
+						>
+							YouTube
+						</Button>
+					</Group>
 
 					<button
 						className={`${styles.swipeButton} ${styles.acceptButton}`}
