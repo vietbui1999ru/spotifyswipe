@@ -18,7 +18,6 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import {
 	IconBrandLastfm,
-	IconBrandSpotify,
 	IconCheck,
 	IconEdit,
 	IconHeart,
@@ -117,13 +116,6 @@ const ProfilePage = () => {
 			clearDisplayName: editName === "" && !!profile?.displayName,
 			profileImage: editImage || undefined,
 			clearProfileImage: editImage === "" && !!profile?.profileImage,
-		});
-	};
-
-	const handleConnectSpotify = async () => {
-		await authClient.signIn.social({
-			provider: "spotify",
-			callbackURL: "/profile",
 		});
 	};
 
@@ -338,33 +330,6 @@ const ProfilePage = () => {
 								Connected Accounts
 							</Text>
 							<Stack gap="sm">
-								<div className={styles.accountRow}>
-									<div className={styles.accountInfo}>
-										<IconBrandSpotify color="#1DB954" size={24} stroke={1.5} />
-										<span className={styles.accountName}>Spotify</span>
-									</div>
-									{connectedProviders?.spotify ? (
-										<Badge
-											color="green"
-											leftSection={<IconCheck size={12} />}
-											size="sm"
-											variant="light"
-										>
-											Connected
-										</Badge>
-									) : (
-										!isDemo && (
-											<Button
-												color="#1DB954"
-												onClick={handleConnectSpotify}
-												size="compact-xs"
-												variant="light"
-											>
-												Connect
-											</Button>
-										)
-									)}
-								</div>
 								<div className={styles.accountRow}>
 									<div className={styles.accountInfo}>
 										<IconBrandLastfm color="#D51007" size={24} stroke={1.5} />

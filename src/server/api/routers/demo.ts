@@ -14,8 +14,6 @@ function songToDiscoveryTrack(song: {
 	albumArt: string | null;
 	lastfmUrl: string | null;
 	externalId: string;
-	spotifyId: string | null;
-	spotifyUrl: string | null;
 }): DiscoveryTrack {
 	return {
 		name: song.title,
@@ -23,8 +21,6 @@ function songToDiscoveryTrack(song: {
 		image: song.albumArt,
 		url: song.lastfmUrl ?? "",
 		externalId: song.externalId,
-		spotifyId: song.spotifyId ?? undefined,
-		spotifyUrl: song.spotifyUrl ?? undefined,
 	};
 }
 

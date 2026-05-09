@@ -528,9 +528,6 @@ async function seedSongs() {
 				albumArt: makeAlbumArt(song.artist),
 				lastfmUrl: makeLastfmUrl(song.artist, song.title),
 				duration: song.duration,
-				spotifyId: null,
-				spotifyUrl: null,
-				previewUrl: null,
 			},
 			create: {
 				title: song.title,
@@ -540,9 +537,6 @@ async function seedSongs() {
 				lastfmUrl: makeLastfmUrl(song.artist, song.title),
 				duration: song.duration,
 				externalId,
-				spotifyId: null,
-				spotifyUrl: null,
-				previewUrl: null,
 			},
 		});
 	});
@@ -597,7 +591,6 @@ async function seedPersonas(songRecords: { id: string }[]) {
 				image,
 				isDemo: true,
 				demoExpiresAt: null, // permanent seed personas; never expire
-				musicProvider: "auto",
 			},
 		});
 

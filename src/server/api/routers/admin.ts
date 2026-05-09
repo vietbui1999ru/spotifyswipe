@@ -268,8 +268,10 @@ export const adminRouter = createTRPCRouter({
 		log.info("Fetching API health metrics");
 
 		try {
-			const [activeSessions, accountsByProvider, usersByMusicProvider] =
-				await withTiming(log, "Query API health", () =>
+			const [activeSessions, accountsByProvider] = await withTiming(
+				log,
+				"Query API health",
+				() =>
 					Promise.all([
 						ctx.db.session.count({
 							where: { expiresAt: { gt: new Date() } },
@@ -278,21 +280,12 @@ export const adminRouter = createTRPCRouter({
 							by: ["providerId"],
 							_count: { providerId: true },
 						}),
-						ctx.db.user.groupBy({
-							by: ["musicProvider"],
-							_count: { musicProvider: true },
-						}),
 					]),
-				);
+			);
 
 			const providers = accountsByProvider.map((row) => ({
 				provider: row.providerId,
 				count: row._count.providerId,
-			}));
-
-			const musicProviders = usersByMusicProvider.map((row) => ({
-				provider: row.musicProvider,
-				count: row._count.musicProvider,
 			}));
 
 			log.info("API health fetched", {
@@ -303,7 +296,6 @@ export const adminRouter = createTRPCRouter({
 			return {
 				activeSessions,
 				accountsByProvider: providers,
-				usersByMusicProvider: musicProviders,
 			};
 		} catch (err) {
 			log.error("Failed to fetch API health", { error: err });
@@ -339,7 +331,6 @@ export const adminRouter = createTRPCRouter({
 								artist: true,
 								album: true,
 								albumArt: true,
-								spotifyUrl: true,
 								_count: {
 									select: { swipeActions: { where: { action: "liked" } } },
 								},
@@ -384,7 +375,6 @@ export const adminRouter = createTRPCRouter({
 				artist: song.artist,
 				album: song.album,
 				albumArt: song.albumArt,
-				spotifyUrl: song.spotifyUrl,
 				likeCount: song._count.swipeActions,
 			}));
 

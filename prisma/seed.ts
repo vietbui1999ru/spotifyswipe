@@ -33,26 +33,26 @@ function daysAgo(n: number): Date {
 // ── Demo Data ──────────────────────────────────────────────────────────────────
 
 const USERS = [
-	{ name: "Alice Chen", email: "alice@demo.com", musicProvider: "spotify" },
-	{ name: "Bob Martinez", email: "bob@demo.com", musicProvider: "spotify" },
-	{ name: "Carol Williams", email: "carol@demo.com", musicProvider: "lastfm" },
-	{ name: "Dave Kim", email: "dave@demo.com", musicProvider: "spotify" },
-	{ name: "Eva Rodriguez", email: "eva@demo.com", musicProvider: "lastfm" },
-	{ name: "Frank Johnson", email: "frank@demo.com", musicProvider: "spotify" },
-	{ name: "Grace Lee", email: "grace@demo.com", musicProvider: "spotify" },
-	{ name: "Hank Patel", email: "hank@demo.com", musicProvider: "lastfm" },
-	{ name: "Ivy Thompson", email: "ivy@demo.com", musicProvider: "spotify" },
-	{ name: "Jake Wilson", email: "jake@demo.com", musicProvider: "spotify" },
-	{ name: "Karen Davis", email: "karen@demo.com", musicProvider: "lastfm" },
-	{ name: "Leo Nguyen", email: "leo@demo.com", musicProvider: "spotify" },
-	{ name: "Mia Brown", email: "mia@demo.com", musicProvider: "spotify" },
-	{ name: "Noah Garcia", email: "noah@demo.com", musicProvider: "lastfm" },
-	{ name: "Olivia Moore", email: "olivia@demo.com", musicProvider: "spotify" },
-	{ name: "Pete Anderson", email: "pete@demo.com", musicProvider: "spotify" },
-	{ name: "Quinn Taylor", email: "quinn@demo.com", musicProvider: "lastfm" },
-	{ name: "Ruby Jackson", email: "ruby@demo.com", musicProvider: "spotify" },
-	{ name: "Sam White", email: "sam@demo.com", musicProvider: "spotify" },
-	{ name: "Tina Harris", email: "tina@demo.com", musicProvider: "lastfm" },
+	{ name: "Alice Chen", email: "alice@demo.com" },
+	{ name: "Bob Martinez", email: "bob@demo.com" },
+	{ name: "Carol Williams", email: "carol@demo.com" },
+	{ name: "Dave Kim", email: "dave@demo.com" },
+	{ name: "Eva Rodriguez", email: "eva@demo.com" },
+	{ name: "Frank Johnson", email: "frank@demo.com" },
+	{ name: "Grace Lee", email: "grace@demo.com" },
+	{ name: "Hank Patel", email: "hank@demo.com" },
+	{ name: "Ivy Thompson", email: "ivy@demo.com" },
+	{ name: "Jake Wilson", email: "jake@demo.com" },
+	{ name: "Karen Davis", email: "karen@demo.com" },
+	{ name: "Leo Nguyen", email: "leo@demo.com" },
+	{ name: "Mia Brown", email: "mia@demo.com" },
+	{ name: "Noah Garcia", email: "noah@demo.com" },
+	{ name: "Olivia Moore", email: "olivia@demo.com" },
+	{ name: "Pete Anderson", email: "pete@demo.com" },
+	{ name: "Quinn Taylor", email: "quinn@demo.com" },
+	{ name: "Ruby Jackson", email: "ruby@demo.com" },
+	{ name: "Sam White", email: "sam@demo.com" },
+	{ name: "Tina Harris", email: "tina@demo.com" },
 ];
 
 const SONGS = [
@@ -411,7 +411,6 @@ async function main() {
 					emailVerified: true,
 					image: `https://i.pravatar.cc/150?u=demo${i}`,
 					role: i === 0 ? "admin" : "user", // Alice is admin
-					musicProvider: u.musicProvider,
 					createdAt: daysAgo(randInt(1, 29)),
 				},
 			}),
@@ -422,8 +421,7 @@ async function main() {
 	// ── 2. Create Accounts (fake OAuth, no real tokens) ────────────────────────
 	await Promise.all(
 		users.map((u, i) => {
-			const provider =
-				USERS[i]?.musicProvider === "spotify" ? "spotify" : "lastfm";
+			const provider = i % 2 === 0 ? "spotify" : "lastfm";
 			return db.account.create({
 				data: {
 					id: `demo-account-${i}`,

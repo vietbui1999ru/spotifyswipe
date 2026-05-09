@@ -88,7 +88,6 @@ export async function POST(request: NextRequest) {
 				email: `demo-${uuid}@spotiswipe.demo`,
 				isDemo: true,
 				demoExpiresAt: new Date(Date.now() + DEMO_SESSION_DURATION),
-				musicProvider: "auto",
 			},
 		});
 
