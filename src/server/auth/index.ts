@@ -70,7 +70,7 @@ export const auth = betterAuth({
 	account: {
 		accountLinking: {
 			enabled: true,
-			trustedProviders: ["spotify", "lastfm", "google"],
+			trustedProviders: ["lastfm", "google"],
 			allowDifferentEmails: true,
 		},
 	},

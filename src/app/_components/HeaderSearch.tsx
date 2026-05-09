@@ -63,7 +63,6 @@ const HeaderSearch = () => {
 					data={uniqueData.map((d) => d.value)}
 					leftSection={<IconSearch size={20} stroke={1.5} />}
 					onChange={(value) => {
-						console.debug("[SpotiSwipe] Search query changed:", value);
 						setSearchQuery(value);
 					}}
 					onKeyDown={(e) => {
