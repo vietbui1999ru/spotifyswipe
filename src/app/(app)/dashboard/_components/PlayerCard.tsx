@@ -13,11 +13,8 @@ import {
 } from "@mantine/core";
 import {
 	IconBrandLastfm,
-	IconBrandSpotify,
 	IconCheck,
 	IconHeart,
-	IconPlayerPause,
-	IconPlayerPlay,
 	IconRefresh,
 	IconX,
 } from "@tabler/icons-react";
@@ -25,7 +22,6 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDiscoveryFeed } from "~/lib/hooks/useDiscoveryFeed";
 import { useSessionState } from "~/lib/hooks/useSessionState";
-import { useSpotifyPlayer } from "~/lib/hooks/useSpotifyPlayer";
 import { api } from "~/trpc/react";
 import styles from "../dashboard.module.css";
 
@@ -34,12 +30,6 @@ interface PlayerCardProps {
 	onSongChange?: (song: { name: string; artist: string } | null) => void;
 	searchQuery?: string;
 }
-
-const formatTime = (seconds: number) => {
-	const m = Math.floor(seconds / 60);
-	const s = Math.floor(seconds % 60);
-	return `${m}:${s.toString().padStart(2, "0")}`;
-};
 
 const PlayerCard = ({
 	activePlaylistId,
@@ -59,7 +49,6 @@ const PlayerCard = ({
 		isLoading,
 		error,
 		refetch,
-		isDemo,
 	} = useDiscoveryFeed(20, searchQuery);
 
 	// Reset card index when search query changes
@@ -74,18 +63,6 @@ const PlayerCard = ({
 	}, [searchQuery]);
 
 	const utils = api.useUtils();
-
-	// --- Spotify Web Playback SDK ---
-	const getToken = useCallback(async () => {
-		const result = await utils.token.getSpotifyToken.fetch();
-		return result.accessToken;
-	}, [utils]);
-
-	const player = useSpotifyPlayer({
-		getToken,
-		playerName: "SpotiSwipe",
-		enabled: !isDemo,
-	});
 
 	const recordSwipe = api.swipe.recordSwipe.useMutation({
 		onSuccess: () => {
@@ -127,11 +104,6 @@ const PlayerCard = ({
 				? { name: currentTrack.name, artist: currentTrack.artist }
 				: null,
 		);
-
-		// Auto-play the new track via Spotify SDK
-		if (currentTrack?.spotifyId && player.isReady && player.isPremium) {
-			player.playTrack(`spotify:track:${currentTrack.spotifyId}`);
-		}
 	}, [currentIndex]);
 
 	// --- Swipe action handlers (defined before gesture handlers that reference them) ---
@@ -162,8 +134,6 @@ const PlayerCard = ({
 				artist: currentTrack.artist,
 				albumArt: currentTrack.image ?? undefined,
 				lastfmUrl: currentTrack.url,
-				spotifyId: currentTrack.spotifyId,
-				spotifyUrl: currentTrack.spotifyUrl,
 				externalId: currentTrack.externalId,
 			};
 
@@ -512,7 +482,7 @@ const PlayerCard = ({
 				</Text>
 			</Stack>
 
-			{/* Card Counter + Spotify/Last.fm link */}
+			{/* Card Counter */}
 			<Group gap="xs" justify="center" mt="xs">
 				<Badge variant="light">
 					{currentIndex + 1} / {feed.length}
@@ -524,67 +494,10 @@ const PlayerCard = ({
 						</Badge>
 					</Tooltip>
 				)}
-				{currentTrack.spotifyUrl && (
-					<Badge
-						color="#1DB954"
-						component="a"
-						href={currentTrack.spotifyUrl}
-						leftSection={<IconBrandSpotify size={12} />}
-						rel="noopener noreferrer"
-						style={{ cursor: "pointer" }}
-						target="_blank"
-						variant="filled"
-					>
-						Spotify
-					</Badge>
-				)}
-				{!currentTrack.spotifyUrl && currentTrack.url && (
-					<Badge
-						color="blue"
-						component="a"
-						href={currentTrack.url}
-						rel="noopener noreferrer"
-						style={{ cursor: "pointer" }}
-						target="_blank"
-						variant="light"
-					>
-						Last.fm
-					</Badge>
-				)}
 			</Group>
 
-			{/* Non-premium banner */}
-			{!player.isPremium && currentTrack.spotifyId && (
-				<Text c="dimmed" mt="xs" size="xs" ta="center">
-					Spotify Premium required for in-app playback
-				</Text>
-			)}
-
-			{/* Swipe + Playback Controls */}
+			{/* Swipe Controls */}
 			<div style={{ marginTop: "auto" }}>
-				{/* Progress bar (Spotify SDK playback) */}
-				{currentTrack.spotifyId && player.isPremium && player.isReady && (
-					<>
-						<div className={styles.progressBar}>
-							<div
-								className={styles.progressFill}
-								style={{
-									width: `${player.duration > 0 ? (player.position / player.duration) * 100 : 0}%`,
-								}}
-							/>
-						</div>
-						<div className={styles.timeDisplay}>
-							<span>{formatTime(player.position / 1000)}</span>
-							<span>
-								{player.duration > 0
-									? formatTime(player.duration / 1000)
-									: "0:00"}
-							</span>
-						</div>
-					</>
-				)}
-
-				{/* Swipe buttons with play/pause integrated in center */}
 				<div className={styles.swipeControls}>
 					<button
 						className={`${styles.swipeButton} ${styles.rejectButton}`}
@@ -595,47 +508,18 @@ const PlayerCard = ({
 						<IconX size={24} />
 					</button>
 
-					{isDemo && currentTrack.url ? (
-						<Button
-							color="red"
-							component="a"
-							href={currentTrack.url}
-							leftSection={<IconBrandLastfm size={18} />}
-							rel="noopener noreferrer"
-							size="sm"
-							target="_blank"
-							variant="light"
-						>
-							Listen on Last.fm
-						</Button>
-					) : currentTrack.spotifyId && player.isPremium && player.isReady ? (
-						<button
-							className={styles.playButton}
-							onClick={() => player.togglePlay()}
-							title={player.paused ? "Play" : "Pause"}
-							type="button"
-						>
-							{player.paused ? (
-								<IconPlayerPlay color="#18181b" size={22} />
-							) : (
-								<IconPlayerPause color="#18181b" size={22} />
-							)}
-						</button>
-					) : (
-						<button
-							className={`${styles.swipeButton}`}
-							onClick={() => handleSwipe("superliked")}
-							style={{
-								borderColor: "rgba(236, 72, 153, 0.5)",
-								color: "rgb(236, 72, 153)",
-								background: "rgba(236, 72, 153, 0.05)",
-							}}
-							title="Super Like"
-							type="button"
-						>
-							<IconHeart size={24} />
-						</button>
-					)}
+					<Button
+						color="red"
+						component="a"
+						href={currentTrack.url}
+						leftSection={<IconBrandLastfm size={18} />}
+						rel="noopener noreferrer"
+						size="sm"
+						target="_blank"
+						variant="light"
+					>
+						Listen on Last.fm
+					</Button>
 
 					<button
 						className={`${styles.swipeButton} ${styles.acceptButton}`}
@@ -647,26 +531,23 @@ const PlayerCard = ({
 					</button>
 				</div>
 
-				{/* Super Like below when play button takes center spot */}
-				{currentTrack.spotifyId && player.isPremium && player.isReady && (
-					<Group justify="center" mt="xs">
-						<button
-							className={`${styles.swipeButton}`}
-							onClick={() => handleSwipe("superliked")}
-							style={{
-								borderColor: "rgba(236, 72, 153, 0.5)",
-								color: "rgb(236, 72, 153)",
-								background: "rgba(236, 72, 153, 0.05)",
-								width: "3rem",
-								height: "3rem",
-							}}
-							title="Super Like"
-							type="button"
-						>
-							<IconHeart size={18} />
-						</button>
-					</Group>
-				)}
+				<Group justify="center" mt="xs">
+					<button
+						className={styles.swipeButton}
+						onClick={() => handleSwipe("superliked")}
+						style={{
+							borderColor: "rgba(236, 72, 153, 0.5)",
+							color: "rgb(236, 72, 153)",
+							background: "rgba(236, 72, 153, 0.05)",
+							width: "3rem",
+							height: "3rem",
+						}}
+						title="Super Like"
+						type="button"
+					>
+						<IconHeart size={18} />
+					</button>
+				</Group>
 			</div>
 		</Box>
 	);
