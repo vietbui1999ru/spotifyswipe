@@ -4,6 +4,18 @@ import { type SongData, upsertSong } from "~/server/api/utils";
 import { AppError, ErrorCode, isTRPCError, toTRPCError } from "~/server/errors";
 import { createLogger, withTiming } from "~/server/logger";
 
+export function buildScrobbleParams(
+  songData: { artist: string; title: string },
+  action: string,
+): { artist: string; track: string; timestamp: number } | null {
+  if (action !== "liked" && action !== "superliked") return null;
+  return {
+    artist: songData.artist,
+    track: songData.title,
+    timestamp: Math.floor(Date.now() / 1000),
+  };
+}
+
 export const swipeRouter = createTRPCRouter({
 	/**
 	 * Record a swipe action (like, skip, superlike)
