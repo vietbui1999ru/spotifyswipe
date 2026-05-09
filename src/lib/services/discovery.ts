@@ -55,7 +55,7 @@ async function enrichWithAlbumArt(
 
 async function getColdStartFeed(): Promise<DiscoveryTrack[]> {
 	const tracks = await lastfm.getChartTopTracks(50);
-	return tracks.map((track) => {
+	const candidates: DiscoveryTrack[] = tracks.map((track) => {
 		const artist =
 			typeof track.artist === "object"
 				? track.artist.name
@@ -68,6 +68,8 @@ async function getColdStartFeed(): Promise<DiscoveryTrack[]> {
 			externalId: `chart:${artist.toLowerCase()}:${track.name.toLowerCase()}`,
 		};
 	});
+	await enrichWithAlbumArt(candidates);
+	return candidates;
 }
 
 // ─── Personalized (Last.fm account) ─────────────────────────────────────────
