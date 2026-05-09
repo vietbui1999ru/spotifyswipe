@@ -2094,7 +2094,6 @@ export namespace Prisma {
     displayName: string | null
     profileImage: string | null
     role: string | null
-    musicProvider: string | null
     isDemo: boolean | null
     demoExpiresAt: Date | null
     createdAt: Date | null
@@ -2110,7 +2109,6 @@ export namespace Prisma {
     displayName: string | null
     profileImage: string | null
     role: string | null
-    musicProvider: string | null
     isDemo: boolean | null
     demoExpiresAt: Date | null
     createdAt: Date | null
@@ -2126,7 +2124,6 @@ export namespace Prisma {
     displayName: number
     profileImage: number
     role: number
-    musicProvider: number
     isDemo: number
     demoExpiresAt: number
     createdAt: number
@@ -2144,7 +2141,6 @@ export namespace Prisma {
     displayName?: true
     profileImage?: true
     role?: true
-    musicProvider?: true
     isDemo?: true
     demoExpiresAt?: true
     createdAt?: true
@@ -2160,7 +2156,6 @@ export namespace Prisma {
     displayName?: true
     profileImage?: true
     role?: true
-    musicProvider?: true
     isDemo?: true
     demoExpiresAt?: true
     createdAt?: true
@@ -2176,7 +2171,6 @@ export namespace Prisma {
     displayName?: true
     profileImage?: true
     role?: true
-    musicProvider?: true
     isDemo?: true
     demoExpiresAt?: true
     createdAt?: true
@@ -2265,7 +2259,6 @@ export namespace Prisma {
     displayName: string | null
     profileImage: string | null
     role: string
-    musicProvider: string
     isDemo: boolean
     demoExpiresAt: Date | null
     createdAt: Date
@@ -2298,7 +2291,6 @@ export namespace Prisma {
     displayName?: boolean
     profileImage?: boolean
     role?: boolean
-    musicProvider?: boolean
     isDemo?: boolean
     demoExpiresAt?: boolean
     createdAt?: boolean
@@ -2324,7 +2316,6 @@ export namespace Prisma {
     displayName?: boolean
     profileImage?: boolean
     role?: boolean
-    musicProvider?: boolean
     isDemo?: boolean
     demoExpiresAt?: boolean
     createdAt?: boolean
@@ -2340,7 +2331,6 @@ export namespace Prisma {
     displayName?: boolean
     profileImage?: boolean
     role?: boolean
-    musicProvider?: boolean
     isDemo?: boolean
     demoExpiresAt?: boolean
     createdAt?: boolean
@@ -2356,14 +2346,13 @@ export namespace Prisma {
     displayName?: boolean
     profileImage?: boolean
     role?: boolean
-    musicProvider?: boolean
     isDemo?: boolean
     demoExpiresAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "displayName" | "profileImage" | "role" | "musicProvider" | "isDemo" | "demoExpiresAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "displayName" | "profileImage" | "role" | "isDemo" | "demoExpiresAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
@@ -2401,7 +2390,6 @@ export namespace Prisma {
       displayName: string | null
       profileImage: string | null
       role: string
-      musicProvider: string
       isDemo: boolean
       demoExpiresAt: Date | null
       createdAt: Date
@@ -2846,7 +2834,6 @@ export namespace Prisma {
     readonly displayName: FieldRef<"User", 'String'>
     readonly profileImage: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'String'>
-    readonly musicProvider: FieldRef<"User", 'String'>
     readonly isDemo: FieldRef<"User", 'Boolean'>
     readonly demoExpiresAt: FieldRef<"User", 'DateTime'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
@@ -6769,9 +6756,6 @@ export namespace Prisma {
     lastfmUrl: string | null
     duration: number | null
     externalId: string | null
-    spotifyId: string | null
-    spotifyUrl: string | null
-    previewUrl: string | null
     createdAt: Date | null
   }
 
@@ -6784,9 +6768,6 @@ export namespace Prisma {
     lastfmUrl: string | null
     duration: number | null
     externalId: string | null
-    spotifyId: string | null
-    spotifyUrl: string | null
-    previewUrl: string | null
     createdAt: Date | null
   }
 
@@ -6799,9 +6780,6 @@ export namespace Prisma {
     lastfmUrl: number
     duration: number
     externalId: number
-    spotifyId: number
-    spotifyUrl: number
-    previewUrl: number
     createdAt: number
     _all: number
   }
@@ -6824,9 +6802,6 @@ export namespace Prisma {
     lastfmUrl?: true
     duration?: true
     externalId?: true
-    spotifyId?: true
-    spotifyUrl?: true
-    previewUrl?: true
     createdAt?: true
   }
 
@@ -6839,9 +6814,6 @@ export namespace Prisma {
     lastfmUrl?: true
     duration?: true
     externalId?: true
-    spotifyId?: true
-    spotifyUrl?: true
-    previewUrl?: true
     createdAt?: true
   }
 
@@ -6854,9 +6826,6 @@ export namespace Prisma {
     lastfmUrl?: true
     duration?: true
     externalId?: true
-    spotifyId?: true
-    spotifyUrl?: true
-    previewUrl?: true
     createdAt?: true
     _all?: true
   }
@@ -6956,9 +6925,6 @@ export namespace Prisma {
     lastfmUrl: string | null
     duration: number | null
     externalId: string
-    spotifyId: string | null
-    spotifyUrl: string | null
-    previewUrl: string | null
     createdAt: Date
     _count: SongCountAggregateOutputType | null
     _avg: SongAvgAggregateOutputType | null
@@ -6990,9 +6956,6 @@ export namespace Prisma {
     lastfmUrl?: boolean
     duration?: boolean
     externalId?: boolean
-    spotifyId?: boolean
-    spotifyUrl?: boolean
-    previewUrl?: boolean
     createdAt?: boolean
     playlistSongs?: boolean | Song$playlistSongsArgs<ExtArgs>
     swipeActions?: boolean | Song$swipeActionsArgs<ExtArgs>
@@ -7008,9 +6971,6 @@ export namespace Prisma {
     lastfmUrl?: boolean
     duration?: boolean
     externalId?: boolean
-    spotifyId?: boolean
-    spotifyUrl?: boolean
-    previewUrl?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["song"]>
 
@@ -7023,9 +6983,6 @@ export namespace Prisma {
     lastfmUrl?: boolean
     duration?: boolean
     externalId?: boolean
-    spotifyId?: boolean
-    spotifyUrl?: boolean
-    previewUrl?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["song"]>
 
@@ -7038,13 +6995,10 @@ export namespace Prisma {
     lastfmUrl?: boolean
     duration?: boolean
     externalId?: boolean
-    spotifyId?: boolean
-    spotifyUrl?: boolean
-    previewUrl?: boolean
     createdAt?: boolean
   }
 
-  export type SongOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "artist" | "album" | "albumArt" | "lastfmUrl" | "duration" | "externalId" | "spotifyId" | "spotifyUrl" | "previewUrl" | "createdAt", ExtArgs["result"]["song"]>
+  export type SongOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "artist" | "album" | "albumArt" | "lastfmUrl" | "duration" | "externalId" | "createdAt", ExtArgs["result"]["song"]>
   export type SongInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     playlistSongs?: boolean | Song$playlistSongsArgs<ExtArgs>
     swipeActions?: boolean | Song$swipeActionsArgs<ExtArgs>
@@ -7068,9 +7022,6 @@ export namespace Prisma {
       lastfmUrl: string | null
       duration: number | null
       externalId: string
-      spotifyId: string | null
-      spotifyUrl: string | null
-      previewUrl: string | null
       createdAt: Date
     }, ExtArgs["result"]["song"]>
     composites: {}
@@ -7505,9 +7456,6 @@ export namespace Prisma {
     readonly lastfmUrl: FieldRef<"Song", 'String'>
     readonly duration: FieldRef<"Song", 'Int'>
     readonly externalId: FieldRef<"Song", 'String'>
-    readonly spotifyId: FieldRef<"Song", 'String'>
-    readonly spotifyUrl: FieldRef<"Song", 'String'>
-    readonly previewUrl: FieldRef<"Song", 'String'>
     readonly createdAt: FieldRef<"Song", 'DateTime'>
   }
     
@@ -7979,7 +7927,6 @@ export namespace Prisma {
     description: string | null
     coverImage: string | null
     isPublic: boolean | null
-    spotifyPlaylistId: string | null
     userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -7991,7 +7938,6 @@ export namespace Prisma {
     description: string | null
     coverImage: string | null
     isPublic: boolean | null
-    spotifyPlaylistId: string | null
     userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -8003,7 +7949,6 @@ export namespace Prisma {
     description: number
     coverImage: number
     isPublic: number
-    spotifyPlaylistId: number
     userId: number
     createdAt: number
     updatedAt: number
@@ -8017,7 +7962,6 @@ export namespace Prisma {
     description?: true
     coverImage?: true
     isPublic?: true
-    spotifyPlaylistId?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -8029,7 +7973,6 @@ export namespace Prisma {
     description?: true
     coverImage?: true
     isPublic?: true
-    spotifyPlaylistId?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -8041,7 +7984,6 @@ export namespace Prisma {
     description?: true
     coverImage?: true
     isPublic?: true
-    spotifyPlaylistId?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -8126,7 +8068,6 @@ export namespace Prisma {
     description: string | null
     coverImage: string | null
     isPublic: boolean
-    spotifyPlaylistId: string | null
     userId: string
     createdAt: Date
     updatedAt: Date
@@ -8155,7 +8096,6 @@ export namespace Prisma {
     description?: boolean
     coverImage?: boolean
     isPublic?: boolean
-    spotifyPlaylistId?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -8171,7 +8111,6 @@ export namespace Prisma {
     description?: boolean
     coverImage?: boolean
     isPublic?: boolean
-    spotifyPlaylistId?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -8184,7 +8123,6 @@ export namespace Prisma {
     description?: boolean
     coverImage?: boolean
     isPublic?: boolean
-    spotifyPlaylistId?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -8197,13 +8135,12 @@ export namespace Prisma {
     description?: boolean
     coverImage?: boolean
     isPublic?: boolean
-    spotifyPlaylistId?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type PlaylistOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "coverImage" | "isPublic" | "spotifyPlaylistId" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["playlist"]>
+  export type PlaylistOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "coverImage" | "isPublic" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["playlist"]>
   export type PlaylistInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     songs?: boolean | Playlist$songsArgs<ExtArgs>
@@ -8230,7 +8167,6 @@ export namespace Prisma {
       description: string | null
       coverImage: string | null
       isPublic: boolean
-      spotifyPlaylistId: string | null
       userId: string
       createdAt: Date
       updatedAt: Date
@@ -8665,7 +8601,6 @@ export namespace Prisma {
     readonly description: FieldRef<"Playlist", 'String'>
     readonly coverImage: FieldRef<"Playlist", 'String'>
     readonly isPublic: FieldRef<"Playlist", 'Boolean'>
-    readonly spotifyPlaylistId: FieldRef<"Playlist", 'String'>
     readonly userId: FieldRef<"Playlist", 'String'>
     readonly createdAt: FieldRef<"Playlist", 'DateTime'>
     readonly updatedAt: FieldRef<"Playlist", 'DateTime'>
@@ -15637,7 +15572,6 @@ export namespace Prisma {
     displayName: 'displayName',
     profileImage: 'profileImage',
     role: 'role',
-    musicProvider: 'musicProvider',
     isDemo: 'isDemo',
     demoExpiresAt: 'demoExpiresAt',
     createdAt: 'createdAt',
@@ -15701,9 +15635,6 @@ export namespace Prisma {
     lastfmUrl: 'lastfmUrl',
     duration: 'duration',
     externalId: 'externalId',
-    spotifyId: 'spotifyId',
-    spotifyUrl: 'spotifyUrl',
-    previewUrl: 'previewUrl',
     createdAt: 'createdAt'
   };
 
@@ -15716,7 +15647,6 @@ export namespace Prisma {
     description: 'description',
     coverImage: 'coverImage',
     isPublic: 'isPublic',
-    spotifyPlaylistId: 'spotifyPlaylistId',
     userId: 'userId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -15898,7 +15828,6 @@ export namespace Prisma {
     displayName?: StringNullableFilter<"User"> | string | null
     profileImage?: StringNullableFilter<"User"> | string | null
     role?: StringFilter<"User"> | string
-    musicProvider?: StringFilter<"User"> | string
     isDemo?: BoolFilter<"User"> | boolean
     demoExpiresAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
@@ -15923,7 +15852,6 @@ export namespace Prisma {
     displayName?: SortOrderInput | SortOrder
     profileImage?: SortOrderInput | SortOrder
     role?: SortOrder
-    musicProvider?: SortOrder
     isDemo?: SortOrder
     demoExpiresAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -15951,7 +15879,6 @@ export namespace Prisma {
     displayName?: StringNullableFilter<"User"> | string | null
     profileImage?: StringNullableFilter<"User"> | string | null
     role?: StringFilter<"User"> | string
-    musicProvider?: StringFilter<"User"> | string
     isDemo?: BoolFilter<"User"> | boolean
     demoExpiresAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
@@ -15976,7 +15903,6 @@ export namespace Prisma {
     displayName?: SortOrderInput | SortOrder
     profileImage?: SortOrderInput | SortOrder
     role?: SortOrder
-    musicProvider?: SortOrder
     isDemo?: SortOrder
     demoExpiresAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -15998,7 +15924,6 @@ export namespace Prisma {
     displayName?: StringNullableWithAggregatesFilter<"User"> | string | null
     profileImage?: StringNullableWithAggregatesFilter<"User"> | string | null
     role?: StringWithAggregatesFilter<"User"> | string
-    musicProvider?: StringWithAggregatesFilter<"User"> | string
     isDemo?: BoolWithAggregatesFilter<"User"> | boolean
     demoExpiresAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -16241,9 +16166,6 @@ export namespace Prisma {
     lastfmUrl?: StringNullableFilter<"Song"> | string | null
     duration?: IntNullableFilter<"Song"> | number | null
     externalId?: StringFilter<"Song"> | string
-    spotifyId?: StringNullableFilter<"Song"> | string | null
-    spotifyUrl?: StringNullableFilter<"Song"> | string | null
-    previewUrl?: StringNullableFilter<"Song"> | string | null
     createdAt?: DateTimeFilter<"Song"> | Date | string
     playlistSongs?: PlaylistSongListRelationFilter
     swipeActions?: SwipeActionListRelationFilter
@@ -16258,9 +16180,6 @@ export namespace Prisma {
     lastfmUrl?: SortOrderInput | SortOrder
     duration?: SortOrderInput | SortOrder
     externalId?: SortOrder
-    spotifyId?: SortOrderInput | SortOrder
-    spotifyUrl?: SortOrderInput | SortOrder
-    previewUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     playlistSongs?: PlaylistSongOrderByRelationAggregateInput
     swipeActions?: SwipeActionOrderByRelationAggregateInput
@@ -16269,7 +16188,6 @@ export namespace Prisma {
   export type SongWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     externalId?: string
-    spotifyId?: string
     AND?: SongWhereInput | SongWhereInput[]
     OR?: SongWhereInput[]
     NOT?: SongWhereInput | SongWhereInput[]
@@ -16279,12 +16197,10 @@ export namespace Prisma {
     albumArt?: StringNullableFilter<"Song"> | string | null
     lastfmUrl?: StringNullableFilter<"Song"> | string | null
     duration?: IntNullableFilter<"Song"> | number | null
-    spotifyUrl?: StringNullableFilter<"Song"> | string | null
-    previewUrl?: StringNullableFilter<"Song"> | string | null
     createdAt?: DateTimeFilter<"Song"> | Date | string
     playlistSongs?: PlaylistSongListRelationFilter
     swipeActions?: SwipeActionListRelationFilter
-  }, "id" | "externalId" | "spotifyId">
+  }, "id" | "externalId">
 
   export type SongOrderByWithAggregationInput = {
     id?: SortOrder
@@ -16295,9 +16211,6 @@ export namespace Prisma {
     lastfmUrl?: SortOrderInput | SortOrder
     duration?: SortOrderInput | SortOrder
     externalId?: SortOrder
-    spotifyId?: SortOrderInput | SortOrder
-    spotifyUrl?: SortOrderInput | SortOrder
-    previewUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: SongCountOrderByAggregateInput
     _avg?: SongAvgOrderByAggregateInput
@@ -16318,9 +16231,6 @@ export namespace Prisma {
     lastfmUrl?: StringNullableWithAggregatesFilter<"Song"> | string | null
     duration?: IntNullableWithAggregatesFilter<"Song"> | number | null
     externalId?: StringWithAggregatesFilter<"Song"> | string
-    spotifyId?: StringNullableWithAggregatesFilter<"Song"> | string | null
-    spotifyUrl?: StringNullableWithAggregatesFilter<"Song"> | string | null
-    previewUrl?: StringNullableWithAggregatesFilter<"Song"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Song"> | Date | string
   }
 
@@ -16333,7 +16243,6 @@ export namespace Prisma {
     description?: StringNullableFilter<"Playlist"> | string | null
     coverImage?: StringNullableFilter<"Playlist"> | string | null
     isPublic?: BoolFilter<"Playlist"> | boolean
-    spotifyPlaylistId?: StringNullableFilter<"Playlist"> | string | null
     userId?: StringFilter<"Playlist"> | string
     createdAt?: DateTimeFilter<"Playlist"> | Date | string
     updatedAt?: DateTimeFilter<"Playlist"> | Date | string
@@ -16348,7 +16257,6 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     coverImage?: SortOrderInput | SortOrder
     isPublic?: SortOrder
-    spotifyPlaylistId?: SortOrderInput | SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -16359,7 +16267,6 @@ export namespace Prisma {
 
   export type PlaylistWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    spotifyPlaylistId?: string
     AND?: PlaylistWhereInput | PlaylistWhereInput[]
     OR?: PlaylistWhereInput[]
     NOT?: PlaylistWhereInput | PlaylistWhereInput[]
@@ -16373,7 +16280,7 @@ export namespace Prisma {
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     songs?: PlaylistSongListRelationFilter
     sharedPost?: XOR<SocialPostNullableScalarRelationFilter, SocialPostWhereInput> | null
-  }, "id" | "spotifyPlaylistId">
+  }, "id">
 
   export type PlaylistOrderByWithAggregationInput = {
     id?: SortOrder
@@ -16381,7 +16288,6 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     coverImage?: SortOrderInput | SortOrder
     isPublic?: SortOrder
-    spotifyPlaylistId?: SortOrderInput | SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -16399,7 +16305,6 @@ export namespace Prisma {
     description?: StringNullableWithAggregatesFilter<"Playlist"> | string | null
     coverImage?: StringNullableWithAggregatesFilter<"Playlist"> | string | null
     isPublic?: BoolWithAggregatesFilter<"Playlist"> | boolean
-    spotifyPlaylistId?: StringNullableWithAggregatesFilter<"Playlist"> | string | null
     userId?: StringWithAggregatesFilter<"Playlist"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Playlist"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Playlist"> | Date | string
@@ -16774,7 +16679,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -16799,7 +16703,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -16824,7 +16727,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16849,7 +16751,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16874,7 +16775,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -16890,7 +16790,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16906,7 +16805,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17172,9 +17070,6 @@ export namespace Prisma {
     lastfmUrl?: string | null
     duration?: number | null
     externalId: string
-    spotifyId?: string | null
-    spotifyUrl?: string | null
-    previewUrl?: string | null
     createdAt?: Date | string
     playlistSongs?: PlaylistSongCreateNestedManyWithoutSongInput
     swipeActions?: SwipeActionCreateNestedManyWithoutSongInput
@@ -17189,9 +17084,6 @@ export namespace Prisma {
     lastfmUrl?: string | null
     duration?: number | null
     externalId: string
-    spotifyId?: string | null
-    spotifyUrl?: string | null
-    previewUrl?: string | null
     createdAt?: Date | string
     playlistSongs?: PlaylistSongUncheckedCreateNestedManyWithoutSongInput
     swipeActions?: SwipeActionUncheckedCreateNestedManyWithoutSongInput
@@ -17206,9 +17098,6 @@ export namespace Prisma {
     lastfmUrl?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableIntFieldUpdateOperationsInput | number | null
     externalId?: StringFieldUpdateOperationsInput | string
-    spotifyId?: NullableStringFieldUpdateOperationsInput | string | null
-    spotifyUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    previewUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     playlistSongs?: PlaylistSongUpdateManyWithoutSongNestedInput
     swipeActions?: SwipeActionUpdateManyWithoutSongNestedInput
@@ -17223,9 +17112,6 @@ export namespace Prisma {
     lastfmUrl?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableIntFieldUpdateOperationsInput | number | null
     externalId?: StringFieldUpdateOperationsInput | string
-    spotifyId?: NullableStringFieldUpdateOperationsInput | string | null
-    spotifyUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    previewUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     playlistSongs?: PlaylistSongUncheckedUpdateManyWithoutSongNestedInput
     swipeActions?: SwipeActionUncheckedUpdateManyWithoutSongNestedInput
@@ -17240,9 +17126,6 @@ export namespace Prisma {
     lastfmUrl?: string | null
     duration?: number | null
     externalId: string
-    spotifyId?: string | null
-    spotifyUrl?: string | null
-    previewUrl?: string | null
     createdAt?: Date | string
   }
 
@@ -17255,9 +17138,6 @@ export namespace Prisma {
     lastfmUrl?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableIntFieldUpdateOperationsInput | number | null
     externalId?: StringFieldUpdateOperationsInput | string
-    spotifyId?: NullableStringFieldUpdateOperationsInput | string | null
-    spotifyUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    previewUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -17270,9 +17150,6 @@ export namespace Prisma {
     lastfmUrl?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableIntFieldUpdateOperationsInput | number | null
     externalId?: StringFieldUpdateOperationsInput | string
-    spotifyId?: NullableStringFieldUpdateOperationsInput | string | null
-    spotifyUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    previewUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -17282,7 +17159,6 @@ export namespace Prisma {
     description?: string | null
     coverImage?: string | null
     isPublic?: boolean
-    spotifyPlaylistId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutPlaylistsInput
@@ -17296,7 +17172,6 @@ export namespace Prisma {
     description?: string | null
     coverImage?: string | null
     isPublic?: boolean
-    spotifyPlaylistId?: string | null
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17310,7 +17185,6 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     isPublic?: BoolFieldUpdateOperationsInput | boolean
-    spotifyPlaylistId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutPlaylistsNestedInput
@@ -17324,7 +17198,6 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     isPublic?: BoolFieldUpdateOperationsInput | boolean
-    spotifyPlaylistId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17338,7 +17211,6 @@ export namespace Prisma {
     description?: string | null
     coverImage?: string | null
     isPublic?: boolean
-    spotifyPlaylistId?: string | null
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17350,7 +17222,6 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     isPublic?: BoolFieldUpdateOperationsInput | boolean
-    spotifyPlaylistId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -17361,7 +17232,6 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     isPublic?: BoolFieldUpdateOperationsInput | boolean
-    spotifyPlaylistId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17850,7 +17720,6 @@ export namespace Prisma {
     displayName?: SortOrder
     profileImage?: SortOrder
     role?: SortOrder
-    musicProvider?: SortOrder
     isDemo?: SortOrder
     demoExpiresAt?: SortOrder
     createdAt?: SortOrder
@@ -17866,7 +17735,6 @@ export namespace Prisma {
     displayName?: SortOrder
     profileImage?: SortOrder
     role?: SortOrder
-    musicProvider?: SortOrder
     isDemo?: SortOrder
     demoExpiresAt?: SortOrder
     createdAt?: SortOrder
@@ -17882,7 +17750,6 @@ export namespace Prisma {
     displayName?: SortOrder
     profileImage?: SortOrder
     role?: SortOrder
-    musicProvider?: SortOrder
     isDemo?: SortOrder
     demoExpiresAt?: SortOrder
     createdAt?: SortOrder
@@ -18114,9 +17981,6 @@ export namespace Prisma {
     lastfmUrl?: SortOrder
     duration?: SortOrder
     externalId?: SortOrder
-    spotifyId?: SortOrder
-    spotifyUrl?: SortOrder
-    previewUrl?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -18133,9 +17997,6 @@ export namespace Prisma {
     lastfmUrl?: SortOrder
     duration?: SortOrder
     externalId?: SortOrder
-    spotifyId?: SortOrder
-    spotifyUrl?: SortOrder
-    previewUrl?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -18148,9 +18009,6 @@ export namespace Prisma {
     lastfmUrl?: SortOrder
     duration?: SortOrder
     externalId?: SortOrder
-    spotifyId?: SortOrder
-    spotifyUrl?: SortOrder
-    previewUrl?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -18185,7 +18043,6 @@ export namespace Prisma {
     description?: SortOrder
     coverImage?: SortOrder
     isPublic?: SortOrder
-    spotifyPlaylistId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -18197,7 +18054,6 @@ export namespace Prisma {
     description?: SortOrder
     coverImage?: SortOrder
     isPublic?: SortOrder
-    spotifyPlaylistId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -18209,7 +18065,6 @@ export namespace Prisma {
     description?: SortOrder
     coverImage?: SortOrder
     isPublic?: SortOrder
-    spotifyPlaylistId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -19572,7 +19427,6 @@ export namespace Prisma {
     description?: string | null
     coverImage?: string | null
     isPublic?: boolean
-    spotifyPlaylistId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     songs?: PlaylistSongCreateNestedManyWithoutPlaylistInput
@@ -19585,7 +19439,6 @@ export namespace Prisma {
     description?: string | null
     coverImage?: string | null
     isPublic?: boolean
-    spotifyPlaylistId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     songs?: PlaylistSongUncheckedCreateNestedManyWithoutPlaylistInput
@@ -19838,7 +19691,6 @@ export namespace Prisma {
     description?: StringNullableFilter<"Playlist"> | string | null
     coverImage?: StringNullableFilter<"Playlist"> | string | null
     isPublic?: BoolFilter<"Playlist"> | boolean
-    spotifyPlaylistId?: StringNullableFilter<"Playlist"> | string | null
     userId?: StringFilter<"Playlist"> | string
     createdAt?: DateTimeFilter<"Playlist"> | Date | string
     updatedAt?: DateTimeFilter<"Playlist"> | Date | string
@@ -20004,7 +19856,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -20028,7 +19879,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -20068,7 +19918,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20092,7 +19941,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20116,7 +19964,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -20140,7 +19987,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -20180,7 +20026,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20204,7 +20049,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20319,7 +20163,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -20343,7 +20186,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -20432,7 +20274,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20456,7 +20297,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20524,7 +20364,6 @@ export namespace Prisma {
     description?: string | null
     coverImage?: string | null
     isPublic?: boolean
-    spotifyPlaylistId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutPlaylistsInput
@@ -20537,7 +20376,6 @@ export namespace Prisma {
     description?: string | null
     coverImage?: string | null
     isPublic?: boolean
-    spotifyPlaylistId?: string | null
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20558,9 +20396,6 @@ export namespace Prisma {
     lastfmUrl?: string | null
     duration?: number | null
     externalId: string
-    spotifyId?: string | null
-    spotifyUrl?: string | null
-    previewUrl?: string | null
     createdAt?: Date | string
     swipeActions?: SwipeActionCreateNestedManyWithoutSongInput
   }
@@ -20574,9 +20409,6 @@ export namespace Prisma {
     lastfmUrl?: string | null
     duration?: number | null
     externalId: string
-    spotifyId?: string | null
-    spotifyUrl?: string | null
-    previewUrl?: string | null
     createdAt?: Date | string
     swipeActions?: SwipeActionUncheckedCreateNestedManyWithoutSongInput
   }
@@ -20603,7 +20435,6 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     isPublic?: BoolFieldUpdateOperationsInput | boolean
-    spotifyPlaylistId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutPlaylistsNestedInput
@@ -20616,7 +20447,6 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     isPublic?: BoolFieldUpdateOperationsInput | boolean
-    spotifyPlaylistId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20643,9 +20473,6 @@ export namespace Prisma {
     lastfmUrl?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableIntFieldUpdateOperationsInput | number | null
     externalId?: StringFieldUpdateOperationsInput | string
-    spotifyId?: NullableStringFieldUpdateOperationsInput | string | null
-    spotifyUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    previewUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     swipeActions?: SwipeActionUpdateManyWithoutSongNestedInput
   }
@@ -20659,9 +20486,6 @@ export namespace Prisma {
     lastfmUrl?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableIntFieldUpdateOperationsInput | number | null
     externalId?: StringFieldUpdateOperationsInput | string
-    spotifyId?: NullableStringFieldUpdateOperationsInput | string | null
-    spotifyUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    previewUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     swipeActions?: SwipeActionUncheckedUpdateManyWithoutSongNestedInput
   }
@@ -20675,7 +20499,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -20699,7 +20522,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -20728,9 +20550,6 @@ export namespace Prisma {
     lastfmUrl?: string | null
     duration?: number | null
     externalId: string
-    spotifyId?: string | null
-    spotifyUrl?: string | null
-    previewUrl?: string | null
     createdAt?: Date | string
     playlistSongs?: PlaylistSongCreateNestedManyWithoutSongInput
   }
@@ -20744,9 +20563,6 @@ export namespace Prisma {
     lastfmUrl?: string | null
     duration?: number | null
     externalId: string
-    spotifyId?: string | null
-    spotifyUrl?: string | null
-    previewUrl?: string | null
     createdAt?: Date | string
     playlistSongs?: PlaylistSongUncheckedCreateNestedManyWithoutSongInput
   }
@@ -20776,7 +20592,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20800,7 +20615,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20835,9 +20649,6 @@ export namespace Prisma {
     lastfmUrl?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableIntFieldUpdateOperationsInput | number | null
     externalId?: StringFieldUpdateOperationsInput | string
-    spotifyId?: NullableStringFieldUpdateOperationsInput | string | null
-    spotifyUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    previewUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     playlistSongs?: PlaylistSongUpdateManyWithoutSongNestedInput
   }
@@ -20851,9 +20662,6 @@ export namespace Prisma {
     lastfmUrl?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableIntFieldUpdateOperationsInput | number | null
     externalId?: StringFieldUpdateOperationsInput | string
-    spotifyId?: NullableStringFieldUpdateOperationsInput | string | null
-    spotifyUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    previewUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     playlistSongs?: PlaylistSongUncheckedUpdateManyWithoutSongNestedInput
   }
@@ -20867,7 +20675,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -20891,7 +20698,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -20917,7 +20723,6 @@ export namespace Prisma {
     description?: string | null
     coverImage?: string | null
     isPublic?: boolean
-    spotifyPlaylistId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutPlaylistsInput
@@ -20930,7 +20735,6 @@ export namespace Prisma {
     description?: string | null
     coverImage?: string | null
     isPublic?: boolean
-    spotifyPlaylistId?: string | null
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21010,7 +20814,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21034,7 +20837,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21066,7 +20868,6 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     isPublic?: BoolFieldUpdateOperationsInput | boolean
-    spotifyPlaylistId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutPlaylistsNestedInput
@@ -21079,7 +20880,6 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     isPublic?: BoolFieldUpdateOperationsInput | boolean
-    spotifyPlaylistId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21127,7 +20927,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -21151,7 +20950,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -21216,7 +21014,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21240,7 +21037,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21295,7 +21091,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -21319,7 +21114,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -21384,7 +21178,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21408,7 +21201,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21463,7 +21255,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -21487,7 +21278,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -21516,7 +21306,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -21540,7 +21329,6 @@ export namespace Prisma {
     displayName?: string | null
     profileImage?: string | null
     role?: string
-    musicProvider?: string
     isDemo?: boolean
     demoExpiresAt?: Date | string | null
     createdAt?: Date | string
@@ -21580,7 +21368,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21604,7 +21391,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21639,7 +21425,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21663,7 +21448,6 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     profileImage?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
-    musicProvider?: StringFieldUpdateOperationsInput | string
     isDemo?: BoolFieldUpdateOperationsInput | boolean
     demoExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21709,7 +21493,6 @@ export namespace Prisma {
     description?: string | null
     coverImage?: string | null
     isPublic?: boolean
-    spotifyPlaylistId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -21836,7 +21619,6 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     isPublic?: BoolFieldUpdateOperationsInput | boolean
-    spotifyPlaylistId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     songs?: PlaylistSongUpdateManyWithoutPlaylistNestedInput
@@ -21849,7 +21631,6 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     isPublic?: BoolFieldUpdateOperationsInput | boolean
-    spotifyPlaylistId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     songs?: PlaylistSongUncheckedUpdateManyWithoutPlaylistNestedInput
@@ -21862,7 +21643,6 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     coverImage?: NullableStringFieldUpdateOperationsInput | string | null
     isPublic?: BoolFieldUpdateOperationsInput | boolean
-    spotifyPlaylistId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

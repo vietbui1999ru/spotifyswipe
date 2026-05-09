@@ -20,7 +20,7 @@ export const appRouter = createTRPCRouter({
 	playlist: playlistRouter,
 	swipe: swipeRouter,
 	social: socialRouter,
-token: tokenRouter,
+	token: tokenRouter,
 	user: userRouter,
 });
 

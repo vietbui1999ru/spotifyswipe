@@ -19,7 +19,6 @@ model User {
   displayName   String? // Custom platform name; falls back to provider name
   profileImage  String? // Custom profile picture; falls back to provider image
   role          String    @default("user") // "user" | "admin"
-  musicProvider String    @default("auto") // "auto" | "spotify" | "lastfm"
   isDemo        Boolean   @default(false)
   demoExpiresAt DateTime?
   createdAt     DateTime  @default(now())
@@ -92,9 +91,6 @@ model Song {
   lastfmUrl  String?
   duration   Int?
   externalId String  @unique
-  spotifyId  String? @unique
-  spotifyUrl String?
-  previewUrl String?
 
   createdAt DateTime @default(now())
 
@@ -105,12 +101,11 @@ model Song {
 }
 
 model Playlist {
-  id                String  @id @default(cuid())
-  name              String
-  description       String?
-  coverImage        String?
-  isPublic          Boolean @default(true)
-  spotifyPlaylistId String? @unique
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  coverImage  String?
+  isPublic    Boolean @default(true)
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

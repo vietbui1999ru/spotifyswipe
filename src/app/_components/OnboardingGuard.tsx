@@ -1,13 +1,13 @@
 "use client";
 
-import { type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 interface OnboardingGuardProps {
-  children: ReactNode;
+	children: ReactNode;
 }
 
 const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
-  return <>{children}</>;
+	return <>{children}</>;
 };
 
 export default OnboardingGuard;

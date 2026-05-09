@@ -130,7 +130,6 @@ exports.Prisma.UserScalarFieldEnum = {
   displayName: 'displayName',
   profileImage: 'profileImage',
   role: 'role',
-  musicProvider: 'musicProvider',
   isDemo: 'isDemo',
   demoExpiresAt: 'demoExpiresAt',
   createdAt: 'createdAt',
@@ -182,9 +181,6 @@ exports.Prisma.SongScalarFieldEnum = {
   lastfmUrl: 'lastfmUrl',
   duration: 'duration',
   externalId: 'externalId',
-  spotifyId: 'spotifyId',
-  spotifyUrl: 'spotifyUrl',
-  previewUrl: 'previewUrl',
   createdAt: 'createdAt'
 };
 
@@ -194,7 +190,6 @@ exports.Prisma.PlaylistScalarFieldEnum = {
   description: 'description',
   coverImage: 'coverImage',
   isPublic: 'isPublic',
-  spotifyPlaylistId: 'spotifyPlaylistId',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
