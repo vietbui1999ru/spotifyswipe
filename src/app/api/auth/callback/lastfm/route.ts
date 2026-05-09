@@ -40,7 +40,7 @@ const log = createLogger("lastfm-callback");
  * Last.fm uses a non-standard auth flow (api_key + MD5 signatures) that
  * better-auth's generic-oauth plugin can't handle, so we keep this custom route.
  *
- * Supports account linking: if a user is already signed in (e.g. via Spotify),
+ * Supports account linking: if a user is already signed in (e.g. via Google or email),
  * the Last.fm account will be linked to the existing user rather than creating a new one.
  */
 
@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
 			throw new Error("Last.fm user profile missing name field");
 		}
 
-		// Check if user is already signed in (e.g. via Spotify) for account linking
+		// Check if user is already signed in (e.g. via Google or email) for account linking
 		const existingSession = await auth.api.getSession({
 			headers: request.headers,
 		});

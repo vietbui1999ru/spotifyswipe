@@ -41,9 +41,7 @@ async function processBatches<TItem, TResult>(
 	return results;
 }
 
-async function enrichWithAlbumArt(
-	candidates: DiscoveryTrack[],
-): Promise<void> {
+async function enrichWithAlbumArt(candidates: DiscoveryTrack[]): Promise<void> {
 	const toEnrich = candidates.filter((c) => !c.image).slice(0, 15);
 	await processBatches(toEnrich, 5, async (candidate) => {
 		const art = await fetchAlbumArt(candidate.artist, candidate.name);
@@ -65,7 +63,7 @@ async function getColdStartFeed(): Promise<DiscoveryTrack[]> {
 			artist,
 			url: track.url,
 			image: lastfm.getImageUrl(track.image),
-			externalId: `chart:${artist.toLowerCase()}:${track.name.toLowerCase()}`,
+			externalId: `${artist.toLowerCase()}:${track.name.toLowerCase()}`,
 		};
 	});
 	await enrichWithAlbumArt(candidates);
@@ -161,8 +159,12 @@ async function getSearchBasedFeed(query: string): Promise<DiscoveryTrack[]> {
 export async function getDiscoveryFeed(
 	options: DiscoveryFeedOptions,
 ): Promise<DiscoveryTrack[]> {
-	const { lastfmUsername, swipedExternalIds, limit = 20, searchQuery } =
-		options;
+	const {
+		lastfmUsername,
+		swipedExternalIds,
+		limit = 20,
+		searchQuery,
+	} = options;
 
 	let candidates: DiscoveryTrack[];
 

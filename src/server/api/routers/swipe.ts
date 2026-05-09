@@ -1,20 +1,20 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { type SongData, upsertSong } from "~/server/api/utils";
+import { scrobbleTrack } from "~/server/auth/lastfm";
 import { AppError, ErrorCode, isTRPCError, toTRPCError } from "~/server/errors";
 import { createLogger, withTiming } from "~/server/logger";
-import { scrobbleTrack } from "~/server/auth/lastfm";
 
 export function buildScrobbleParams(
-  songData: { artist: string; title: string },
-  action: string,
+	songData: { artist: string; title: string },
+	action: string,
 ): { artist: string; track: string; timestamp: number } | null {
-  if (action !== "liked" && action !== "superliked") return null;
-  return {
-    artist: songData.artist,
-    track: songData.title,
-    timestamp: Math.floor(Date.now() / 1000),
-  };
+	if (action !== "liked" && action !== "superliked") return null;
+	return {
+		artist: songData.artist,
+		track: songData.title,
+		timestamp: Math.floor(Date.now() / 1000),
+	};
 }
 
 export const swipeRouter = createTRPCRouter({
@@ -74,7 +74,11 @@ export const swipeRouter = createTRPCRouter({
 					songId: song.id,
 				});
 
-				if (input.action === "liked" || input.action === "superliked") {
+				const scrobbleParams = buildScrobbleParams(
+					{ artist: input.songData.artist, title: input.songData.title },
+					input.action,
+				);
+				if (scrobbleParams) {
 					ctx.db.account
 						.findFirst({
 							where: { userId: ctx.session.user.id, providerId: "lastfm" },
@@ -82,11 +86,7 @@ export const swipeRouter = createTRPCRouter({
 						})
 						.then((account) => {
 							if (!account?.accessToken) return;
-							return scrobbleTrack(account.accessToken, {
-								artist: input.songData.artist,
-								track: input.songData.title,
-								timestamp: Math.floor(Date.now() / 1000),
-							});
+							return scrobbleTrack(account.accessToken, scrobbleParams);
 						})
 						.catch(() => {
 							log.warn("Scrobble failed (non-blocking)", {
