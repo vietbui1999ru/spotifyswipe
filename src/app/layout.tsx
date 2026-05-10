@@ -1,12 +1,14 @@
 // Import styles of packages that you've installed.
 // All packages except `@mantine/hooks` require styles imports
 import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
 
 import {
 	ColorSchemeScript,
 	MantineProvider,
 	mantineHtmlProps,
 } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
 import { TRPCReactProvider } from "~/trpc/react";
 import AppShellWrapper from "./_components/AppShellWrapper";
 import { AuthProvider } from "./_components/AuthProvider";
@@ -31,6 +33,7 @@ export default function RootLayout({
 				<AuthProvider>
 					<TRPCReactProvider>
 						<MantineProvider defaultColorScheme="dark">
+							<Notifications position="top-right" />
 							<BugMonitorProvider>
 								<AppShellWrapper>{children}</AppShellWrapper>
 							</BugMonitorProvider>
