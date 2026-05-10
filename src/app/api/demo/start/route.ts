@@ -27,35 +27,21 @@ function getAuthSecret(): string {
 
 const log = createLogger("demo-start");
 
-const DEMO_SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours
-
 export async function POST(request: NextRequest) {
 	try {
-		// Rate-limit: check if caller already has a valid demo session
+		// If caller already has any session, reuse it
 		const existingSession = await auth.api.getSession({
 			headers: request.headers,
 		});
 
 		if (existingSession?.user?.id) {
-			const existingUser = await db.user.findUnique({
-				where: { id: existingSession.user.id },
-				select: { isDemo: true, demoExpiresAt: true },
+			log.info("Caller already has a session", {
+				userId: existingSession.user.id,
 			});
-
-			// If they already have a non-expired demo session, reuse it
-			if (
-				existingUser?.isDemo &&
-				existingUser.demoExpiresAt &&
-				existingUser.demoExpiresAt > new Date()
-			) {
-				log.info("Reusing existing demo session", {
-					userId: existingSession.user.id,
-				});
-				return NextResponse.json({ success: true });
-			}
+			return NextResponse.json({ success: true });
 		}
 
-		// Rate-limit: max 5 demo users per IP per hour
+		// Rate-limit: max 50 demo users per IP per hour
 		const ip =
 			request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
 			request.headers.get("x-real-ip") ||
@@ -87,7 +73,6 @@ export async function POST(request: NextRequest) {
 				name: `Demo User #${suffix}`,
 				email: `demo-${uuid}@spotiswipe.demo`,
 				isDemo: true,
-				demoExpiresAt: new Date(Date.now() + DEMO_SESSION_DURATION),
 			},
 		});
 
@@ -104,7 +89,7 @@ export async function POST(request: NextRequest) {
 
 		// Create session (same pattern as lastfm callback)
 		const sessionToken = crypto.randomUUID();
-		const expiresAt = new Date(Date.now() + DEMO_SESSION_DURATION);
+		const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
 		await db.session.create({
 			data: {
