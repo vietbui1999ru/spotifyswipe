@@ -8,6 +8,12 @@ import {
 } from "~/server/auth/lastfm";
 import { AppError, ErrorCode, toTRPCError } from "~/server/errors";
 import { createLogger } from "~/server/logger";
+import {
+	type DiscoveryTrack,
+	getDiscoveryFeed,
+} from "~/lib/services/discovery";
+import { redis } from "~/server/redis";
+import { lastfmRatelimit } from "~/server/rate-limit";
 
 /** Get Last.fm session key for the current user. Throws if not connected. */
 async function getLastfmSessionKey(
@@ -196,5 +202,87 @@ export const lastfmRouter = createTRPCRouter({
 					),
 				);
 			}
+		}),
+
+	getDiscoveryFeed: protectedProcedure
+		.input(
+			z.object({
+				limit: z.number().min(1).max(50).default(20),
+				searchQuery: z.string().optional(),
+				lastfmUsername: z.string().nullable(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const log = createLogger("lastfm.getDiscoveryFeed", {
+				userId: ctx.session.user.id,
+			});
+
+			const ip =
+				ctx.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+				ctx.headers.get("x-real-ip") ??
+				"unknown";
+
+			const swipedHistory = await ctx.db.swipeAction.findMany({
+				where: { userId: ctx.session.user.id },
+				select: { song: { select: { externalId: true } } },
+				take: 50,
+				orderBy: { createdAt: "desc" },
+			});
+			const swipedExternalIds = new Set(
+				swipedHistory.map((s) => s.song.externalId),
+			);
+
+			if (lastfmRatelimit) {
+				const { success } = await lastfmRatelimit.limit(ip);
+				if (!success) {
+					log.warn("Rate limit exceeded, falling back to seeded songs", { ip });
+					const fallback = await ctx.db.song.findMany({
+						where:
+							swipedExternalIds.size > 0
+								? { externalId: { notIn: [...swipedExternalIds] } }
+								: {},
+						take: input.limit,
+					});
+					for (let i = fallback.length - 1; i > 0; i--) {
+						const j = Math.floor(Math.random() * (i + 1));
+						[fallback[i], fallback[j]] = [fallback[j]!, fallback[i]!];
+					}
+					return {
+						tracks: fallback.map(
+							(s): DiscoveryTrack => ({
+								name: s.title,
+								artist: s.artist,
+								image: s.albumArt,
+								url: s.lastfmUrl ?? "",
+								externalId: s.externalId,
+							}),
+						),
+						rateLimited: true,
+					};
+				}
+			}
+
+			const cacheKey = `feed:${input.lastfmUsername ?? "anon"}:${input.searchQuery ?? ""}:${input.limit}`;
+			if (redis) {
+				const cached = await redis.get<DiscoveryTrack[]>(cacheKey);
+				if (cached) {
+					log.debug("Cache hit", { cacheKey });
+					return { tracks: cached, rateLimited: false };
+				}
+			}
+
+			const tracks = await getDiscoveryFeed({
+				lastfmUsername: input.lastfmUsername,
+				swipedExternalIds,
+				limit: input.limit,
+				searchQuery: input.searchQuery,
+			});
+
+			if (redis && tracks.length > 0) {
+				await redis.set(cacheKey, tracks, { ex: 600 });
+			}
+
+			log.info("Discovery feed served", { count: tracks.length });
+			return { tracks, rateLimited: false };
 		}),
 });
