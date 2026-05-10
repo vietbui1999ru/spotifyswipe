@@ -1,4 +1,8 @@
 import { z } from "zod";
+import {
+	type DiscoveryTrack,
+	getDiscoveryFeed,
+} from "~/lib/services/discovery";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import {
 	loveTrack,
@@ -8,12 +12,8 @@ import {
 } from "~/server/auth/lastfm";
 import { AppError, ErrorCode, toTRPCError } from "~/server/errors";
 import { createLogger } from "~/server/logger";
-import {
-	type DiscoveryTrack,
-	getDiscoveryFeed,
-} from "~/lib/services/discovery";
-import { redis } from "~/server/redis";
 import { lastfmRatelimit } from "~/server/rate-limit";
+import { redis } from "~/server/redis";
 
 /** Get Last.fm session key for the current user. Throws if not connected. */
 async function getLastfmSessionKey(

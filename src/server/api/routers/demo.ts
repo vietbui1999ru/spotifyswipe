@@ -1,10 +1,6 @@
 import { z } from "zod";
 import type { DiscoveryTrack } from "~/lib/services/discovery";
-import {
-	createTRPCRouter,
-	protectedProcedure,
-	publicProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { createLogger } from "~/server/logger";
 
 /** Map a Song DB record to the DiscoveryTrack interface used by the client. */

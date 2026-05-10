@@ -553,7 +553,7 @@ async function seedSongs() {
 	return results;
 }
 
-async function seedPersonas(songRecords: { id: string }[]) {
+async function seedPersonas(_songRecords: { id: string }[]) {
 	console.log("Seeding personas...");
 
 	const createdUsers: Array<{
@@ -658,7 +658,7 @@ async function seedPlaylists(
 					songs: {
 						create: playlistDef.songIndices.map((songIdx, position) => ({
 							position,
-							songId: songRecords[songIdx]!.id,
+							songId: songRecords[songIdx]?.id,
 						})),
 					},
 				},
@@ -704,7 +704,7 @@ async function seedSwipeActions(
 
 		for (let i = 0; i < persona.swipeIndices.length; i++) {
 			const songIdx = persona.swipeIndices[i]!;
-			const songId = songRecords[songIdx]!.id;
+			const songId = songRecords[songIdx]?.id;
 
 			if (alreadySwipedIds.has(songId) || seenInBatch.has(songId)) continue;
 			seenInBatch.add(songId);
