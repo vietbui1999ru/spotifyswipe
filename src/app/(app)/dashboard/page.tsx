@@ -2,14 +2,16 @@
 
 import { Box } from "@mantine/core";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useState } from "react";
+import { Suspense, useCallback, useState } from "react";
+import { useDemoNotifications } from "~/lib/hooks/useDemoNotifications";
 import { useSessionState } from "~/lib/hooks/useSessionState";
 import LyricsPanel from "./_components/LyricsPanel";
 import PlayerCard from "./_components/PlayerCard";
 import PlaylistStack from "./_components/PlaylistStack";
 import styles from "./dashboard.module.css";
 
-const Dashboard = () => {
+function DashboardContent() {
+	useDemoNotifications();
 	const searchParams = useSearchParams();
 	const searchQuery = searchParams.get("q") ?? undefined;
 
@@ -58,6 +60,12 @@ const Dashboard = () => {
 			</div>
 		</Box>
 	);
-};
+}
 
-export default Dashboard;
+export default function Dashboard() {
+	return (
+		<Suspense>
+			<DashboardContent />
+		</Suspense>
+	);
+}
