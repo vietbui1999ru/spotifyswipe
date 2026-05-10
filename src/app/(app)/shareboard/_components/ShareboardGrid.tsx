@@ -89,11 +89,13 @@ const ShareboardGrid = ({ onSelectPost }: ShareboardGridProps) => {
 
 			<div className={styles.shareboardsGrid}>
 				{posts.map((post) => (
-					<button
+					<div
 						className={styles.shareboardCard}
 						key={post.id}
 						onClick={() => onSelectPost(post.id)}
-						type="button"
+						onKeyDown={(e) => e.key === "Enter" && onSelectPost(post.id)}
+						role="button"
+						tabIndex={0}
 					>
 						{/* Card Header */}
 						<div className={styles.cardHeader}>
@@ -156,7 +158,7 @@ const ShareboardGrid = ({ onSelectPost }: ShareboardGridProps) => {
 								Add to My Playlists
 							</Button>
 						</div>
-					</button>
+					</div>
 				))}
 			</div>
 		</div>
