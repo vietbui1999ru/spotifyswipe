@@ -12,7 +12,7 @@
         "@mantine/dropzone": "^8.3.13",
         "@mantine/form": "^8.3.13",
         "@mantine/hooks": "^8.3.13",
-        "@mantine/notifications": "^9.1.1",
+        "@mantine/notifications": "^8.3.13",
         "@mantine/nprogress": "^8.3.13",
         "@material/material-color-utilities": "^0.3.0",
         "@prisma/client": "^6.6.0",
@@ -185,11 +185,11 @@
 
     "@mantine/hooks": ["@mantine/hooks@8.3.13", "", { "peerDependencies": { "react": "^18.x || ^19.x" } }, "sha512-7YMbMW/tR9E8m/9DbBW01+3RNApm2mE/JbRKXf9s9+KxgbjQvq0FYGWV8Y4+Sjz48AO4vtWk2qBriUTgBMKAyg=="],
 
-    "@mantine/notifications": ["@mantine/notifications@9.1.1", "", { "dependencies": { "@mantine/store": "9.1.1", "react-transition-group": "4.4.5" }, "peerDependencies": { "@mantine/core": "9.1.1", "@mantine/hooks": "9.1.1", "react": "^19.2.0", "react-dom": "^19.2.0" } }, "sha512-ZfcEMMDp0BQ+yKmVp8ifPXLKej8pv9TcaRnmy2CZ07USD61E9LH5ClRAP/hxQuCyf/qLb5BPHsI7+f3K8uhj4Q=="],
+    "@mantine/notifications": ["@mantine/notifications@8.3.18", "", { "dependencies": { "@mantine/store": "8.3.18", "react-transition-group": "4.4.5" }, "peerDependencies": { "@mantine/core": "8.3.18", "@mantine/hooks": "8.3.18", "react": "^18.x || ^19.x", "react-dom": "^18.x || ^19.x" } }, "sha512-IpQ0lmwbigTBbZCR6iSYWqIOKEx1tlcd7PcEJ5M5X1qeVSY/N3mmDQt1eJmObvcyDeL5cTJMbSA9UPqhRqo9jw=="],
 
     "@mantine/nprogress": ["@mantine/nprogress@8.3.13", "", { "dependencies": { "@mantine/store": "8.3.13" }, "peerDependencies": { "@mantine/core": "8.3.13", "@mantine/hooks": "8.3.13", "react": "^18.x || ^19.x", "react-dom": "^18.x || ^19.x" } }, "sha512-itDLHIAbjPWjKrRgoCyf39vXoxEwgHb6gzDjKV0LSaVsHkWT1Mdvm9VB7qlNnRnvf/mxKSMe2mtLaSiHNnCC7A=="],
 
-    "@mantine/store": ["@mantine/store@9.1.1", "", { "peerDependencies": { "react": "^19.2.0" } }, "sha512-kbxEU8wVGbobHlmQmk0lu9M+xCILKjuAPcMAshgzPznGLfXeE9zrB0gNT2cbk11Ik8dlV9J6Vsn9cuACyOSpfQ=="],
+    "@mantine/store": ["@mantine/store@8.3.18", "", { "peerDependencies": { "react": "^18.x || ^19.x" } }, "sha512-i+QRTLmZzLldea0egtUVnGALd6UMIu8jd44nrNWBSNIXJU/8B6rMlC6gyX+l4szopZSuOaaNJIXkqRdC1gQsVg=="],
 
     "@material/material-color-utilities": ["@material/material-color-utilities@0.3.0", "", {}, "sha512-ztmtTd6xwnuh2/xu+Vb01btgV8SQWYCaK56CkRK8gEkWe5TuDyBcYJ0wgkMRn+2VcE9KUmhvkz+N9GHrqw/C0g=="],
 
