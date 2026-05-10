@@ -90,12 +90,9 @@ export const demoRouter = createTRPCRouter({
 	getTimeRemaining: protectedProcedure.query(async ({ ctx }) => {
 		const user = await ctx.db.user.findUnique({
 			where: { id: ctx.session.user.id },
-			select: { isDemo: true, demoExpiresAt: true },
+			select: { isDemo: true },
 		});
 		if (!user?.isDemo) return null;
-		return {
-			isDemo: true,
-			expiresAt: user.demoExpiresAt,
-		};
+		return { isDemo: true };
 	}),
 });
