@@ -4,17 +4,14 @@ import { createLogger } from "~/server/logger";
 
 const log = createLogger("cron-cleanup-demo");
 
-/** Shared cleanup logic — deletes expired demo users (with 1h grace period). */
+/** Shared cleanup logic — deletes demo accounts older than 30 days. */
 export async function cleanupExpiredDemoUsers() {
-	const gracePeriod = new Date(Date.now() - 60 * 60 * 1000); // 1 hour ago
+	const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
 	const result = await db.user.deleteMany({
 		where: {
 			isDemo: true,
-			demoExpiresAt: {
-				not: null,
-				lt: gracePeriod,
-			},
+			createdAt: { lt: thirtyDaysAgo },
 		},
 	});
 
